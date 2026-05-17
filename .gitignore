@@ -24,3 +24,4 @@ CLAUDE.md
 .goosehints
 .goose/
 SESSION_LOG.mdpackages/contracts/coverage/
+package-lock.json
