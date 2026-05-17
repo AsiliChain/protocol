@@ -1,0 +1,26 @@
+node_modules/
+dist/
+.next/
+build/
+.env
+.env.local
+.env.example
+packages/*/.env
+packages/*/.env.local
+packages/contracts/cache/
+packages/contracts/artifacts/
+packages/contracts/typechain-types/
+crews/
+.venv/
+*.log
+*.bak
+.DS_Store
+.turbo/
+agents/
+scripts/
+
+# Goose context files — not for commits
+CLAUDE.md
+.goosehints
+.goose/
+SESSION_LOG.md

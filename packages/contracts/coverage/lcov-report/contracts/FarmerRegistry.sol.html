@@ -1,0 +1,815 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for contracts/FarmerRegistry.sol</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../prettify.css" />
+    <link rel="stylesheet" href="../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../index.html">all files</a> / <a href="index.html">contracts/</a> FarmerRegistry.sol
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">100% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>29/29</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">100% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>48/48</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">100% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>11/11</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">100% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>35/35</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line high'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">51×</span>
+<span class="cline-any cline-yes">50×</span>
+<span class="cline-any cline-yes">49×</span>
+<span class="cline-any cline-yes">48×</span>
+<span class="cline-any cline-yes">47×</span>
+<span class="cline-any cline-yes">46×</span>
+<span class="cline-any cline-yes">44×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">42×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">42×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">42×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">14×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">18×</span>
+<span class="cline-any cline-yes">16×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">15×</span>
+<span class="cline-any cline-yes">15×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8×</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">// SPDX-License-Identifier: MIT
+pragma solidity 0.8.22;
+&nbsp;
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+&nbsp;
+/**
+ * @title FarmerRegistry
+ * @notice On-chain identity primitive for AsiliChain. Stores farmer records keyed
+ *         by wallet address with a MAAIF government ID reverse lookup.
+ * @dev    UUPS upgradeable. AccessControl with AGENT_ROLE, COOP_ROLE, DEFAULT_ADMIN_ROLE.
+ *
+ *         Independent farmers (those without a cooperative) are supported via the
+ *         INDEPENDENT_AGGREGATOR address — a protocol-managed multisig set post-deploy.
+ *         Their cooperativeWallet is set to INDEPENDENT_AGGREGATOR at registration.
+ *         They access the full protocol identically to cooperative-member farmers.
+ *
+ *         Seven invariants reference (CLAUDE.md):
+ *         #6 _authorizeUpgrade requires DEFAULT_ADMIN_ROLE — enforced here.
+ *         Others (1-5,7) do not apply to this contract directly (no loans, stages,
+ *         vault, or fees) but are enforced in the contracts that do.
+ */
+contract FarmerRegistry is Initializable, UUPSUpgradeable, AccessControlUpgradeable {
+    // ─── Roles ──────────────────────
+    bytes32 public constant AGENT_ROLE = keccak256("AGENT_ROLE");
+    bytes32 public constant COOP_ROLE = keccak256("COOP_ROLE");
+&nbsp;
+    // ─── Structs ────────────────────
+    struct Farmer {
+        string  maaifFarmerId;          // MAAIF government ID
+        address cooperativeWallet;      // cooperative that receives settlement share
+        bytes32 farmBoundaryIpfsCid;    // IPFS CID of GeoJSON polygon (EUDR DDS)
+        uint256 farmAreaHectares;       // land area × 100 (e.g., 250 = 2.50 ha)
+        bool    gfwDeforestationFree;   // Global Forest Watch verification result (GFW)
+        bool    active;                 // false = deactivated
+        uint256 registrationTimestamp;  // block.timestamp at registration
+    }
+&nbsp;
+    // ─── Storage ────────────────────
+    /// @notice wallet address → Farmer record
+    mapping(address =&gt; Farmer) public farmers;
+&nbsp;
+    /// @notice MAAIF government ID → wallet address (reverse lookup)
+    mapping(string =&gt; address) public maaifToWallet;
+&nbsp;
+    /// @notice Protocol-managed multisig for independent farmers.
+    ///         Set post-deploy via setIndependentAggregator().
+    address public INDEPENDENT_AGGREGATOR;
+&nbsp;
+    // ─── Events ─────────────────────
+    event FarmerRegistered(
+        address indexed farmerWallet,
+        string maaifId,
+        address indexed cooperativeWallet
+    );
+    event FarmerVerified(address indexed farmerWallet, bool gfwDeforestationFree);
+    event FarmerDeactivated(address indexed farmerWallet);
+    event IndependentAggregatorSet(address indexed aggregator);
+    event FarmerMigrated(
+        address indexed farmerWallet,
+        address indexed fromCooperative,
+        address indexed toCooperative
+    );
+&nbsp;
+    // ─── Constructor / Initializer ──────────────────
+&nbsp;
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() {
+        _disableInitializers();
+    }
+&nbsp;
+    /**
+     * @notice Initialize the FarmerRegistry contract.
+     * @param defaultAdmin Address that receives DEFAULT_ADMIN_ROLE (3-of-5 multisig).
+     *
+     * INDEPENDENT_AGGREGATOR starts as address(0) and must be set post-deploy
+     * via setIndependentAggregator() before any independent farmer can be registered.
+     */
+    function initialize(address defaultAdmin) external initializer {
+        require(defaultAdmin != address(0), "FarmerRegistry: zero admin");
+        __AccessControl_init();
+        _grantRole(DEFAULT_ADMIN_ROLE, defaultAdmin);
+    }
+&nbsp;
+    // ─── Registration ───────────────────────
+&nbsp;
+    /**
+     * @notice Register a new farmer. Only AGENT_ROLE.
+     * @param farmerWallet    The farmer's wallet address (primary key).
+     * @param maaifFarmerId   MAAIF government ID. Must be unique.
+     * @param cooperativeWallet Cooperative wallet. Pass INDEPENDENT_AGGREGATOR
+     *                          for independent farmers. Must be non-zero.
+     * @param farmBoundaryIpfsCid IPFS CID of the farm's GeoJSON boundary (bytes32).
+     * @param farmAreaHectares    Farm area × 100 (e.g., 250 = 2.50 hectares).
+     * @param gfwDeforestationFree GlobalFarmingWatch verification result.
+     */
+    function registerFarmer(
+        address farmerWallet,
+        string calldata maaifFarmerId,
+        address cooperativeWallet,
+        bytes32 farmBoundaryIpfsCid,
+        uint256 farmAreaHectares,
+        bool gfwDeforestationFree
+    )
+        external
+        onlyRole(AGENT_ROLE)
+    {
+        require(farmerWallet != address(0), "FarmerRegistry: zero farmer wallet");
+        require(bytes(maaifFarmerId).length &gt; 0, "FarmerRegistry: empty MAAIF ID");
+        require(cooperativeWallet != address(0), "FarmerRegistry: invalid coop wallet");
+        require(farmBoundaryIpfsCid != bytes32(0), "FarmerRegistry: empty IPFS CID");
+        require(farmAreaHectares &gt; 0, "FarmerRegistry: zero farm area");
+        require(farmers[farmerWallet].registrationTimestamp == 0, "FarmerRegistry: already registered");
+        require(
+            maaifToWallet[maaifFarmerId] == address(0),
+            "FarmerRegistry: MAAIF ID already registered"
+        );
+&nbsp;
+        farmers[farmerWallet] = Farmer({
+            maaifFarmerId:          maaifFarmerId,
+            cooperativeWallet:      cooperativeWallet,
+            farmBoundaryIpfsCid:    farmBoundaryIpfsCid,
+            farmAreaHectares:       farmAreaHectares,
+            gfwDeforestationFree:   gfwDeforestationFree,
+            active:                 true,
+            registrationTimestamp:  block.timestamp
+        });
+&nbsp;
+        maaifToWallet[maaifFarmerId] = farmerWallet;
+&nbsp;
+        emit FarmerRegistered(farmerWallet, maaifFarmerId, cooperativeWallet);
+    }
+&nbsp;
+    // ─── Queries ────────────────────
+&nbsp;
+    /**
+     * @notice Check if a farmer wallet is actively registered.
+     */
+    function isRegistered(address farmerWallet) external view returns (bool) {
+        return farmers[farmerWallet].active;
+    }
+&nbsp;
+    /**
+     * @notice Get the full Farmer record for a wallet.
+     * @dev Reverts if the farmer was never registered. Deactivated farmers
+     *      remain readable for BatchToken, TraceLog, and LendingVault queries.
+     */
+    function getFarmer(address farmerWallet) external view returns (Farmer memory) {
+        require(
+            farmers[farmerWallet].registrationTimestamp != 0,
+            "FarmerRegistry: not registered"
+        );
+        return farmers[farmerWallet];
+    }
+&nbsp;
+    /**
+     * @notice Returns true if the farmer is registered via INDEPENDENT_AGGREGATOR.
+     *         Returns false if INDEPENDENT_AGGREGATOR has not been set yet.
+     */
+    function isIndependent(address farmerWallet) public view returns (bool) {
+        return INDEPENDENT_AGGREGATOR != address(0)
+            &amp;&amp; farmers[farmerWallet].cooperativeWallet == INDEPENDENT_AGGREGATOR;
+    }
+&nbsp;
+    // ─── Updates ────────────────────
+&nbsp;
+    /**
+     * @notice Update the GFW deforestation-free status for a farmer.
+     *         Only AGENT_ROLE. Used when GFW data is re-verified.
+     */
+    function verifyFarmer(address farmerWallet, bool gfwDeforestationFree)
+        external
+        onlyRole(AGENT_ROLE)
+    {
+        require(farmers[farmerWallet].active, "FarmerRegistry: not registered");
+        farmers[farmerWallet].gfwDeforestationFree = gfwDeforestationFree;
+        emit FarmerVerified(farmerWallet, gfwDeforestationFree);
+    }
+&nbsp;
+    /**
+     * @notice Deactivate a farmer. AGENT_ROLE or COOP_ROLE.
+     *         Soft-delete — MAAIF ID reservation is preserved.
+     * @dev Phase 1: any COOP_ROLE holder can deactivate any farmer.
+     *      Cooperative-scoped deactivation (own members only) requires a
+     *      cooperative membership mapping and is deferred to a future upgrade.
+     */
+    function deactivateFarmer(address farmerWallet)
+        external
+    {
+        require(farmers[farmerWallet].active, "FarmerRegistry: not registered");
+        require(
+            hasRole(AGENT_ROLE, _msgSender()) || hasRole(COOP_ROLE, _msgSender()),
+            "FarmerRegistry: access denied"
+        );
+        farmers[farmerWallet].active = false;
+        emit FarmerDeactivated(farmerWallet);
+    }
+&nbsp;
+    // ─── INDEPENDENT_AGGREGATOR management ──────────────────
+&nbsp;
+    /**
+     * @notice Set or update the INDEPENDENT_AGGREGATOR address.
+     *         Only DEFAULT_ADMIN_ROLE. Aggregator must be non-zero.
+     * @param aggregator The multisig address for independent farmer routing.
+     */
+    function setIndependentAggregator(address aggregator)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
+        require(aggregator != address(0), "FarmerRegistry: zero aggregator");
+        INDEPENDENT_AGGREGATOR = aggregator;
+        emit IndependentAggregatorSet(aggregator);
+    }
+&nbsp;
+    /**
+     * @notice Migrate an independent farmer to a named cooperative.
+     *         Only DEFAULT_ADMIN_ROLE. Farmer must currently be independent.
+     * @param farmerWallet          The registered farmer wallet.
+     * @param newCooperativeWallet  The cooperative to assign. Non-zero, not INDEPENDENT_AGGREGATOR.
+     */
+    function migrateFarmer(
+        address farmerWallet,
+        address newCooperativeWallet
+    )
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
+        require(farmers[farmerWallet].active, "FarmerRegistry: not registered");
+        require(isIndependent(farmerWallet), "FarmerRegistry: not independent");
+        require(newCooperativeWallet != address(0), "FarmerRegistry: zero coop");
+        require(
+            newCooperativeWallet != INDEPENDENT_AGGREGATOR,
+            "FarmerRegistry: already independent"
+        );
+&nbsp;
+        address oldCooperative = farmers[farmerWallet].cooperativeWallet;
+        farmers[farmerWallet].cooperativeWallet = newCooperativeWallet;
+&nbsp;
+        emit FarmerMigrated(farmerWallet, oldCooperative, newCooperativeWallet);
+    }
+&nbsp;
+    // ─── UUPS Upgrade ───────────────────────
+    /// @dev Only DEFAULT_ADMIN_ROLE can upgrade — enforces invariant #6.
+    function _authorizeUpgrade(address)
+        internal
+        override
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    { }
+}
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Sat May 16 2026 05:05:27 GMT+0300 (East Africa Time)
+</div>
+</div>
+<script src="../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../sorter.js"></script>
+</body>
+</html>
