@@ -3,4 +3,8 @@ module.exports = {
     "test/",
     "FarmerRegistryV2.sol",
   ],
+  providerOptions: {
+    allowUnlimitedContractSize: true,
+  },
+  configureYulOptimizer: true,
 };

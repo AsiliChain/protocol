@@ -20,7 +20,7 @@ async function deployFarmerRegistry() {
   // Grant roles
   const AGENT_ROLE = await registry.AGENT_ROLE();
   const COOP_ROLE = await registry.COOP_ROLE();
-  await registry.connect(admin).grantRole(AGENT_ROLE, agent.address);
+  await registry.connect(admin).grantRole(AGENT_ROLE, ethers.getAddress(agent.address));
   await registry.connect(admin).grantRole(COOP_ROLE, coopMember.address);
 
   // Set INDEPENDENT_AGGREGATOR

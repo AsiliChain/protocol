@@ -22,7 +22,10 @@ const config: HardhatUserConfig = {
       accounts: process.env.DEPLOYER_PRIVATE_KEY
         ? [process.env.DEPLOYER_PRIVATE_KEY] : [],
     },
-    localhost: {
+    hardhat: {
+    allowUnlimitedContractSize: process.env.COVERAGE === "true",
+  },
+  localhost: {
       url: "http://127.0.0.1:8545",
       chainId: 31337,
     },

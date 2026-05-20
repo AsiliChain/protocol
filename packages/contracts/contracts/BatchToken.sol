@@ -229,6 +229,10 @@ contract BatchToken is Initializable, ERC1155Upgradeable, AccessControlUpgradeab
      * @notice Enforces Invariant #7: Prevents transfers of tokens locked as collateral.
      * @dev Overrides OZ ERC1155 _update. Allows minting (from == 0) and burning (to == 0).
      */
+    function checkExists(uint256 tokenId) external view {
+        require(batchData[tokenId].mintTimestamp != 0, "BatchToken: Token does not exist");
+    }
+
     function _update(
         address from,
         address to,
