@@ -8,7 +8,7 @@ async function deployFarmerRegistry() {
     await ethers.getSigners();
 
   const FarmerRegistry = await ethers.getContractFactory("FarmerRegistry");
-  const proxy = await upgrades.deployProxy(FarmerRegistry, [admin.address], {
+  const proxy = await upgrades.deployProxy(FarmerRegistry, [ethers.getAddress(admin.address)], {
     initializer: "initialize",
   });
 
@@ -21,14 +21,14 @@ async function deployFarmerRegistry() {
   const AGENT_ROLE = await registry.AGENT_ROLE();
   const COOP_ROLE = await registry.COOP_ROLE();
   await registry.connect(admin).grantRole(AGENT_ROLE, ethers.getAddress(agent.address));
-  await registry.connect(admin).grantRole(COOP_ROLE, coopMember.address);
+  await registry.connect(admin).grantRole(COOP_ROLE, ethers.getAddress(coopMember.address));
 
   // Set INDEPENDENT_AGGREGATOR
-  const aggregator = ethers.Wallet.createRandom().address;
-  await registry.connect(admin).setIndependentAggregator(aggregator);
+  const aggregator = ethers.getAddress(ethers.Wallet.createRandom().address);
+  await registry.connect(admin).setIndependentAggregator(ethers.getAddress(aggregator));
 
   // A real cooperative wallet for cross-cooperative tests
-  const realCoopWallet = ethers.Wallet.createRandom().address;
+  const realCoopWallet = ethers.getAddress(ethers.getAddress(ethers.Wallet.createRandom().address));
 
   // Helper: valid registration args (defaults to independent farmer)
   const validArgs = (
@@ -81,7 +81,7 @@ describe("FarmerRegistry — initialize", () => {
     // Deploy WITHOUT calling setIndependentAggregator
     const [admin] = await ethers.getSigners();
     const FarmerRegistry = await ethers.getContractFactory("FarmerRegistry");
-    const proxy = await upgrades.deployProxy(FarmerRegistry, [admin.address], {
+    const proxy = await upgrades.deployProxy(FarmerRegistry, [ethers.getAddress(admin.address)], {
       initializer: "initialize",
     });
     const registry = await ethers.getContractAt(
@@ -429,7 +429,7 @@ describe("FarmerRegistry — isIndependent", () => {
     // Deploy fresh without calling setIndependentAggregator
     const [admin, agent] = await ethers.getSigners();
     const FarmerRegistry = await ethers.getContractFactory("FarmerRegistry");
-    const proxy = await upgrades.deployProxy(FarmerRegistry, [admin.address], {
+    const proxy = await upgrades.deployProxy(FarmerRegistry, [ethers.getAddress(admin.address)], {
       initializer: "initialize",
     });
     const registry = await ethers.getContractAt(
@@ -438,11 +438,11 @@ describe("FarmerRegistry — isIndependent", () => {
     );
     await registry
       .connect(admin)
-      .grantRole(await registry.AGENT_ROLE(), agent.address);
+      .grantRole(await registry.AGENT_ROLE(), ethers.getAddress(agent.address));
 
     // Register with INDEPENDENT_AGGREGATOR still at address(0)
     // Must use a real cooperative wallet since zero is blocked by registerFarmer
-    const realCoopWallet = ethers.Wallet.createRandom().address;
+    const realCoopWallet = ethers.getAddress(ethers.getAddress(ethers.Wallet.createRandom().address));
     await registry
       .connect(agent)
       .registerFarmer(
@@ -715,7 +715,7 @@ describe("FarmerRegistry — deactivateFarmer", () => {
 describe("FarmerRegistry — setIndependentAggregator", () => {
   it("sets INDEPENDENT_AGGREGATOR to the given address", async () => {
     const { registry, admin } = await loadFixture(deployFarmerRegistry);
-    const newAggregator = ethers.Wallet.createRandom().address;
+    const newAggregator = ethers.getAddress(ethers.Wallet.createRandom().address);
 
     await registry.connect(admin).setIndependentAggregator(newAggregator);
     expect(await registry.INDEPENDENT_AGGREGATOR()).to.equal(newAggregator);
@@ -723,7 +723,7 @@ describe("FarmerRegistry — setIndependentAggregator", () => {
 
   it("emits IndependentAggregatorSet", async () => {
     const { registry, admin } = await loadFixture(deployFarmerRegistry);
-    const newAggregator = ethers.Wallet.createRandom().address;
+    const newAggregator = ethers.getAddress(ethers.Wallet.createRandom().address);
 
     await expect(
       registry.connect(admin).setIndependentAggregator(newAggregator)
@@ -734,8 +734,8 @@ describe("FarmerRegistry — setIndependentAggregator", () => {
 
   it("can be called again to rotate the aggregator address", async () => {
     const { registry, admin } = await loadFixture(deployFarmerRegistry);
-    const first = ethers.Wallet.createRandom().address;
-    const second = ethers.Wallet.createRandom().address;
+    const first = ethers.getAddress(ethers.Wallet.createRandom().address);
+    const second = ethers.getAddress(ethers.Wallet.createRandom().address);
 
     await registry.connect(admin).setIndependentAggregator(first);
     expect(await registry.INDEPENDENT_AGGREGATOR()).to.equal(first);
@@ -753,7 +753,7 @@ describe("FarmerRegistry — setIndependentAggregator", () => {
 
   it("reverts when caller lacks DEFAULT_ADMIN_ROLE", async () => {
     const { registry, agent } = await loadFixture(deployFarmerRegistry);
-    const newAggregator = ethers.Wallet.createRandom().address;
+    const newAggregator = ethers.getAddress(ethers.Wallet.createRandom().address);
 
     await expect(
       registry.connect(agent).setIndependentAggregator(newAggregator)
@@ -859,7 +859,7 @@ describe("FarmerRegistry — migrateFarmer", () => {
     await expect(
       registry
         .connect(admin)
-        .migrateFarmer(farmer1.address, ethers.Wallet.createRandom().address)
+        .migrateFarmer(farmer1.address, ethers.getAddress(ethers.Wallet.createRandom().address))
     ).to.be.revertedWith("FarmerRegistry: not independent");
   });
 

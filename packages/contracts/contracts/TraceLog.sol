@@ -116,6 +116,7 @@ contract TraceLog is Initializable, AccessControlUpgradeable, UUPSUpgradeable {
         if (current == Stage(0) && !_isInitialized(tokenId)) {
             require(newStage == Stage.DELIVERED, "TraceLog: first stage must be DELIVERED");
             _checkStageRole(newStage);
+            _initialized[tokenId] = true;
             stages[tokenId] = Stage.DELIVERED;
             emit StageUpdated(tokenId, Stage(0), Stage.DELIVERED, msg.sender, block.timestamp);
             return;
