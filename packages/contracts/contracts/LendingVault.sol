@@ -227,7 +227,7 @@ contract LendingVault is
         usdcUsdPriceId   = usdcUsdPriceId_;
 
         // Default parameters (admin-updatable)
-        pricePerKgBase        = 250_000000;  // $2.50/kg
+        pricePerKgBase        = 2_500000;  // $2.50/kg, 6 decimals
         maxLtvBps             = 8000;        // 80%
         interestRateBps       = 1000;        // 10% annualized
         loanTermSecs          = 90 days;

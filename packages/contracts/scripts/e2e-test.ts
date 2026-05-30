@@ -164,7 +164,7 @@ async function main() {
 
   // ─── Step 6: MFI deposits USDC into vault ──────
   console.log("\n--- 6. MFI depositing USDC into vault ---");
-  const mfiDepositAmount = ethers.parseUnits("200000", 6); // 200,000 USDC
+  const mfiDepositAmount = ethers.parseUnits("10000", 6); // 10,000 USDC
   const approveTx = await usdc.approve(LENDING_VAULT, mfiDepositAmount);
   await approveTx.wait();
   const depositTx = await lendingVault.deposit(mfiDepositAmount);
