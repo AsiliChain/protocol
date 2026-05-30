@@ -1,0 +1,94 @@
+# AsiliChain Protocol — Goose Context
+
+You are working on AsiliChain, a DeFi protocol for Uganda
+coffee farmers on Mantle Network. Pre-launch, Phase 1
+targeting Q3 2026.
+
+## Critical rules before any action
+
+1. Read CLAUDE.md first. It is your complete knowledge base.
+2. For specs, always read from packages/../docs/ locally
+   or https://asilichain.github.io/docs
+3. Contracts go in packages/contracts/contracts/
+4. API routes go in packages/api/app/api/
+5. USSD flows go in packages/ussd/flows/
+6. Never use protocol/, app/, or api/ at root level
+7. Solidity version: 0.8.28 ONLY (OpenZeppelin 5.6.1 minimum)
+8. All contracts must implement the 7 security invariants
+   listed in CLAUDE.md
+9. Never auto-approve deployments or git pushes
+10. Foundry (cast) is installed locally — use for balance checks,
+    contract reads, and tx debugging on Mantle Sepolia
+11. hardhat.config.ts includes mantleSepolia network (chainId 5003)
+
+## Before writing any Solidity
+
+Check CLAUDE.md contract section for:
+- Correct constructor args for that contract
+- Which roles it needs
+- Which other contracts it depends on
+- Post-deploy role grants if it is LendingVault
+
+## Contract Deployment Order
+
+1. FarmerRegistry.sol
+2. CreditScore.sol
+3. BatchToken.sol
+4. TraceLog.sol
+5. PurchaseOrder.sol
+6. ProtocolFee.sol
+7. LendingVault.sol
+
+Post-deploy grants REQUIRED after LendingVault deploy.
+Includes ProtocolFee (4 contracts: BatchToken, CreditScore, TraceLog, ProtocolFee).
+
+# Mantle Sepolia Deployed Addresses (2026-05-30)
+FarmerRegistry:   0x302c598637045a77d8667f5f1DDCaCdfCF9d42Ca
+CreditScore:      0xDC7a375e511D8190b2AbfD04fe8e578d30F977a3
+BatchToken:       0xD9b4834b46Ed7cA1A9b2B506ec7A5f4f84D5CB14
+TraceLog:         0xB67D3569C5089cF7142c664098a84EC49Ca832Fb
+PurchaseOrder:    0xd25DC7F81D9a1C45d762f667AFB09C6217755f9E
+ProtocolFee:      0x5Fdb79BaEE557Da50849ad9AEdEf2ae205278Bda
+LendingVault:     0x0d1816408956EC76249D362e5e0E6163Afd21b45
+MockUSDC:         0x0fF5e462efD3AB43153d22187c7BD5ED40Ae0C4a
+RPC:              https://rpc.sepolia.mantle.xyz
+Deployer:         0xB70f03dE20c9D4c90246c830F81D44f377A652C0
+# ethers v6 + Hardhat ENS Resolution Fix
+When passing address arguments to contract calls (grantRole, setIndependentAggregator,
+registerFarmer, mintBatch, etc.), ALWAYS wrap with ethers.getAddress():
+  await contract.grantRole(ROLE, ethers.getAddress(signer.address));
+This prevents HardhatEthersProvider.resolveName errors.
+Exception: deployProxy arguments (e.g., [admin.address]) do NOT need wrapping.
+Exception: hasRole() assertions (e.g., hasRole(ROLE, admin.address)) do NOT need wrapping.
+
+# SENTINEL GUARD PATTERN
+When a mapping value of 0 can be both "uninitialized/default" and a
+valid state (e.g. score=0, loanAmount=0), always use a separate
+mapping(address => bool) to track explicit initialization. The getter
+must check the bool, not compare the value to 0. This avoids the
+ambiguous-zero bug. A common pattern:
+  mapping(address => uint256) public values;
+  mapping(address => bool) public initialized;
+  function getValue(address a) public view returns (uint256) {
+      return initialized[a] ? values[a] : DEFAULT_VALUE;
+  }
+Flag this when designing LendingVault and any contract where
+a state variable can legitimately equal zero.
+
+# IBatchToken INTERFACE RULE
+Keep IBatchToken.sol minimal — only export what LendingVault consumes:
+checkExists, hasActiveLoan, lockAsCollateral, unlockCollateral, burnSettled.
+Do NOT add struct-based batch data getters (causes ABI mismatch).
+
+# E2E Test (2026-05-30) — PASSED
+scripts/e2e-test.ts runs 11-step protocol cycle on Mantle Sepolia.
+Realistic values: $5.00/kg, $5,000 batch value, $2,500 loan, $2,335 farmer payout.
+Run with:
+  export DEPLOYER_PRIVATE_KEY="$(security find-generic-password -s "asilichain-deploy" -w)"
+  npx hardhat run scripts/e2e-test.ts --network mantleSepolia
+NOTE: .env.keychain has wrong service name (asilichain-deployer vs actual asilichain-deploy).
+
+# pricePerKgBase FIXES (2026-05-30)
+- Source had 250_000000 ($250.00/kg) — fixed to 2_500000 ($2.50/kg) then to 5_000000 ($5.00/kg)
+- Deployed patches via setCoffeePrice() on Mantle Sepolia
+- Zombie loan (Token 4, 125k principal) settled to clear activeLoanBook
