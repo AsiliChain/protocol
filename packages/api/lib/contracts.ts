@@ -1,0 +1,154 @@
+import { getAddress } from "viem";
+
+function envAddress(key: string): `0x${string}` {
+  const val = process.env[key];
+  if (!val) throw new Error(`Missing env var: ${key}`);
+  return getAddress(val);
+}
+
+export const addresses = {
+  farmerRegistry: envAddress("CONTRACT_FARMER_REGISTRY"),
+  creditScore: envAddress("CONTRACT_CREDIT_SCORE"),
+  batchToken: envAddress("CONTRACT_BATCH_TOKEN"),
+  traceLog: envAddress("CONTRACT_TRACE_LOG"),
+  purchaseOrder: envAddress("CONTRACT_PURCHASE_ORDER"),
+  protocolFee: envAddress("CONTRACT_PROTOCOL_FEE"),
+  lendingVault: envAddress("CONTRACT_LENDING_VAULT"),
+} as const;
+
+// Minimal ABIs — only the functions the API calls.
+// Generated from hardhat artifacts; keep in sync with deployed contracts.
+
+export const batchTokenAbi = [
+  {
+    type: "function",
+    name: "mintBatch",
+    inputs: [
+      { name: "batchId", type: "string", internalType: "string" },
+      { name: "cooperativeWallet", type: "address", internalType: "address" },
+      { name: "farmerWallet", type: "address", internalType: "address" },
+      { name: "weightKg", type: "uint256", internalType: "uint256" },
+      { name: "grade", type: "string", internalType: "string" },
+      { name: "moisturePct", type: "uint256", internalType: "uint256" },
+      { name: "collectionPointHash", type: "bytes32", internalType: "bytes32" },
+      { name: "weightSlipIpfsCid", type: "bytes32", internalType: "bytes32" },
+    ],
+    outputs: [{ name: "tokenId", type: "uint256", internalType: "uint256" }],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "batchData",
+    inputs: [{ name: "tokenId", type: "uint256", internalType: "uint256" }],
+    outputs: [
+      { name: "batchId", type: "string", internalType: "string" },
+      { name: "farmerWallet", type: "address", internalType: "address" },
+      { name: "cooperativeWallet", type: "address", internalType: "address" },
+      { name: "weightKg", type: "uint256", internalType: "uint256" },
+      { name: "grade", type: "string", internalType: "string" },
+      { name: "moisturePct", type: "uint256", internalType: "uint256" },
+      { name: "mintTimestamp", type: "uint256", internalType: "uint256" },
+      { name: "loanActive", type: "bool", internalType: "bool" },
+    ],
+    stateMutability: "view",
+  },
+] as const;
+
+export const traceLogAbi = [
+  {
+    type: "function",
+    name: "updateStage",
+    inputs: [
+      { name: "tokenId", type: "uint256", internalType: "uint256" },
+      { name: "newStage", type: "uint8", internalType: "uint8" },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "stages",
+    inputs: [{ name: "tokenId", type: "uint256", internalType: "uint256" }],
+    outputs: [{ name: "", type: "uint8", internalType: "uint8" }],
+    stateMutability: "view",
+  },
+] as const;
+
+export const farmerRegistryAbi = [
+  {
+    type: "function",
+    name: "isRegistered",
+    inputs: [{ name: "farmerWallet", type: "address", internalType: "address" }],
+    outputs: [{ name: "", type: "bool", internalType: "bool" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "registerFarmer",
+    inputs: [
+      { name: "farmerWallet", type: "address", internalType: "address" },
+      { name: "maaifFarmerId", type: "string", internalType: "string" },
+      { name: "cooperativeWallet", type: "address", internalType: "address" },
+      { name: "farmBoundaryIpfsCid", type: "bytes32", internalType: "bytes32" },
+      { name: "farmAreaHectares", type: "uint256", internalType: "uint256" },
+      { name: "gfwDeforestationFree", type: "bool", internalType: "bool" },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "getFarmer",
+    inputs: [{ name: "farmerWallet", type: "address", internalType: "address" }],
+    outputs: [
+      { name: "maaifFarmerId", type: "string", internalType: "string" },
+      { name: "cooperativeWallet", type: "address", internalType: "address" },
+      { name: "farmBoundaryIpfsCid", type: "bytes32", internalType: "bytes32" },
+      { name: "farmAreaHectares", type: "uint256", internalType: "uint256" },
+      { name: "gfwDeforestationFree", type: "bool", internalType: "bool" },
+      { name: "active", type: "bool", internalType: "bool" },
+      { name: "registrationTimestamp", type: "uint256", internalType: "uint256" },
+    ],
+    stateMutability: "view",
+  },
+] as const;
+
+export const lendingVaultAbi = [
+  {
+    type: "function",
+    name: "settle",
+    inputs: [
+      { name: "batchTokenId", type: "uint256", internalType: "uint256" },
+      { name: "usdcAmount", type: "uint256", internalType: "uint256" },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "deposit",
+    inputs: [{ name: "amount", type: "uint256", internalType: "uint256" }],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+] as const;
+
+export const creditScoreAbi = [
+  {
+    type: "function",
+    name: "getScore",
+    inputs: [{ name: "farmerWallet", type: "address", internalType: "address" }],
+    outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "getLtvTier",
+    inputs: [{ name: "farmerWallet", type: "address", internalType: "address" }],
+    outputs: [
+      { name: "maxLoanUsdc", type: "uint256", internalType: "uint256" },
+      { name: "ltvBasisPoints", type: "uint256", internalType: "uint256" },
+    ],
+    stateMutability: "view",
+  },
+] as const;

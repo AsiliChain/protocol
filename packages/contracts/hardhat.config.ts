@@ -21,6 +21,11 @@ const config: HardhatUserConfig = {
       url: "http://127.0.0.1:8545",
       chainId: 31337,
     },
+    mantleSepolia: {
+      url: process.env.MANTLE_SEPOLIA_RPC_URL || "https://rpc.sepolia.mantle.xyz",
+      chainId: 5003,
+      accounts: process.env.DEPLOYER_PRIVATE_KEY ? [process.env.DEPLOYER_PRIVATE_KEY] : [],
+    },
   },
   paths: {
     sources: "./contracts",
