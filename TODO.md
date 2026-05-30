@@ -2,10 +2,10 @@
 
 ## Priority — Sprint
 
-- [ ] Wire up Kotani Pay — implement real API calls in `lib/kotanipay.ts`, webhook handling, $1 test ping
+- [ ] Wire up Fonbnk — implement real API calls in `lib/fonbnk.ts`, webhook handling, sandbox test
 - [ ] Deploy API package to Vercel — get routes live, configure `.env` with contract addresses + secrets
 - [ ] Configure Alchemy webhook pointing at `/api/webhooks/alchemy` — trigger on EXPORTED stage
-- [ ] Kotani Pay $1 E2E test: USDC on Mantle Sepolia → MTN Uganda Mobile Money
+- [ ] Fonbnk sandbox E2E test: deposit Celo USDC → disburse to MTN Uganda Mobile Money
 - [ ] `POST /api/eudr/generate-dds` — Generate EUDR Due Diligence Statement
 - [ ] `GET  /api/eudr/dds/[id]` — Get DDS details
 - [ ] `POST /api/eudr/verify-gfw` — Verify farm polygon via GFW
@@ -33,7 +33,7 @@
 
 - [ ] Deployer wallet holds 0.1+ MNT for Sepolia gas
 - [ ] All `.env` vars populated
-- [ ] Kotani Pay FIA VASP registration confirmed
+- [ ] Fonbnk merchant KYB completed
 - [ ] 50 loans auto-repaid on Mantle mainnet (pilot gate)
 
 ## Tech Debt / Tooling

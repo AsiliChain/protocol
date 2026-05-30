@@ -38,7 +38,7 @@ Wrote and successfully ran 11-step end-to-end test on Mantle Sepolia:
 ### Next Steps
 - Deploy API routes to Vercel
 - Configure Alchemy webhook → `/api/webhooks/alchemy`
-- Kotani Pay $1 test: USDC on Mantle Sepolia → Uganda MTN
+- Fonbnk sandbox test: deposit Celo USDC → disburse to MTN Uganda
 - EUDR routes
 - Payment status GET routes
 
@@ -97,7 +97,7 @@ Post-deploy: VAULT_ROLE → LendingVault on BatchToken, CreditScore, TraceLog, P
 
 ### Next
 - End-to-end test: mint batch → advance stages → webhook settle → farmer payout
-- Kotani Pay $1 test
+- Fonbnk sandbox test
 - Alchemy webhook configuration
 
 ---

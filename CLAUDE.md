@@ -146,7 +146,7 @@ webhooks/alchemy/        POST - Alchemy EXPORTED webhook
 - `mantle.ts` — viem client, wallet transactions. Uses `mantleSepolia` (5003) or `mantle` (5000) by env.
 - `contracts.ts` — Minimal ABIs + deployed addresses from env vars. Keep in sync with contracts.
 - `hedera.ts` — HCS topic publishing
-- `kotanipay.ts` — USDC → MTN conversion
+- `fonbnk.ts` — USDC → MTN conversion (via Celo merchant balance)
 - `transfi.ts` — international transfers
 - `gfw.ts` — GlobalFarmingWatch verification
 - `maaif.ts` — NTS API farmer data
@@ -163,13 +163,13 @@ webhooks/alchemy/        POST - Alchemy EXPORTED webhook
 
 ## Phase 0 Blockers (all required before mainnet)
 
-1. Kotani Pay $1 test: USDC on Mantle Sepolia → Uganda MTN
+1. Fonbnk sandbox test: deposit Celo USDC → disburse via API
 2. Alchemy webhook fires for EXPORTED within 30s
 3. MAAIF NTS API returns farmer records for test IDs
 4. ~~Deployer wallet holds 0.1+ MNT for Sepolia gas~~ ✅ Funded (900 MNT)
 5. Hedera HCS topic created, ID saved to .env
 6. All .env vars populated
-7. Kotani Pay FIA VASP registration confirmed
+7. Fonbnk merchant account KYB completed
 8. UWRSA-licensed warehouse confirmed for Mbale pilot
 
 ## Revenue (no token, permanent)
