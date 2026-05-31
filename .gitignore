@@ -17,6 +17,8 @@ crews/
 .DS_Store
 .turbo/
 agents/
+!packages/api/lib/agents/
+!packages/api/app/api/agents/
 scripts/
 
 # Goose context files — not for commits
