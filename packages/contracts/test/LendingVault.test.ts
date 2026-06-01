@@ -94,7 +94,7 @@ describe("LendingVault", function () {
             expect(await vault.hasRole(await vault.DEFAULT_ADMIN_ROLE(), ethers.getAddress(adminAddr))).to.be.true;
         });
         it("sets default parameters", async () => {
-            expect(await vault.pricePerKgBase()).to.equal(250_000000n);
+            expect(await vault.pricePerKgBase()).to.equal(5_000000n);
             expect(await vault.maxLtvBps()).to.equal(8000n);
             expect(await vault.interestRateBps()).to.equal(1000n);
             expect(await vault.paused()).to.be.false;
@@ -121,7 +121,7 @@ describe("LendingVault", function () {
     describe("setCoffeePrice", function () {
         it("updates price and emits event", async () => {
             await expect(vault.connect(admin).setCoffeePrice(300_000000n))
-                .to.emit(vault, "CoffeePriceUpdated").withArgs(250_000000n, 300_000000n, ethers.getAddress(adminAddr));
+                .to.emit(vault, "CoffeePriceUpdated").withArgs(5_000000n, 300_000000n, ethers.getAddress(adminAddr));
             expect(await vault.pricePerKgBase()).to.equal(300_000000n);
         });
         it("reverts if zero", async () => {
@@ -306,9 +306,9 @@ describe("LendingVault", function () {
     // ============================================
     describe("valuation", function () {
         it("returns correct value for screen18", async () => {
-            // 2.50/kg × 100kg × 1.00x = $250
+            // $5.00/kg × 100kg × 1.00x = $500
             const value = await vault.getBatchValue(1n);
-            expect(value).to.equal(25000_000000n);
+            expect(value).to.equal(500_000000n);
         });
 
         it("returns correct grade multipliers", async () => {
