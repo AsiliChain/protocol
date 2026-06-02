@@ -1,9 +1,8 @@
 /**
  * AI Agent Registry — ERC-8004 identity and metadata.
  *
- * Each agent has an on-chain ERC-8004 identity (Phase 3).
- * In Phase 1, the registry serves as the metadata source for
- * agent discovery, audit records, and the cooperative dashboard.
+ * Agents are registered on-chain via IdentityRegistry (Mantle Sepolia).
+ * erc8004AgentId is the sequential token ID minted by the registry.
  *
  * Every agent decision is written to Hedera HCS with the agent's
  * identity, creating a verifiable audit trail of intent and outcome.
@@ -17,7 +16,7 @@ export interface AgentMetadata {
   description: string;
   version: string;
   status: AgentStatus;
-  erc8004AgentId: `0x${string}` | null; // set when registered on-chain
+  erc8004AgentId: number | null; // sequential token ID from IdentityRegistry
   capabilities: string[];
   runIntervalSeconds: number;
   trigger: "scheduled" | "event";
@@ -34,7 +33,7 @@ export const agents: Record<string, AgentMetadata> = {
       "stale price feeds. Writes risk assessments to Hedera HCS.",
     version: "1.0.0",
     status: "active",
-    erc8004AgentId: null,
+    erc8004AgentId: 0, // tokenId from IdentityRegistry (Mantle Sepolia)
     capabilities: [
       "LTV calculation per active loan",
       "Portfolio-level risk aggregation",
@@ -54,7 +53,7 @@ export const agents: Record<string, AgentMetadata> = {
       "Writes anomaly reports to Hedera HCS.",
     version: "1.0.0",
     status: "active",
-    erc8004AgentId: null,
+    erc8004AgentId: 1, // tokenId from IdentityRegistry (Mantle Sepolia)
     capabilities: [
       "Missing purchase order detection",
       "Stale export detection",

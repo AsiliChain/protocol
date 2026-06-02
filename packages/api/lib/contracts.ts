@@ -14,6 +14,7 @@ export const addresses = {
   purchaseOrder: envAddress("CONTRACT_PURCHASE_ORDER"),
   protocolFee: envAddress("CONTRACT_PROTOCOL_FEE"),
   lendingVault: envAddress("CONTRACT_LENDING_VAULT"),
+  identityRegistry: envAddress("CONTRACT_IDENTITY_REGISTRY"),
 } as const;
 
 // Minimal ABIs — only the functions the API calls.
@@ -215,6 +216,31 @@ export const pythAbi = [
       { name: "expo", type: "int32", internalType: "int32" },
       { name: "publishTime", type: "uint256", internalType: "uint256" },
     ],
+    stateMutability: "view",
+  },
+] as const;
+
+/** Minimal ERC-8004 Identity Registry ABI for reading agent identity. */
+export const identityRegistryAbi = [
+  {
+    type: "function",
+    name: "ownerOf",
+    inputs: [{ name: "agentId", type: "uint256", internalType: "uint256" }],
+    outputs: [{ name: "", type: "address", internalType: "address" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "tokenURI",
+    inputs: [{ name: "tokenId", type: "uint256", internalType: "uint256" }],
+    outputs: [{ name: "", type: "string", internalType: "string" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "balanceOf",
+    inputs: [{ name: "owner", type: "address", internalType: "address" }],
+    outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
     stateMutability: "view",
   },
 ] as const;

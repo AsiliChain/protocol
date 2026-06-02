@@ -193,14 +193,17 @@ webhooks/alchemy/        POST - Alchemy EXPORTED webhook
 - UMRA: MFI licences (legal opinion required before Phase 2)
 - UWRSA Act 2006: warehouse receipts as negotiable instruments
 
-## ERC-8004 Agents (Mantle mainnet)
+## ERC-8004 — On-Chain Agent Identity
 
-1. Risk Monitor: between Chainlink and LendingVault
-2. USSD Session Agent: between Africa's Talking and API
-3. DDS Anomaly Detector: between GRADED event and DDS pipeline
-4. Cooperative Intelligence: reads all contracts → dashboard
+Deployed **IdentityRegistry** (ERC-8004) on **Mantle Sepolia**:
+- Proxy: `0x62a6b58f8c3625F0c5f46D6C86A65595AA769C89`
+- Impl: `0x2E9D3EDf3406c4bd1a8f2CAE814c35D2294Fa02e`
+- Agents registered: **risk-monitor (id=0)**, **anomaly-detector (id=1)**
+- Owner: `0xB70f03dE20c9D4c90246c830F81D44f377A652C0` (deployer)
+- Registry is Ownable + UUPS upgradeable; agent NFTs are ERC-721 with URIStorage
+- Canonical spec at [github.com/erc-8004/erc-8004-contracts](https://github.com/erc-8004/erc-8004-contracts)
 
-GrowingCropToken: deferred to post-V1. Do not implement.
+Env vars: `CONTRACT_IDENTITY_REGISTRY` in `packages/api/.env.local`, `IDENTITY_REGISTRY_ADDRESS` in `protocol/.env`.
 
 ## Goose Setup
 
