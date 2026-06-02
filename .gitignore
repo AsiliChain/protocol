@@ -22,9 +22,9 @@ agents/
 scripts/
 
 # Goose context files — not for commits
-CLAUDE.md
 .goosehints
 .goose/
+.env.keychain
 SESSION_LOG.md
 packages/contracts/coverage/
 package-lock.json
