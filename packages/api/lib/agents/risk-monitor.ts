@@ -200,21 +200,20 @@ export async function runRiskMonitorCycle(
     // Skip nonexistent batches
     if (!batch) continue;
 
-    // We only care about active or defaulted loans
-    const loanStatus = loan ? Number((loan as Record<string, unknown>).status) : 0;
+    // getLoan returns tuple: [batchTokenId, farmerWallet, principalUsdc, interestUsdc, originatedAt, expiresAt, forbearanceExpiry, status]
+    // batchData returns tuple: [batchId, farmerWallet, cooperativeWallet, weightKg, grade, moisturePct, mintTimestamp, loanActive]
+    const loanStatus = loan ? Number(loan[7]) : 0;
     if (loanStatus !== 1 && loanStatus !== 2) continue;
 
     activeCount += 1;
 
-    // Compute collateral value
-    const weightKg = Number((batch as Record<string, unknown>).weightKg);
-    const grade = String((batch as Record<string, unknown>).grade);
+    const weightKg = Number(batch[3]);
+    const grade = String(batch[4]);
     const gradeMultiplier = getGradeMultiplier(grade);
     const valueUsdc = (pricePerKgBase * weightKg * gradeMultiplier) / 100;
 
-    // Extract loan details
-    const principalUsdc = loan ? Number((loan as Record<string, unknown>).principalUsdc) : 0;
-    const interestUsdc = loan ? Number((loan as Record<string, unknown>).interestUsdc) : 0;
+    const principalUsdc = loan ? Number(loan[2]) : 0;
+    const interestUsdc = loan ? Number(loan[3]) : 0;
 
     // Compute LTV in basis points
     const ltvBps = valueUsdc > 0

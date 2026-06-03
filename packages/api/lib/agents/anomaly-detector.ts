@@ -1,3 +1,4 @@
+import { type Abi } from "viem";
 import { getPublicClient } from "../mantle";
 import {
   addresses,
@@ -84,7 +85,7 @@ export async function runAnomalyDetectorCycle(
   // allowFailure ensures non-existent tokens don't block the rest.
   const contracts: {
     address: `0x${string}`;
-    abi: readonly unknown[];
+    abi: Abi;
     functionName: string;
     args: readonly unknown[];
   }[] = [];

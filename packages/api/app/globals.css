@@ -1,0 +1,63 @@
+@import "tailwindcss";
+
+@theme {
+  /* Forest Green #2D6A2D — Primary brand */
+  --color-brand-50: #f0f7f0;
+  --color-brand-100: #daeeda;
+  --color-brand-200: #b5ddb5;
+  --color-brand-300: #85c785;
+  --color-brand-400: #5aad5a;
+  --color-brand-500: #3d8f3d;
+  --color-brand-600: #2D6A2D;
+  --color-brand-700: #235623;
+  --color-brand-800: #1a421a;
+  --color-brand-900: #112e11;
+
+  /* Coffee Brown #4B2E0A — Secondary */
+  --color-earth-50: #f5f0eb;
+  --color-earth-100: #e6d9cc;
+  --color-earth-200: #ceb499;
+  --color-earth-300: #b58f66;
+  --color-earth-400: #9c6f3d;
+  --color-earth-500: #83561f;
+  --color-earth-600: #663f10;
+  --color-earth-700: #4B2E0A;
+  --color-earth-800: #3a2308;
+  --color-earth-900: #291805;
+
+  /* Origin Gold #C8922A — Accent */
+  --color-gold-50: #fdf8ef;
+  --color-gold-100: #f9edcf;
+  --color-gold-200: #f3dba0;
+  --color-gold-300: #ecc870;
+  --color-gold-400: #d8a946;
+  --color-gold-500: #C8922A;
+  --color-gold-600: #a67822;
+  --color-gold-700: #845f1b;
+  --color-gold-800: #624613;
+  --color-gold-900: #402d0c;
+
+  /* Deep Navy #1A3557 — Dark base */
+  --color-navy-50: #f0f3f7;
+  --color-navy-100: #d6e0ed;
+  --color-navy-200: #adc1db;
+  --color-navy-300: #84a2c9;
+  --color-navy-400: #5b83b7;
+  --color-navy-500: #3d6a9f;
+  --color-navy-600: #2d527d;
+  --color-navy-700: #1f3f63;
+  --color-navy-800: #1A3557;
+  --color-navy-900: #122540;
+
+  /* Risk indicators */
+  --color-risk-healthy: #22c55e;
+  --color-risk-warning: #f59e0b;
+  --color-risk-critical: #ef4444;
+}
+
+@layer base {
+  body {
+    @apply bg-navy-50 text-navy-900 antialiased;
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+}

@@ -57,11 +57,45 @@ USE: `packages/contracts/`, `packages/api/`, `packages/agent-app/`
 - viem: 2.x (Mantle client)
 - Next.js: 14 App Router
 - TypeScript: strict mode everywhere
+- Tailwind CSS v4
 - Mantle mainnet: chainId 5000
 - Mantle Sepolia: chainId 5003
 - Gas: ~$0.002/proof, ~$7/year per cooperative
 - Foundry: installed locally — `cast` for balance checks, contract reads, tx debugging
 - hardhat.config.ts: includes `mantleSepolia` network (chainId 5003, RPC from env)
+
+## Brand
+
+- Forest Green `#2D6A2D` (primary)
+- Coffee Brown `#4B2E0A` (secondary)
+- Origin Gold `#C8922A` (accent)
+- Deep Navy `#1A3557` (dark base)
+- Logo: `packages/api/public/asilichain_logo.png`
+
+## Frontend Structure (packages/api)
+
+```
+app/
+├── layout.tsx              ← minimal root layout (no sidebar)
+├── page.tsx                ← marketing landing page (hero, twin narrative, how it works, etc.)
+├── globals.css             ← Tailwind v4 theme with brand palette
+├── (dashboard)/            ← route group — all dashboard pages with sidebar
+│   ├── layout.tsx          ← sidebar + topbar layout
+│   ├── sidebar.tsx         ← nav: Dashboard, Farmers, Batches, Loans, AI Agents
+│   ├── top-bar.tsx
+│   ├── dashboard/page.tsx  ← stats bar, portfolio health, recent batches, agent status
+│   ├── farmers/page.tsx + [address]/page.tsx
+│   ├── batches/page.tsx + [id]/page.tsx
+│   ├── loans/page.tsx
+│   └── agents/page.tsx
+└── api/                    ← REST endpoints (app/api/)
+```
+
+## Open Design Daemon
+
+Available at `http://127.0.0.1:{PORT}` (port extracted from daemon log).
+Endpoint: `POST /api/chat` with `{ agentId, model, message }`.
+Use for UI/UX design tasks.
 
 ## Contract Deployment Order (STRICT)
 

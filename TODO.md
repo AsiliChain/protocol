@@ -1,43 +1,32 @@
 # TODO
 
-## Priority — Sprint
+## Hackathon Sprint (June 2–15)
 
-- [ ] Wire up Fonbnk — implement real API calls in `lib/fonbnk.ts`, webhook handling, sandbox test
-- [ ] Deploy API package to Vercel — get routes live, configure `.env` with contract addresses + secrets
-- [ ] Configure Alchemy webhook pointing at `/api/webhooks/alchemy` — trigger on EXPORTED stage
-- [ ] Fonbnk sandbox E2E test: deposit Celo USDC → disburse to MTN Uganda Mobile Money
-- [ ] `POST /api/eudr/generate-dds` — Generate EUDR Due Diligence Statement
-- [ ] `GET  /api/eudr/dds/[id]` — Get DDS details
-- [ ] `POST /api/eudr/verify-gfw` — Verify farm polygon via GFW
-- [ ] `GET  /api/payments/[id]` — Get payment status
+- [x] ERC-8004 IdentityRegistry deployed to Mantle Sepolia (proxy: `0x62a6b58f8c3625F0c5f46D6C86A65595AA769C89`)
+- [x] AI agents registered: risk-monitor (id=0), anomaly-detector (id=1)
+- [x] **Dashboard MVP** — Next.js frontend with batch lifecycle, farmer view, agent reports
+- [x] **Landing page** — marketing page at / with hero, twin narrative, how it works, AI agents, tech stack
+- [x] **Brand palette** — official colors in globals.css: Forest Green, Coffee Brown, Origin Gold, Deep Navy
+- [x] **App restructure** — route group (dashboard)/ for sidebar pages, clean root layout for landing page
+- [ ] Deploy API + dashboard to Vercel
+- [ ] Pitch deck + demo video (2 min walkthrough)
+- [ ] Submit to Dorahacks (deadline: June 15)
 
-## Integration Libs — Wire Up Stubs
+## Offramp (evaluating)
 
-- [ ] `lib/hedera.ts` — Install Hedera SDK, implement HCS message publish
-- [ ] `lib/gfw.ts` — Wire to GlobalFarmingWatch API (needs API key)
-- [ ] `lib/maaif.ts` — Wire to MAAIF NTS API (needs API key + test records)
-- [ ] `lib/transfi.ts` — Wire to Transfi API (needs API key)
+- [ ] reply.cash (Solana USDC → MTN MoMo, ~2% fee, no min) — wait for hackathon submission
+- [ ] Yativo API sandbox test
+
+## Integration Libs
+
+- [ ] `lib/hedera.ts` — Real HCS credentials (sandbox topic)
+- [ ] `lib/gfw.ts` — Wire to GlobalFarmingWatch API
+- [ ] `lib/maaif.ts` — Wire to MAAIF NTS API
 
 ## Infrastructure
 
-- [x] Deploy all 7 contracts to Mantle Sepolia
-- [x] E2E protocol test passed (11-step cycle, farmer net payout verified)
-- [ ] Set up `.env` on Vercel/railway with all contract addresses + secrets
+- [x] All 7 contracts deployed to Mantle Sepolia
+- [x] CCIP bridge (Mantle → Base) tested
+- [x] ERC-8004 IdentityRegistry deployed
+- [ ] Set up `.env` on Vercel with all contract addresses
 - [ ] Add `packages/api` to turbo.json pipeline
-- [ ] MAAIF NTS API returns farmer records for test IDs
-- [ ] Alchemy webhook fires for EXPORTED within 30s
-- [ ] Hedera HCS topic created, ID saved to `.env`
-- [ ] UWRSA-licensed warehouse confirmed for Mbale pilot
-
-## Phase 0 Blockers (required before mainnet)
-
-- [ ] Deployer wallet holds 0.1+ MNT for Sepolia gas
-- [ ] All `.env` vars populated
-- [ ] Fonbnk merchant KYB completed
-- [ ] 50 loans auto-repaid on Mantle mainnet (pilot gate)
-
-## Tech Debt / Tooling
-
-- [ ] Install `typescript-language-server` globally (needed for LSP in API pkg)
-- [ ] `lib/notion.ts` depends on `@notionhq/client` — add to `package.json`
-- [ ] Add coverage threshold gate to CI (`solidity-coverage` check mode)

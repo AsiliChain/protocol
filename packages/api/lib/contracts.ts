@@ -23,6 +23,13 @@ export const addresses = {
 export const batchTokenAbi = [
   {
     type: "function",
+    name: "nextTokenId",
+    inputs: [],
+    outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
     name: "mintBatch",
     inputs: [
       { name: "batchId", type: "string", internalType: "string" },
