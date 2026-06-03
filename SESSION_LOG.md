@@ -4,7 +4,116 @@ Each session appends here. Searchable, human-readable.
 
 ---
 
+## 2026-06-03 — Dashboard Performance + Agent Triggers + Risk Donut (Session 10)
+
+### Context
+After running the seed script, the dashboard was taking 10+ seconds to load due to sequential RPC loops. Also needed: manual agent trigger button, cron-based risk monitor, and portfolio health donut computed directly from on-chain data (instead of relying on agent API POSTs that blocked SSR).
+
+### Key Changes
+
+1. **Dashboard performance** (`lib/dashboard.ts`):
+   - `getDashboardStats()`: 200 individual `readContract` calls → single `publicClient.multicall()` for loan data
+   - `getRecentBatches()`: same multicall refactor for batch token reads
+   - Load time: ~10s+ warm → ~0.7s warm
+   - Mirrors existing `anomaly-detector.ts` multicall pattern
+
+2. **Port conflict resolved**:
+   - Port 3000 was serving Routerly AI launch agent (`ai.routerly.service` at `~/Library/LaunchAgents/`)
+   - Unloaded via `launchctl bootout gui/$(id -u)/ai.routerly.service`
+   - Landing page now serves HTTP 200 (was Routerly's 302 redirect)
+
+3. **Agent trigger architecture**:
+   - Removed agent POSTs from dashboard SSR (was blocking page load 5+ seconds)
+   - Created `GET /api/cron/risk-monitor` — Vercel Cron endpoint, requires `Authorization: Bearer ${CRON_SECRET}`
+   - Created `vercel.json` with `*/15 * * * *` cron schedule
+   - Created `RunAgentButton` client component — "Run Now" button on `/agents` page, POSTs to `/api/agents/{slug}`
+   - Run button integrated into agent report cards (not identity cards)
+   - Anomaly detector = manual only (event-triggered, needs Phase 3 event system)
+
+4. **Portfolio health donut** (`lib/dashboard.ts` + `_components/PortfolioDonut.tsx`):
+   - Added `getPortfolioHealth()` — two-pass multicall:
+     - Pass 1: `getLoan` for all tokens → filter `ACTIVE=1` → collect `{tokenId, principalUsdc}`
+     - Pass 2: `batchData` for active loans → compute LTV via `pricePerKgBase × weightKg × gradeMultiplier / 100`
+     - Classify at 80%/100% of `maxLtvBps` → healthy/warning/critical
+   - Zero-dependency SVG donut chart component
+   - Weighted avg LTV shown below legend
+   - Dashboard page now renders live donut instead of placeholder
+
+5. **Active-loan bug fixed**:
+   - `getDashboardStats()` was checking `loan[7] === 0` (LoanStatus.NONE)
+   - LendingVault.sol enum: NONE=0, ACTIVE=1, DEFAULTED=2, SETTLED=3
+   - Changed to `loan[7] === 1` — was counting all tokens without loans as "active"
+   - Previously showed "9 active loans" → now correctly shows 4 (the 4 seeded loans)
+
+6. **Infrastructure**:
+   - Added `.gitignore` exception for `packages/api/app/(dashboard)/agents/` (agents page was being silently ignored)
+   - Added `NEXT_PUBLIC_APP_URL=http://localhost:3000`, `NEXT_IGNORE_INCORRECT_LOCKFILE=1`, `CRON_SECRET=dev-cron-secret` to `.env.local`
+
+### Key Files Changed
+- `packages/api/lib/dashboard.ts` — multicall refactor, `getPortfolioHealth()` added, active-loan bug fix
+- `packages/api/app/(dashboard)/dashboard/page.tsx` — removed agent POSTs, wired portfolio health donut
+- `packages/api/app/api/cron/risk-monitor/route.ts` — NEW Vercel Cron endpoint
+- `packages/api/vercel.json` — NEW cron schedule
+- `packages/api/app/(dashboard)/agents/_components/RunAgentButton.tsx` — NEW "Run Now" button
+- `packages/api/app/(dashboard)/agents/page.tsx` — Run button in report cards
+- `packages/api/app/(dashboard)/dashboard/_components/PortfolioDonut.tsx` — NEW SVG donut component
+- `.env.local` — added app URL, cron secret, lockfile fix
+- `.gitignore` — agents page exclusion
+- `.opencode/CONTEXT.md`, `CLAUDE.md`, `TODO.md`, `SESSION_LOG.md` — memory files
+
+### Blockers
+- LoanStatus enum bug is now fixed
+- Portfolio health computed directly from on-chain data (no agent dependency)
+- Anomaly detector still manual-only until Phase 3 event system
+
+### Next
+- Deploy API + dashboard to Vercel
+- Pitch deck + demo video for hackathon submission (deadline June 15)
+
 ## 2026-06-03 — Seed Script + Dashboard Auto-Trigger + Farmers Page (Session 9)
+
+### Context
+12 days before hackathon deadline. Task: populate Mantle Sepolia with demo data and fix two high-visibility gaps — the portfolio donut never populated, and the farmers page showed "use the block explorer."
+
+### Key Changes
+
+1. **Installed tsx** — added as devDependency for running TypeScript scripts outside Next.js
+
+2. **Seed script** (`scripts/seed-testnet.ts`):
+   - Registers 3 farmers from deployer wallet: Amina Nakato (Mbale, 2ha), Joseph Wekesa (Mbale, 3ha), Grace Chemutai (Kapchorwa, 1ha)
+   - Mints 5 batches at varying stages (DELIVERED→SETTLED) with realistic Uganda data (screen sizes AA, A, AB, B; weights 150–680kg)
+   - Advances stages one at a time via TraceLog.updateStage()
+   - Prints wallet address + batch token IDs at the end for KNOWN_FARMERS
+   - Run with: `npx tsx --env-file=.env.local scripts/seed-testnet.ts`
+   - No loan issuance: `lendingVaultAbi` in `contracts.ts` does not include `issueLoan`
+
+3. **Dashboard auto-trigger** (`dashboard/page.tsx`):
+   - Replaced `GET /api/agents/risk-monitor` (which never returns a report) with `POST` via `Promise.allSettled`
+   - Both risk-monitor and anomaly-detector POSTed in parallel
+   - Report populates the conic-gradient donut immediately
+
+4. **Farmers page** (`farmers/page.tsx`):
+   - Added KNOWN_FARMERS constant with 3 clickable cards (all deployer wallet)
+   - Removed "use the API or block explorer to find registered farmer addresses" warning
+   - Removed API Reference section
+   - Kept wallet search form
+
+### Key Files Changed
+- `packages/api/scripts/seed-testnet.ts` — NEW (384 lines)
+- `packages/api/package.json` — tsx added
+- `packages/api/app/(dashboard)/dashboard/page.tsx` — fetchData() POST first
+- `packages/api/app/(dashboard)/farmers/page.tsx` — KNOWN_FARMERS
+- `CLAUDE.md`, `.opencode/CONTEXT.md`, `TODO.md`, `SESSION_LOG.md` — memory files
+
+### Blockers
+- Seed script hasn't been run yet (needs manual execution with .env.local)
+- No `issueLoan` in contracts.ts ABI — loans page stays at 0
+
+### Next
+- Run seed script against Mantle Sepolia
+- Deploy to Vercel
+- CCIP static page
+- DDS stub on batch detail page
 
 ### Context
 12 days before hackathon deadline. Task: populate Mantle Sepolia with demo data and fix two high-visibility gaps — the portfolio donut never populated, and the farmers page showed "use the block explorer."

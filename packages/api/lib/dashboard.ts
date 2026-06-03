@@ -20,6 +20,14 @@ export interface DashboardStats {
   totalPrincipalUsdc: bigint;
 }
 
+export interface PortfolioHealth {
+  healthyCount: number;
+  warningCount: number;
+  criticalCount: number;
+  weightedAvgLtvBps: number;
+  totalAssessed: number;
+}
+
 export interface BatchSummary {
   tokenId: number;
   batchId: string;
@@ -150,13 +158,156 @@ export async function getDashboardStats(): Promise<DashboardStats> {
     if (r.status === "failure") continue;
     // loan tuple: [batchTokenId, farmerWallet, principalUsdc, interestUsdc, originatedAt, expiresAt, forbearanceExpiry, status]
     const loan = r.result as readonly [bigint, string, bigint, bigint, bigint, bigint, bigint, number];
-    if (loan[7] === 0) {
+    // LoanStatus: NONE=0, ACTIVE=1, DEFAULTED=2, SETTLED=3
+    if (loan[7] === 1) {
       activeLoans++;
       totalPrincipal += loan[2];
     }
   }
 
   return { totalBatches, activeLoans, totalPrincipalUsdc: totalPrincipal };
+}
+
+function getGradeMultiplier(grade: string): number {
+  const map: Record<string, number> = {
+    screen18: 100,
+    screen15: 95,
+    PB: 75,
+    pBerry: 75,
+    FAQ: 60,
+  };
+  return map[grade.toLowerCase()] ?? 50;
+}
+
+export async function getPortfolioHealth(): Promise<PortfolioHealth | null> {
+  const nextTokenId = await publicClient.readContract({
+    address: addresses.batchToken,
+    abi: batchTokenAbi,
+    functionName: "nextTokenId",
+  });
+
+  const maxTokens = Number(nextTokenId);
+  if (maxTokens <= 1) return null;
+
+  const start = Math.max(1, maxTokens - 200);
+
+  // Pass 1: multicall getLoan for all tokens — find active loans + their principals
+  const loanContracts: {
+    address: `0x${string}`;
+    abi: typeof lendingVaultAbi;
+    functionName: "getLoan";
+    args: readonly [bigint];
+  }[] = [];
+
+  for (let id = start; id < maxTokens; id++) {
+    loanContracts.push({
+      address: addresses.lendingVault,
+      abi: lendingVaultAbi,
+      functionName: "getLoan",
+      args: [BigInt(id)],
+    });
+  }
+
+  const loanResults = await publicClient.multicall({
+    contracts: loanContracts,
+    allowFailure: true,
+  });
+
+  // Collect active loan data: tokenId → principalUsdc
+  const activeLoanData: { tokenId: number; principalUsdc: number }[] = [];
+
+  for (let i = 0; i < loanResults.length; i++) {
+    const r = loanResults[i];
+    if (r.status === "failure") continue;
+    const loan = r.result as readonly [bigint, string, bigint, bigint, bigint, bigint, bigint, number];
+    // LoanStatus: ACTIVE=1
+    if (loan[7] !== 1) continue;
+    activeLoanData.push({
+      tokenId: start + i,
+      principalUsdc: Number(loan[2]),
+    });
+  }
+
+  if (activeLoanData.length === 0) return null;
+
+  // Pass 2: read price params + multicall batchData for active loans only
+  const [rawPricePerKg, rawMaxLtvBps] = await Promise.all([
+    publicClient.readContract({
+      address: addresses.lendingVault,
+      abi: lendingVaultAbi,
+      functionName: "pricePerKgBase",
+    }),
+    publicClient.readContract({
+      address: addresses.lendingVault,
+      abi: lendingVaultAbi,
+      functionName: "maxLtvBps",
+    }),
+  ]);
+
+  const pricePerKgBase = Number(rawPricePerKg);
+  const maxLtvBps = Number(rawMaxLtvBps);
+
+  const batchContracts: {
+    address: `0x${string}`;
+    abi: typeof batchTokenAbi;
+    functionName: "batchData";
+    args: readonly [bigint];
+  }[] = [];
+
+  for (const d of activeLoanData) {
+    batchContracts.push({
+      address: addresses.batchToken,
+      abi: batchTokenAbi,
+      functionName: "batchData",
+      args: [BigInt(d.tokenId)],
+    });
+  }
+
+  const batchResults = await publicClient.multicall({
+    contracts: batchContracts,
+    allowFailure: true,
+  });
+
+  let healthy = 0;
+  let warning = 0;
+  let critical = 0;
+  let totalPrincipal = 0;
+  let totalValue = 0;
+
+  for (let i = 0; i < activeLoanData.length; i++) {
+    const d = activeLoanData[i];
+    const br = batchResults[i];
+    if (br.status === "failure") continue;
+
+    const batch = br.result as readonly [string, string, string, bigint, string, bigint, bigint, boolean];
+    const weightKg = Number(batch[3]);
+    const grade = String(batch[4]);
+    const gradeMultiplier = getGradeMultiplier(grade);
+    const valueUsdc = (pricePerKgBase * weightKg * gradeMultiplier) / 100;
+    const ltvBps = valueUsdc > 0
+      ? Math.round((d.principalUsdc / valueUsdc) * 10000)
+      : 0;
+
+    totalPrincipal += d.principalUsdc;
+    totalValue += valueUsdc;
+
+    const ratio = maxLtvBps > 0 ? ltvBps / maxLtvBps : 0;
+    if (ratio >= 1.0) critical++;
+    else if (ratio >= 0.8) warning++;
+    else healthy++;
+  }
+
+  const weightedAvgLtvBps = totalValue > 0
+    ? Math.round((totalPrincipal / totalValue) * 10000)
+    : 0;
+
+  return {
+    healthyCount: healthy,
+    warningCount: warning,
+    criticalCount: critical,
+    weightedAvgLtvBps,
+    totalAssessed: healthy + warning + critical,
+  };
 }
 
 export async function getRecentBatches(count = 5): Promise<BatchSummary[]> {

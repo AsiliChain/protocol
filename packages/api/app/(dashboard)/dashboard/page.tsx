@@ -2,10 +2,13 @@ import {
   getDashboardStats,
   getRecentBatches,
   getAgentsIdentity,
+  getPortfolioHealth,
   formatUsdc,
   stageLabel,
   stageColor,
 } from "@/lib/dashboard";
+import { PortfolioDonut } from "@/app/(dashboard)/dashboard/_components/PortfolioDonut";
+import type { PortfolioHealth } from "@/lib/dashboard";
 
 function truncateAddress(addr: string): string {
   if (addr.length < 12) return addr;
@@ -13,7 +16,7 @@ function truncateAddress(addr: string): string {
 }
 
 async function fetchData() {
-  const [stats, batches, agentsIdentity] = await Promise.all([
+  const [stats, batches, agentsIdentity, portfolioHealth] = await Promise.all([
     getDashboardStats().catch(() => ({
       totalBatches: 0,
       activeLoans: 0,
@@ -25,13 +28,15 @@ async function fetchData() {
     getAgentsIdentity().catch(
       () => [] as Awaited<ReturnType<typeof getAgentsIdentity>>,
     ),
+    getPortfolioHealth().catch(() => null),
   ]);
 
-  return { stats, batches, agentsIdentity };
+  return { stats, batches, agentsIdentity, portfolioHealth };
 }
 
 export default async function DashboardPage() {
-  const { stats, batches, agentsIdentity } = await fetchData();
+  const { stats, batches, agentsIdentity, portfolioHealth } =
+    await fetchData();
 
   const MANTLESCAN_TOKENHOLDER =
     "https://sepolia.mantlescan.org/address/0x62a6b58f8c3625F0c5f46D6C86A65595AA769C89?tab=tokenholder";
@@ -57,18 +62,7 @@ export default async function DashboardPage() {
       {/* ── Portfolio Health + Agent Status ────────────────── */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Portfolio Health */}
-        <div className="rounded-lg border border-navy-200 bg-white p-6">
-          <h2 className="text-base font-semibold text-navy-900">
-            Portfolio Health
-          </h2>
-          <p className="mt-4 text-sm text-navy-400">
-            Trigger risk monitor from the{" "}
-            <a href="/agents" className="text-brand-600 hover:underline">
-              Agents page
-            </a>{" "}
-            to see LTV-based portfolio health.
-          </p>
-        </div>
+        <PortfolioDonut health={portfolioHealth} />
 
         {/* Agent Status */}
         <div className="rounded-lg border border-navy-200 bg-white p-6">

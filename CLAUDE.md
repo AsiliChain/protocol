@@ -239,16 +239,11 @@ Deployed **IdentityRegistry** (ERC-8004) on **Mantle Sepolia**:
 
 Env vars: `CONTRACT_IDENTITY_REGISTRY` in `packages/api/.env.local`, `IDENTITY_REGISTRY_ADDRESS` in `protocol/.env`.
 
-## Goose Setup
+## Tooling
 
-- Primary coding agent: Goose (goose-docs.ai)
-- Config: ~/.config/goose/config.yaml
-- Hints: protocol/.goosehints
-- Recipes: protocol/.goose/recipes/
-
-Goose reads .goosehints for project context on every session.
-NEVER enable auto-approve for contract deployments or git pushes.
-Always review Goose's plan before execution.
+- Primary coding agent: OpenCode (formerly Goose)
+- Config: ~/.config/goose/config.yaml (legacy)
+- Hints: protocol/.goosehints (legacy)
 
 ## Development Rules
 

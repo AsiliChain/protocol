@@ -20,7 +20,9 @@
 - [x] **CCIP page** — static bridge info at /ccip with nav item
 - [x] **DDS stub** — "Generate Compliance Document" button on EXPORTED/SETTLED batches
 - [x] **Port conflict** — Routerly launch agent removed from port 3000
-- [x] **NEXT_PUBLIC_APP_URL** + CRON_SECRET + lockfile fix in .env.local
+- [x] **NEXT_PUBLIC_APP_URL** + CRON_SECRET + lockfix in .env.local
+- [x] **Risk donut on dashboard** — `getPortfolioHealth()` + SVG donut, computed from on-chain multicall data
+- [x] **Active-loan bug fixed** — `loan[7] === 0` → `=== 1` (was counting NONE-status loans as active)
 
 ### In progress
 - [ ] **Deploy API + dashboard to Vercel**
@@ -29,7 +31,6 @@
 - [ ] **Deploy API + dashboard to Vercel** (live URL for demo)
 - [ ] **Pitch deck** + demo video (2 min walkthrough)
 - [ ] Submit to Dorahacks (deadline: June 15)
-- [ ] **Risk donut on dashboard** — compute LTV breakdown directly from on-chain data instead of agent API POST
 
 ## Offramp (evaluating)
 
