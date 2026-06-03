@@ -7,6 +7,7 @@ import {
   purchaseOrderAbi,
 } from "@/lib/contracts";
 import { formatUsdc, formatDate } from "@/lib/dashboard";
+import { DdsButton } from "../_components/DdsButton";
 
 const STAGE_LABELS = [
   "DELIVERED", "GRADED", "MILLED", "WAREHOUSED",
@@ -279,6 +280,32 @@ export default async function BatchDetailPage({
         </div>
         <StageTimeline current={currentStage} />
       </div>
+
+      {/* EUDR Compliance Document */}
+      {currentStage >= 5 && (
+        <div className="rounded-xl border border-navy-200 bg-white p-5">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h3 className="font-semibold text-navy-900">
+                EUDR Compliance Document
+              </h3>
+              <p className="mt-1 text-sm text-navy-400">
+                Generate an automated Due Diligence Statement for this batch.
+                GPS coordinates, deforestation-free status, and supply chain
+                history are included.
+              </p>
+            </div>
+            <DdsButton
+              tokenId={tokenId}
+              batchId={batchId}
+              farmer={farmerWallet}
+              grade={grade}
+              weightKg={weightKg.toString()}
+              stage={STAGE_LABELS[currentStage]}
+            />
+          </div>
+        </div>
+      )}
 
       {/* Loan Info */}
       {loan && (

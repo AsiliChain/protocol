@@ -19,6 +19,7 @@ crews/
 agents/
 !packages/api/lib/agents/
 !packages/api/app/api/agents/
+!packages/api/app/(dashboard)/agents/
 scripts/
 
 # Goose context files — not for commits

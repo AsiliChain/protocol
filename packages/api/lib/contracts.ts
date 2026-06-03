@@ -157,6 +157,16 @@ export const purchaseOrderAbi = [
 export const lendingVaultAbi = [
   {
     type: "function",
+    name: "originate",
+    inputs: [
+      { name: "batchTokenId", type: "uint256", internalType: "uint256" },
+      { name: "farmerWallet", type: "address", internalType: "address" },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
     name: "settle",
     inputs: [
       { name: "batchTokenId", type: "uint256", internalType: "uint256" },

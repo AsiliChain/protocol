@@ -6,6 +6,7 @@ const navItems = [
   { href: "/batches", label: "Batches", icon: "📦" },
   { href: "/loans", label: "Loans", icon: "💰" },
   { href: "/agents", label: "AI Agents", icon: "🤖" },
+  { href: "/ccip", label: "CCIP Bridge", icon: "🌉" },
 ];
 
 export function Sidebar() {

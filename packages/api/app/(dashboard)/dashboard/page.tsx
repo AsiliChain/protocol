@@ -6,16 +6,11 @@ import {
   stageLabel,
   stageColor,
 } from "@/lib/dashboard";
-import type { RiskMonitorReport } from "@/lib/agents/risk-monitor";
-
-// ─── Helpers ──────────────────────────────────────────────
 
 function truncateAddress(addr: string): string {
   if (addr.length < 12) return addr;
   return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
 }
-
-// ─── Data Fetching ────────────────────────────────────────
 
 async function fetchData() {
   const [stats, batches, agentsIdentity] = await Promise.all([
@@ -32,41 +27,11 @@ async function fetchData() {
     ),
   ]);
 
-  let riskReport: RiskMonitorReport | null = null;
-  try {
-    const base = process.env.NEXT_PUBLIC_APP_URL ?? "";
-    const res = await fetch(`${base}/api/agents/risk-monitor`, {
-      cache: "no-store",
-    });
-    if (res.ok) {
-      const json = await res.json();
-      if (json.report) {
-        riskReport = json.report as RiskMonitorReport;
-      }
-    }
-  } catch {
-    // risk monitor API unreachable — handled in UI
-  }
-
-  return { stats, batches, agentsIdentity, riskReport };
+  return { stats, batches, agentsIdentity };
 }
 
-// ─── Page Component ───────────────────────────────────────
-
 export default async function DashboardPage() {
-  const { stats, batches, agentsIdentity, riskReport } = await fetchData();
-
-  const portfolio = riskReport?.portfolio;
-  const totalAssessed = portfolio
-    ? portfolio.healthyCount + portfolio.warningCount + portfolio.criticalCount
-    : 0;
-
-  const healthyPct =
-    totalAssessed > 0 ? (portfolio!.healthyCount / totalAssessed) * 100 : 0;
-  const warningPct =
-    totalAssessed > 0 ? (portfolio!.warningCount / totalAssessed) * 100 : 0;
-  const criticalPct =
-    totalAssessed > 0 ? (portfolio!.criticalCount / totalAssessed) * 100 : 0;
+  const { stats, batches, agentsIdentity } = await fetchData();
 
   const MANTLESCAN_TOKENHOLDER =
     "https://sepolia.mantlescan.org/address/0x62a6b58f8c3625F0c5f46D6C86A65595AA769C89?tab=tokenholder";
@@ -96,64 +61,13 @@ export default async function DashboardPage() {
           <h2 className="text-base font-semibold text-navy-900">
             Portfolio Health
           </h2>
-
-          {totalAssessed > 0 ? (
-            <div className="mt-4 flex flex-col items-center gap-4">
-              {/* Donut chart via conic-gradient */}
-              <div className="relative h-40 w-40">
-                <div
-                  className="h-full w-full rounded-full"
-                  style={{
-                    background: `conic-gradient(
-                      #22c55e 0% ${healthyPct}%,
-                      #f59e0b ${healthyPct}% ${healthyPct + warningPct}%,
-                      #ef4444 ${healthyPct + warningPct}% 100%
-                    )`,
-                  }}
-                />
-                <div className="absolute inset-4 flex items-center justify-center rounded-full bg-white">
-                  <div className="text-center">
-                    <p className="text-2xl font-bold text-navy-900">
-                      {totalAssessed}
-                    </p>
-                    <p className="text-xs text-navy-500">loans</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Legend */}
-              <div className="flex gap-6">
-                <LegendItem
-                  color="bg-risk-healthy"
-                  label="Healthy"
-                  count={portfolio!.healthyCount}
-                />
-                <LegendItem
-                  color="bg-risk-warning"
-                  label="Warning"
-                  count={portfolio!.warningCount}
-                />
-                <LegendItem
-                  color="bg-risk-critical"
-                  label="Critical"
-                  count={portfolio!.criticalCount}
-                />
-              </div>
-
-              {portfolio.weightedAvgLtvBps > 0 && (
-                <p className="text-sm text-navy-500">
-                  Weighted avg LTV:{" "}
-                  <span className="font-medium text-navy-700">
-                    {(portfolio.weightedAvgLtvBps / 100).toFixed(1)}%
-                  </span>
-                </p>
-              )}
-            </div>
-          ) : (
-            <p className="mt-4 text-sm text-navy-400">
-              Run risk monitor to see portfolio health
-            </p>
-          )}
+          <p className="mt-4 text-sm text-navy-400">
+            Trigger risk monitor from the{" "}
+            <a href="/agents" className="text-brand-600 hover:underline">
+              Agents page
+            </a>{" "}
+            to see LTV-based portfolio health.
+          </p>
         </div>
 
         {/* Agent Status */}
@@ -291,23 +205,4 @@ function StatCard({
   );
 }
 
-function LegendItem({
-  color,
-  label,
-  count,
-}: {
-  color: string;
-  label: string;
-  count: number;
-}) {
-  return (
-    <div className="flex items-center gap-2">
-      <span
-        className={`inline-block h-2.5 w-2.5 rounded-full ${color}`}
-      />
-      <span className="text-xs text-navy-600">
-        {label} ({count})
-      </span>
-    </div>
-  );
-}
+

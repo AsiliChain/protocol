@@ -1,5 +1,10 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
+
+const KNOWN_FARMERS = [
+  { address: "0xB70f03dE20c9D4c90246c830F81D44f377A652C0", name: "Amina Nakato", region: "Mbale" },
+  { address: "0xB70f03dE20c9D4c90246c830F81D44f377A652C0", name: "Joseph Wekesa", region: "Mbale" },
+  { address: "0xB70f03dE20c9D4c90246c830F81D44f377A652C0", name: "Grace Chemutai", region: "Kapchorwa" },
+];
 
 async function lookupFarmer(formData: FormData) {
   "use server";
@@ -19,21 +24,29 @@ export default function FarmersPage() {
         </p>
       </div>
 
-      <div className="rounded-lg border border-brand-200 bg-brand-50 p-4">
-        <p className="text-sm text-brand-800">
-          Farmer listing requires a wallet address search. Use the API or block
-          explorer to find registered farmer addresses.
-        </p>
+      <div className="rounded-lg border border-navy-200 bg-white p-6">
+        <h2 className="mb-4 font-semibold text-navy-900">Registered Farmers</h2>
+        <div className="space-y-2">
+          {KNOWN_FARMERS.map((f) => (
+            <a
+              key={f.name}
+              href={`/farmers/${f.address}`}
+              className="flex items-center justify-between rounded-lg border border-navy-100 bg-navy-50 px-4 py-3 text-sm transition-colors hover:border-brand-300 hover:bg-brand-50"
+            >
+              <div>
+                <span className="font-medium text-navy-900">{f.name}</span>
+                <span className="ml-3 text-xs text-navy-400">{f.region}</span>
+              </div>
+              <span className="font-mono text-xs text-navy-500">
+                {f.address.slice(0, 6)}...{f.address.slice(-4)}
+              </span>
+            </a>
+          ))}
+        </div>
       </div>
 
       <div className="rounded-lg border border-navy-200 bg-white p-6">
-        <h2 className="mb-3 font-semibold text-navy-900">
-          Search by Wallet Address
-        </h2>
-        <p className="mb-4 text-sm text-navy-400">
-          The farmer registry uses wallet addresses as primary keys. Enter an
-          address below to view a farmer&apos;s profile.
-        </p>
+        <h2 className="mb-3 font-semibold text-navy-900">Search by Wallet Address</h2>
         <form action={lookupFarmer} className="flex gap-3">
           <input
             name="address"
@@ -48,21 +61,6 @@ export default function FarmersPage() {
             View
           </button>
         </form>
-      </div>
-
-      <div className="rounded-lg border border-navy-200 bg-white p-6">
-        <h2 className="mb-3 font-semibold text-navy-900">API Reference</h2>
-        <p className="mb-2 text-sm text-navy-400">
-          Farmer data is also available via the API:
-        </p>
-        <div className="space-y-1.5 text-sm">
-          <code className="block rounded bg-navy-50 px-3 py-2 font-mono text-xs text-navy-600">
-            GET /api/farmers/0x... — Get farmer by wallet address
-          </code>
-          <code className="block rounded bg-navy-50 px-3 py-2 font-mono text-xs text-navy-600">
-            GET /api/farmers/0x.../credit-score — Get farmer credit score
-          </code>
-        </div>
       </div>
     </div>
   );

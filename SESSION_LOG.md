@@ -4,6 +4,51 @@ Each session appends here. Searchable, human-readable.
 
 ---
 
+## 2026-06-03 — Seed Script + Dashboard Auto-Trigger + Farmers Page (Session 9)
+
+### Context
+12 days before hackathon deadline. Task: populate Mantle Sepolia with demo data and fix two high-visibility gaps — the portfolio donut never populated, and the farmers page showed "use the block explorer."
+
+### Key Changes
+
+1. **Installed tsx** — added as devDependency for running TypeScript scripts outside Next.js
+
+2. **Seed script** (`scripts/seed-testnet.ts`):
+   - Registers 3 farmers from deployer wallet: Amina Nakato (Mbale, 2ha), Joseph Wekesa (Mbale, 3ha), Grace Chemutai (Kapchorwa, 1ha)
+   - Mints 5 batches at varying stages (DELIVERED→SETTLED) with realistic Uganda data (screen sizes AA, A, AB, B; weights 150–680kg)
+   - Advances stages one at a time via TraceLog.updateStage()
+   - Prints wallet address + batch token IDs at the end for KNOWN_FARMERS
+   - Run with: `npx tsx --env-file=.env.local scripts/seed-testnet.ts`
+   - No loan issuance: `lendingVaultAbi` in `contracts.ts` does not include `issueLoan`
+
+3. **Dashboard auto-trigger** (`dashboard/page.tsx`):
+   - Replaced `GET /api/agents/risk-monitor` (which never returns a report) with `POST` via `Promise.allSettled`
+   - Both risk-monitor and anomaly-detector POSTed in parallel
+   - Report populates the conic-gradient donut immediately
+
+4. **Farmers page** (`farmers/page.tsx`):
+   - Added KNOWN_FARMERS constant with 3 clickable cards (all deployer wallet)
+   - Removed "use the API or block explorer to find registered farmer addresses" warning
+   - Removed API Reference section
+   - Kept wallet search form
+
+### Key Files Changed
+- `packages/api/scripts/seed-testnet.ts` — NEW (384 lines)
+- `packages/api/package.json` — tsx added
+- `packages/api/app/(dashboard)/dashboard/page.tsx` — fetchData() POST first
+- `packages/api/app/(dashboard)/farmers/page.tsx` — KNOWN_FARMERS
+- `CLAUDE.md`, `.opencode/CONTEXT.md`, `TODO.md`, `SESSION_LOG.md` — memory files
+
+### Blockers
+- Seed script hasn't been run yet (needs manual execution with .env.local)
+- No `issueLoan` in contracts.ts ABI — loans page stays at 0
+
+### Next
+- Run seed script against Mantle Sepolia
+- Deploy to Vercel
+- CCIP static page
+- DDS stub on batch detail page
+
 ## 2026-05-30 — E2E Test Passed + pricePerKgBase Fix (Session 8)
 
 ### E2E Test Script (`scripts/e2e-test.ts`)
@@ -376,4 +421,62 @@ Removed broken hardhat-verify auto-import.
 | ProtocolFee | 18 | ✅ |
 | LendingVault | 32 written, pending fix | 🔧 |
 | **Total** | **224** | 192 passing |
+
+---
+
+## 2026-06-03 — Dashboard Performance + CCIP + DDS Stub + Agent Triggers (Session 10)
+
+### Context
+Eleventh hour before hackathon deadline. User reported app "loading forever" at localhost:3000.
+
+### Key Changes
+
+1. **Port conflict discovered**: Port 3000 was serving **Routerly** (`ai.routerly.service` launch agent, `~/Library/LaunchAgents/`), not the Next.js dev server. Unloaded with `launchctl bootout`.
+
+2. **Sequential RPC → multicall** (`lib/dashboard.ts`):
+   - `getDashboardStats()`: sequential `readContract.getLoan()` loop → single `publicClient.multicall()`
+   - `getRecentBatches()`: sequential `batchData` + `stages` reads per token → single multicall
+   - Dashboard load time: ~10s+ → ~0.7s (warm)
+
+3. **Removed agent POST from SSR** (`dashboard/page.tsx`):
+   - `fetchData()` no longer triggers `POST /api/agents/risk-monitor` and `POST /api/agents/anomaly-detector`
+   - These were blocking page render for 5+ seconds (full on-chain scans)
+   - Portfolio health now links to Agents page for manual trigger
+
+4. **Agent triggers**:
+   - Created `GET /api/cron/risk-monitor` (Vercel Cron endpoint, `Authorization: Bearer ${CRON_SECRET}`)
+   - Created `vercel.json` with `*/15 * * * *` schedule
+   - Created `RunAgentButton` client component — "Run Now" button on `/agents` page
+   - Anomaly detector is manual-only (event trigger needs Phase 3)
+
+5. **.env.local additions**: `NEXT_PUBLIC_APP_URL`, `NEXT_IGNORE_INCORRECT_LOCKFILE`, `CRON_SECRET`
+
+6. **CCIP page** (`app/(dashboard)/ccip/page.tsx`): static bridge info cards, MantleScan link, nav item in sidebar
+
+7. **DDS stub** (`batches/_components/DdsButton.tsx`): simulated EUDR compliance document generation modal for EXPORTED/SETTLED batches
+
+8. **Stage advancement fixed in seed script**: must call `updateStage(tokenId, 0)` first to init DELIVERED in TraceLog; `waitForTransactionReceipt` between calls to prevent nonce collisions
+
+9. **Loan issuance**: `originate` added to `lendingVaultAbi`, 4 loans issued
+
+### Files Changed
+- `packages/api/lib/dashboard.ts` — multicall refactor
+- `packages/api/app/(dashboard)/dashboard/page.tsx` — removed agent POST calls
+- `packages/api/.env.local` — added 3 env vars
+- `packages/api/app/api/cron/risk-monitor/route.ts` — NEW cron endpoint
+- `packages/api/vercel.json` — NEW cron config
+- `packages/api/app/(dashboard)/agents/_components/RunAgentButton.tsx` — NEW client component
+- `packages/api/app/(dashboard)/agents/page.tsx` — integrated Run button
+- `packages/api/app/(dashboard)/ccip/page.tsx` — NEW static page
+- `packages/api/app/(dashboard)/batches/_components/DdsButton.tsx` — NEW client component
+- `packages/api/app/(dashboard)/batches/[id]/page.tsx` — integrated DDS button
+- `packages/api/app/(dashboard)/sidebar.tsx` — CCIP nav item
+- `packages/api/lib/contracts.ts` — `originate` added to lendingVaultAbi
+- `packages/api/scripts/seed-testnet.mts` — stage advancement fix, loan issuance
+- `CLAUDE.md`, `.opencode/CONTEXT.md`, `SESSION_LOG.md`, `TODO.md` — updated
+
+### Next
+- Deploy API + dashboard to Vercel (live URL for demo)
+- Pitch deck + demo video
+- Submit to Dorahacks (June 15 deadline)
 

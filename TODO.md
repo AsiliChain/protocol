@@ -1,16 +1,35 @@
 # TODO
 
-## Hackathon Sprint (June 2–15)
+## Hackathon Sprint (June 3–15)
 
+### Done
 - [x] ERC-8004 IdentityRegistry deployed to Mantle Sepolia (proxy: `0x62a6b58f8c3625F0c5f46D6C86A65595AA769C89`)
 - [x] AI agents registered: risk-monitor (id=0), anomaly-detector (id=1)
 - [x] **Dashboard MVP** — Next.js frontend with batch lifecycle, farmer view, agent reports
 - [x] **Landing page** — marketing page at / with hero, twin narrative, how it works, AI agents, tech stack
 - [x] **Brand palette** — official colors in globals.css: Forest Green, Coffee Brown, Origin Gold, Deep Navy
 - [x] **App restructure** — route group (dashboard)/ for sidebar pages, clean root layout for landing page
-- [ ] Deploy API + dashboard to Vercel
-- [ ] Pitch deck + demo video (2 min walkthrough)
+- [x] **Seed script** — `scripts/seed-testnet.ts` registers 3 farmers + mints 5 batches on Mantle Sepolia
+- [x] **Farmers page** — KNOWN_FARMERS list, clickable cards
+- [x] **Seed run** — batches #7–#11, #13 minted on Mantle Sepolia
+- [x] **Option A** — `originate` added to `lendingVaultAbi`, 4 loans issued on #7, #8, #9, #13
+- [x] **Stage advancement fixed** — DELIVERED init in TraceLog, all tokens at target stages
+- [x] **VAULT_ROLE** granted to deployer for SETTLED
+- [x] **Dashboard performance** — sequential RPC → multicall, 10s+ → 0.7s
+- [x] **Agent triggers** — Vercel Cron (15 min) + manual "Run Now" button on /agents page
+- [x] **CCIP page** — static bridge info at /ccip with nav item
+- [x] **DDS stub** — "Generate Compliance Document" button on EXPORTED/SETTLED batches
+- [x] **Port conflict** — Routerly launch agent removed from port 3000
+- [x] **NEXT_PUBLIC_APP_URL** + CRON_SECRET + lockfile fix in .env.local
+
+### In progress
+- [ ] **Deploy API + dashboard to Vercel**
+
+### Next
+- [ ] **Deploy API + dashboard to Vercel** (live URL for demo)
+- [ ] **Pitch deck** + demo video (2 min walkthrough)
 - [ ] Submit to Dorahacks (deadline: June 15)
+- [ ] **Risk donut on dashboard** — compute LTV breakdown directly from on-chain data instead of agent API POST
 
 ## Offramp (evaluating)
 
@@ -28,5 +47,6 @@
 - [x] All 7 contracts deployed to Mantle Sepolia
 - [x] CCIP bridge (Mantle → Base) tested
 - [x] ERC-8004 IdentityRegistry deployed
+- [x] tsx installed as devDependency
 - [ ] Set up `.env` on Vercel with all contract addresses
 - [ ] Add `packages/api` to turbo.json pipeline

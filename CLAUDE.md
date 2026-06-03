@@ -370,3 +370,74 @@ cast call 0x302c598637045a77d8667f5f1DDCaCdfCF9d42Ca "isRegistered(address)(bool
 - `protocol/.env` — uses `FARMER_REGISTRY_ADDRESS=` naming (deploy script convention)
 - `protocol/packages/api/.env.local` — uses `CONTRACT_FARMER_REGISTRY=` naming (contracts.ts convention)
 - `protocol/.env.keychain` — Keychain entries for secrets (source to load)
+
+## Seed Script (2026-06-03)
+
+`packages/api/scripts/seed-testnet.ts` — standalone viem script that populates Mantle Sepolia with demo data:
+- Registers 3 farmers from deployer wallet (Amina Nakato, Joseph Wekesa, Grace Chemutai)
+- Mints 5 batches at different stages (DELIVERED → SETTLED)
+- Stage advancement one step at a time via TraceLog.updateStage()
+- No loan issuance (lendingVaultAbi in contracts.ts omits `issueLoan`)
+- Run: `npx tsx --env-file=.env.local scripts/seed-testnet.ts`
+- Requires tsx devDependency (installed)
+
+## Seed Script v2 (2026-06-03, later session)
+
+`packages/api/scripts/seed-testnet.mts` — ESM (`.mts`) rewrite with:
+- Stage advancement fix: must call `updateStage(tokenId, 0)` first to init DELIVERED in TraceLog
+- `runStageAdvancementOnly()`: skips minting, only advances stages for existing tokens
+- Loan issuance: `originate` added to `lendingVaultAbi`, 4 loans on tokens #7, #8, #9, #13
+- Token IDs at target stages after run: #7 SETTLED, #8 EXPORTED, #9 WAREHOUSED, #10 COMMITTED, #11 DELIVERED, #13 GRADED
+- `padRight` replaced with `toHex(s, { size: 32 })` for viem 2.x compatibility
+- `waitForTransactionReceipt` between stage calls to prevent nonce collisions
+
+## Dashboard Performance Fix (2026-06-03)
+
+`lib/dashboard.ts` — replaced sequential `readContract` loops with `publicClient.multicall()`:
+- `getDashboardStats()`: individual `for` loop of `readContract.getLoan()` → single multicall (up to 200 tokens in 1 RPC)
+- `getRecentBatches()`: individual `batchData` + `stages` reads per token → single multicall (2 contracts per token)
+- Pattern matches existing `anomaly-detector.ts` multicall usage
+
+`dashboard/page.tsx` `fetchData()`:
+- Removed `POST /api/agents/{risk-monitor,anomaly-detector}` from SSR — was blocking page for 5+ seconds
+- Portfolio health shows message to run from Agents page instead
+- Dashboard load time: ~10s+ → ~0.7s (warm)
+
+## Agent Triggers (2026-06-03)
+
+- **Vercel Cron Job**: `GET /api/cron/risk-monitor` triggered every 15 min by `vercel.json`. Requires `Authorization: Bearer ${CRON_SECRET}`. Runs `runRiskMonitorCycle()`.
+- **Manual button**: `RunAgentButton` client component on `/agents` page. POSTs to `/api/agents/{slug}`. Shows loading state and result.
+- **Anomaly Detector**: Manual-only (event-triggered: BATCH_SUBMITTED — needs Phase 3 event system)
+
+## .env.local additions (2026-06-03)
+- `NEXT_PUBLIC_APP_URL=http://localhost:3000` — required for server-side self-fetch
+- `NEXT_IGNORE_INCORRECT_LOCKFILE=1` — suppresses pnpm lockfile warning
+- `CRON_SECRET=dev-cron-secret` — auth for Vercel Cron Job
+
+## Port Conflict (2026-06-03)
+
+Port 3000 was serving **Routerly** (`ai.routerly.service` launch agent at `~/Library/LaunchAgents/`) instead of the Next.js dev server. Fixed by unloading the launch agent with `launchctl bootout`.
+
+## Farmers Page (2026-06-03)
+
+`farmers/page.tsx` updated:
+- Added KNOWN_FARMERS constant (3 deployer-wallet entries with names + regions)
+- Registered Farmers section with clickable cards replaces the "use the API or block explorer" warning
+- Removed API reference section
+- Kept wallet search form below known farmers
+
+## CCIP Bridge Page (2026-06-03)
+
+`app/(dashboard)/ccip/page.tsx` — static server component:
+- 6 bridge info cards (Source, Dest, Router, OnRamp, OffRamp, Token)
+- Latest bridge tx card with "View on MantleScan" link
+- Fee configuration section
+- Nav item in sidebar
+
+## DDS Stub (2026-06-03)
+
+`app/(dashboard)/batches/_components/DdsButton.tsx` — client component:
+- Appears on EXPORTED/SETTLED batches
+- Simulated 1.2s generation → modal with mock EUDR Due Diligence Statement
+- Shows batch data (token ID, farmer, grade, weight, stage, GPS, deforestation status)
+- "DRAFT" badge, disclaimer about MAAIF NTS API pending

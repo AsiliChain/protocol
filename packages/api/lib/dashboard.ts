@@ -116,36 +116,47 @@ export async function getDashboardStats(): Promise<DashboardStats> {
     functionName: "nextTokenId",
   });
 
-  // Count active loans by scanning tokens (limit to last 200 for performance)
   const maxTokens = Number(nextTokenId);
+  const totalBatches = maxTokens - 1;
+
+  // Scan loan data via multicall — one RPC instead of up to 200 sequential calls
+  const start = Math.max(1, maxTokens - 200);
+  const contracts: {
+    address: `0x${string}`;
+    abi: typeof lendingVaultAbi;
+    functionName: "getLoan";
+    args: readonly [bigint];
+  }[] = [];
+
+  for (let id = start; id < maxTokens; id++) {
+    contracts.push({
+      address: addresses.lendingVault,
+      abi: lendingVaultAbi,
+      functionName: "getLoan",
+      args: [BigInt(id)],
+    });
+  }
+
+  const results = await publicClient.multicall({
+    contracts,
+    allowFailure: true,
+  });
+
   let activeLoans = 0;
   let totalPrincipal = 0n;
 
-  const start = Math.max(1, maxTokens - 200);
-  for (let id = start; id < maxTokens; id++) {
-    try {
-      const loan = await publicClient.readContract({
-        address: addresses.lendingVault,
-        abi: lendingVaultAbi,
-        functionName: "getLoan",
-        args: [BigInt(id)],
-      });
-      // loan is a tuple: [batchTokenId, farmerWallet, principalUsdc, interestUsdc, originatedAt, expiresAt, forbearanceExpiry, status]
-      // status: 0 = ACTIVE
-      if (loan[7] === 0) {
-        activeLoans++;
-        totalPrincipal += loan[2];
-      }
-    } catch {
-      // no loan for this token
+  for (let i = 0; i < results.length; i++) {
+    const r = results[i];
+    if (r.status === "failure") continue;
+    // loan tuple: [batchTokenId, farmerWallet, principalUsdc, interestUsdc, originatedAt, expiresAt, forbearanceExpiry, status]
+    const loan = r.result as readonly [bigint, string, bigint, bigint, bigint, bigint, bigint, number];
+    if (loan[7] === 0) {
+      activeLoans++;
+      totalPrincipal += loan[2];
     }
   }
 
-  return {
-    totalBatches: maxTokens - 1,
-    activeLoans,
-    totalPrincipalUsdc: totalPrincipal,
-  };
+  return { totalBatches, activeLoans, totalPrincipalUsdc: totalPrincipal };
 }
 
 export async function getRecentBatches(count = 5): Promise<BatchSummary[]> {
@@ -156,44 +167,54 @@ export async function getRecentBatches(count = 5): Promise<BatchSummary[]> {
   });
 
   const maxTokens = Number(nextTokenId);
-  const results: BatchSummary[] = [];
   const start = Math.max(1, maxTokens - count);
+  const tokenIds: bigint[] = [];
 
   for (let id = maxTokens - 1; id >= start; id--) {
-    try {
-      const batch = await publicClient.readContract({
-        address: addresses.batchToken,
-        abi: batchTokenAbi,
-        functionName: "batchData",
-        args: [BigInt(id)],
-      });
+    tokenIds.push(BigInt(id));
+  }
 
-      let stage = 0;
-      try {
-        stage = Number(
-          await publicClient.readContract({
-            address: addresses.traceLog,
-            abi: traceLogAbi,
-            functionName: "stages",
-            args: [BigInt(id)],
-          }),
-        );
-      } catch {
-        // not in trace log yet
-      }
+  // Batch batchData + stages reads into a single multicall
+  const contracts: {
+    address: `0x${string}`;
+    abi: typeof batchTokenAbi | typeof traceLogAbi;
+    functionName: string;
+    args: readonly [bigint];
+  }[] = [];
 
-      results.push({
-        tokenId: id,
-        batchId: batch[0],
-        farmerWallet: batch[1],
-        weightKg: batch[3],
-        grade: batch[4],
-        stage,
-        loanActive: batch[7],
-      });
-    } catch {
-      // token may not exist
-    }
+  for (const id of tokenIds) {
+    contracts.push(
+      { address: addresses.batchToken, abi: batchTokenAbi, functionName: "batchData", args: [id] },
+      { address: addresses.traceLog, abi: traceLogAbi, functionName: "stages", args: [id] },
+    );
+  }
+
+  const multicallResults = await publicClient.multicall({
+    contracts,
+    allowFailure: true,
+  });
+
+  const results: BatchSummary[] = [];
+
+  for (let i = 0; i < tokenIds.length; i++) {
+    const baseIdx = i * 2;
+    const batchResult = multicallResults[baseIdx];
+    const stageResult = multicallResults[baseIdx + 1];
+
+    if (batchResult.status === "failure") continue;
+
+    const batch = batchResult.result as readonly [string, string, string, bigint, string, bigint, bigint, boolean];
+    const stage = stageResult.status === "success" ? Number(stageResult.result) : 0;
+
+    results.push({
+      tokenId: Number(tokenIds[i]),
+      batchId: batch[0],
+      farmerWallet: batch[1],
+      weightKg: batch[3],
+      grade: batch[4],
+      stage,
+      loanActive: batch[7],
+    });
   }
 
   return results;
