@@ -10,8 +10,10 @@ export default async function BatchesPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-navy-900">Batches</h2>
-          <p className="mt-1 text-sm text-navy-400">
+          <h2 className="text-2xl font-bold" style={{ color: "oklch(93% 0.006 60)" }}>
+            Batches
+          </h2>
+          <p className="mt-1 text-sm" style={{ color: "oklch(42% 0.012 55)" }}>
             {stats !== null
               ? `${stats.totalBatches} total batches`
               : "Coffee batch lifecycle"}
@@ -20,14 +22,23 @@ export default async function BatchesPage() {
       </div>
 
       {batches.length === 0 ? (
-        <div className="rounded-xl border border-navy-200 bg-white p-6">
-          <p className="text-sm text-navy-400">No batches recorded yet</p>
+        <div
+          className="rounded-xl p-6"
+          style={{ backgroundColor: "oklch(17% 0.008 55)", border: "1px solid oklch(24% 0.008 55)" }}
+        >
+          <p className="text-sm" style={{ color: "oklch(42% 0.012 55)" }}>
+            No batches recorded yet
+          </p>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-xl border border-navy-200 bg-white">
+        <div
+          className="overflow-hidden rounded-xl shadow-sm"
+          style={{ backgroundColor: "oklch(17% 0.008 55)", border: "1px solid oklch(24% 0.008 55)" }}
+        >
+          <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead>
-              <tr className="border-b border-navy-100 bg-navy-50/50 text-xs font-medium uppercase tracking-wide text-navy-400">
+              <tr className="dash-table-header">
                 <th className="px-4 py-3">Token ID</th>
                 <th className="px-4 py-3">Batch ID</th>
                 <th className="px-4 py-3">Farmer</th>
@@ -39,33 +50,32 @@ export default async function BatchesPage() {
             </thead>
             <tbody>
               {batches.map((b) => (
-                <tr
-                  key={b.tokenId}
-                  className="border-b border-navy-50 transition-colors hover:bg-navy-50/50"
-                >
+                <tr key={b.tokenId} className="dash-table-row">
                   <td className="px-4 py-3 font-mono text-xs">
                     <a
                       href={`/batches/${b.tokenId}`}
-                      className="font-medium text-brand-600 hover:underline"
+                      className="font-medium hover:underline"
+                      style={{ color: "oklch(72% 0.16 80)" }}
                     >
                       #{b.tokenId}
                     </a>
                   </td>
-                  <td className="px-4 py-3 font-mono text-xs text-navy-600">
+                  <td className="px-4 py-3 font-mono text-xs" style={{ color: "oklch(68% 0.01 58)" }}>
                     {b.batchId.slice(0, 12)}...
                   </td>
-                  <td className="px-4 py-3 font-mono text-xs text-navy-600">
+                  <td className="px-4 py-3 font-mono text-xs" style={{ color: "oklch(68% 0.01 58)" }}>
                     <a
                       href={`/farmers/${b.farmerWallet}`}
-                      className="hover:text-brand-600 hover:underline"
+                      className="hover:underline"
+                      style={{ color: "oklch(72% 0.16 80)" }}
                     >
                       {b.farmerWallet.slice(0, 6)}...{b.farmerWallet.slice(-4)}
                     </a>
                   </td>
-                  <td className="px-4 py-3 text-navy-900">
+                  <td className="px-4 py-3 font-medium" style={{ color: "oklch(80% 0.005 60)" }}>
                     {b.weightKg.toString()} kg
                   </td>
-                  <td className="px-4 py-3 text-navy-900">{b.grade}</td>
+                  <td className="px-4 py-3 capitalize" style={{ color: "oklch(68% 0.01 58)" }}>{b.grade}</td>
                   <td className="px-4 py-3">
                     <span
                       className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-medium ${stageColor(b.stage)}`}
@@ -79,13 +89,14 @@ export default async function BatchesPage() {
                         Active
                       </span>
                     ) : (
-                      <span className="text-navy-300">—</span>
+                      <span style={{ color: "oklch(35% 0.008 55)" }}>—</span>
                     )}
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       )}
     </div>

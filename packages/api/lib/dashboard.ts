@@ -354,7 +354,7 @@ export async function getRecentBatches(count = 5): Promise<BatchSummary[]> {
 
     if (batchResult.status === "failure") continue;
 
-    const batch = batchResult.result as readonly [string, string, string, bigint, string, bigint, bigint, boolean];
+    const batch = batchResult.result as unknown as readonly [string, string, string, bigint, string, bigint, bigint, boolean];
     const stage = stageResult.status === "success" ? Number(stageResult.result) : 0;
 
     results.push({

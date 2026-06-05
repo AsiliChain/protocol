@@ -1,5 +1,13 @@
 import type { Metadata } from "next";
+import { Inter, Archivo } from "next/font/google";
 import "./globals.css";
+
+const inter = Inter({ subsets: ["latin"] });
+const archivo = Archivo({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "900"],
+  variable: "--font-archivo",
+});
 
 export const metadata: Metadata = {
   title: "Asilichain — Coffee Supply Chain Finance on Mantle",
@@ -14,7 +22,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className={`${inter.className} ${archivo.variable}`}>{children}</body>
     </html>
   );
 }

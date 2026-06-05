@@ -18,26 +18,44 @@ export default function FarmersPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-navy-900">Farmers</h1>
-        <p className="mt-1 text-sm text-navy-400">
+        <h1 className="text-2xl font-bold" style={{ color: "oklch(93% 0.006 60)" }}>
+          Farmers
+        </h1>
+        <p className="mt-1 text-sm" style={{ color: "oklch(42% 0.012 55)" }}>
           Registered farmer profiles
         </p>
       </div>
 
-      <div className="rounded-lg border border-navy-200 bg-white p-6">
-        <h2 className="mb-4 font-semibold text-navy-900">Registered Farmers</h2>
+      <div
+        className="rounded-xl p-6"
+        style={{ backgroundColor: "oklch(17% 0.008 55)", border: "1px solid oklch(24% 0.008 55)" }}
+      >
+        <h2 className="mb-4 font-semibold" style={{ color: "oklch(93% 0.006 60)" }}>
+          Registered Farmers
+        </h2>
         <div className="space-y-2">
-          {KNOWN_FARMERS.map((f) => (
+          {KNOWN_FARMERS.map((f, i) => (
             <a
               key={f.name}
               href={`/farmers/${f.address}`}
-              className="flex items-center justify-between rounded-lg border border-navy-100 bg-navy-50 px-4 py-3 text-sm transition-colors hover:border-brand-300 hover:bg-brand-50"
+              className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm dash-card-border"
+              style={{ backgroundColor: "oklch(17% 0.008 55)", color: "oklch(93% 0.006 60)" }}
             >
-              <div>
-                <span className="font-medium text-navy-900">{f.name}</span>
-                <span className="ml-3 text-xs text-navy-400">{f.region}</span>
+              <span
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold"
+                style={{ backgroundColor: "oklch(23% 0.010 50)", color: "oklch(72% 0.16 80)" }}
+              >
+                {f.name.split(" ").map((n) => n[0]).join("")}
+              </span>
+              <div className="flex-1 min-w-0">
+                <span className="font-medium" style={{ color: "oklch(93% 0.006 60)" }}>
+                  {f.name}
+                </span>
+                <span className="ml-2 text-xs" style={{ color: "oklch(72% 0.16 80)" }}>
+                  {f.region}
+                </span>
               </div>
-              <span className="font-mono text-xs text-navy-500">
+              <span className="font-mono text-xs" style={{ color: "oklch(42% 0.012 55)" }}>
                 {f.address.slice(0, 6)}...{f.address.slice(-4)}
               </span>
             </a>
@@ -45,19 +63,21 @@ export default function FarmersPage() {
         </div>
       </div>
 
-      <div className="rounded-lg border border-navy-200 bg-white p-6">
-        <h2 className="mb-3 font-semibold text-navy-900">Search by Wallet Address</h2>
+      <div
+        className="rounded-xl p-6"
+        style={{ backgroundColor: "oklch(17% 0.008 55)", border: "1px solid oklch(24% 0.008 55)" }}
+      >
+        <h2 className="mb-3 font-semibold" style={{ color: "oklch(93% 0.006 60)" }}>
+          Search by Wallet Address
+        </h2>
         <form action={lookupFarmer} className="flex gap-3">
           <input
             name="address"
             type="text"
             placeholder="0x..."
-            className="flex-1 rounded-md border border-navy-200 px-4 py-2.5 text-sm text-navy-900 placeholder:text-navy-300 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+            className="flex-1 rounded-xl px-4 py-2.5 text-sm dash-input"
           />
-          <button
-            type="submit"
-            className="rounded-md bg-brand-600 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-brand-700"
-          >
+          <button type="submit" className="dash-btn-primary shrink-0">
             View
           </button>
         </form>
