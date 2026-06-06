@@ -60,6 +60,13 @@ export const batchTokenAbi = [
     ],
     stateMutability: "view",
   },
+  {
+    type: "function",
+    name: "getFarmerWallet",
+    inputs: [{ name: "tokenId", type: "uint256", internalType: "uint256" }],
+    outputs: [{ name: "", type: "address", internalType: "address" }],
+    stateMutability: "view",
+  },
 ] as const;
 
 export const traceLogAbi = [
@@ -85,9 +92,33 @@ export const traceLogAbi = [
 export const farmerRegistryAbi = [
   {
     type: "function",
+    name: "grantRole",
+    inputs: [
+      { name: "role", type: "bytes32", internalType: "bytes32" },
+      { name: "account", type: "address", internalType: "address" },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
     name: "isRegistered",
     inputs: [{ name: "farmerWallet", type: "address", internalType: "address" }],
     outputs: [{ name: "", type: "bool", internalType: "bool" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "isIndependent",
+    inputs: [{ name: "farmerWallet", type: "address", internalType: "address" }],
+    outputs: [{ name: "", type: "bool", internalType: "bool" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "getFarmerCount",
+    inputs: [{ name: "cooperativeWallet", type: "address", internalType: "address" }],
+    outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
     stateMutability: "view",
   },
   {
@@ -100,6 +131,9 @@ export const farmerRegistryAbi = [
       { name: "farmBoundaryIpfsCid", type: "bytes32", internalType: "bytes32" },
       { name: "farmAreaHectares", type: "uint256", internalType: "uint256" },
       { name: "gfwDeforestationFree", type: "bool", internalType: "bool" },
+      { name: "nationalId", type: "string", internalType: "string" },
+      { name: "farmerName", type: "string", internalType: "string" },
+      { name: "phoneNumber", type: "string", internalType: "string" },
     ],
     outputs: [],
     stateMutability: "nonpayable",
@@ -116,6 +150,9 @@ export const farmerRegistryAbi = [
       { name: "gfwDeforestationFree", type: "bool", internalType: "bool" },
       { name: "active", type: "bool", internalType: "bool" },
       { name: "registrationTimestamp", type: "uint256", internalType: "uint256" },
+      { name: "nationalId", type: "string", internalType: "string" },
+      { name: "farmerName", type: "string", internalType: "string" },
+      { name: "phoneNumber", type: "string", internalType: "string" },
     ],
     stateMutability: "view",
   },
@@ -259,6 +296,13 @@ export const identityRegistryAbi = [
     inputs: [{ name: "owner", type: "address", internalType: "address" }],
     outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
     stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "registerFor",
+    inputs: [{ name: "agentWallet", type: "address", internalType: "address" }],
+    outputs: [{ name: "agentId", type: "uint256", internalType: "uint256" }],
+    stateMutability: "nonpayable",
   },
 ] as const;
 

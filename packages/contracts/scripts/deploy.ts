@@ -1,7 +1,7 @@
 import { ethers, upgrades } from "hardhat";
 
 async function main() {
-  console.log("▶️ Starting full deployment (7 contracts)...\n");
+  console.log("▶️ Starting full deployment (8 contracts)...\n");
 
   const [deployer] = await ethers.getSigners();
   console.log("Deploying contracts with account:", deployer.address, "\n");
@@ -19,11 +19,13 @@ async function main() {
   );
   await farmerRegistryProxy.waitForDeployment();
   const farmerRegistryAddress = await farmerRegistryProxy.getAddress();
-  console.log("1/7 ✅ FarmerRegistry proxy:", farmerRegistryAddress);
+  console.log("1/8 ✅ FarmerRegistry proxy:", farmerRegistryAddress);
 
-  // Set INDEPENDENT_AGGREGATOR (random wallet for local testing)
-  const independentAggregatorWallet = ethers.Wallet.createRandom();
-  const independentAggregatorAddress = independentAggregatorWallet.address;
+  // Set INDEPENDENT_AGGREGATOR
+  // On Sepolia/mainnet, set INDEPENDENT_AGGREGATOR_ADDRESS in .env
+  // For local testing, generate a random address
+  const independentAggregatorAddress = process.env.INDEPENDENT_AGGREGATOR_ADDRESS
+    || ethers.Wallet.createRandom().address;
   const farmerRegistry = await ethers.getContractAt(
     "FarmerRegistry",
     farmerRegistryAddress
@@ -40,7 +42,7 @@ async function main() {
   );
   await creditScoreProxy.waitForDeployment();
   const creditScoreAddress = await creditScoreProxy.getAddress();
-  console.log("2/7 ✅ CreditScore proxy:", creditScoreAddress);
+  console.log("2/8 ✅ CreditScore proxy:", creditScoreAddress);
 
   // 3. BatchToken — needs FarmerRegistry
   const BatchToken = await ethers.getContractFactory("BatchToken");
@@ -55,7 +57,7 @@ async function main() {
   );
   await batchTokenProxy.waitForDeployment();
   const batchTokenAddress = await batchTokenProxy.getAddress();
-  console.log("3/7 ✅ BatchToken proxy:", batchTokenAddress);
+  console.log("3/8 ✅ BatchToken proxy:", batchTokenAddress);
 
   // 4. TraceLog — needs BatchToken
   const TraceLog = await ethers.getContractFactory("TraceLog");
@@ -66,7 +68,12 @@ async function main() {
   );
   await traceLogProxy.waitForDeployment();
   const traceLogAddress = await traceLogProxy.getAddress();
-  console.log("4/7 ✅ TraceLog proxy:", traceLogAddress);
+  console.log("4/8 ✅ TraceLog proxy:", traceLogAddress);
+
+  // Sprint 1: Initialize TraceLog V2 with FarmerRegistry (needed for independent farmer role gating)
+  const traceLogV2 = await ethers.getContractAt("TraceLog", traceLogAddress);
+  await traceLogV2.initializeV2(farmerRegistryAddress);
+  console.log("   └─ TraceLog V2 initialized with FarmerRegistry:", farmerRegistryAddress);
 
   // 5. PurchaseOrder — needs BatchToken + TraceLog
   const PurchaseOrder = await ethers.getContractFactory("PurchaseOrder");
@@ -81,7 +88,7 @@ async function main() {
   );
   await purchaseOrderProxy.waitForDeployment();
   const purchaseOrderAddress = await purchaseOrderProxy.getAddress();
-  console.log("5/7 ✅ PurchaseOrder proxy:", purchaseOrderAddress);
+  console.log("5/8 ✅ PurchaseOrder proxy:", purchaseOrderAddress);
 
   // ──────────────────────────────────────────────
   // Phase 2: Deploy mock infrastructure + dependent contracts
@@ -108,9 +115,29 @@ async function main() {
   );
   await protocolFeeProxy.waitForDeployment();
   const protocolFeeAddress = await protocolFeeProxy.getAddress();
-  console.log("6/7 ✅ ProtocolFee proxy:", protocolFeeAddress);
+  console.log("6/8 ✅ ProtocolFee proxy:", protocolFeeAddress);
 
-  // 7. LendingVault — needs ALL contracts + external addresses
+  // 7. IdentityRegistry — independent (ERC-721 agent identity NFTs)
+  const IdentityRegistry = await ethers.getContractFactory("IdentityRegistry");
+  const identityRegistryProxy = await upgrades.deployProxy(
+    IdentityRegistry,
+    [ethers.getAddress(deployer.address)],
+    { initializer: "initialize", kind: "uups" }
+  );
+  await identityRegistryProxy.waitForDeployment();
+  const identityRegistryAddress = await identityRegistryProxy.getAddress();
+  console.log("7/8 ✅ IdentityRegistry proxy:", identityRegistryAddress);
+
+  // Register the two AI agents
+  const identityRegistry = await ethers.getContractAt("IdentityRegistry", identityRegistryAddress);
+  const riskMonitorTx = await identityRegistry.register();
+  await riskMonitorTx.wait();
+  console.log("   └─ Risk Monitor registered — agentId: 0");
+  const anomalyTx = await identityRegistry.register();
+  await anomalyTx.wait();
+  console.log("   └─ Anomaly Detector registered — agentId: 1");
+
+  // 8. LendingVault — needs ALL contracts + external addresses
   // Pyth oracle is Phase 2; use placeholder non-zero addresses for local deployment.
   const PYTH_PLACEHOLDER = "0x0000000000000000000000000000000000000001";
   const PRICE_FEED_PLACEHOLDER = "0x0000000000000000000000000000000000000000000000000000000000000001";
@@ -132,7 +159,7 @@ async function main() {
   );
   await lendingVaultProxy.waitForDeployment();
   const lendingVaultAddress = await lendingVaultProxy.getAddress();
-  console.log("7/7 ✅ LendingVault proxy:", lendingVaultAddress);
+  console.log("8/8 ✅ LendingVault proxy:", lendingVaultAddress);
 
   // ──────────────────────────────────────────────
   // Phase 3: Post-deploy role grants (MANDATORY)
@@ -161,12 +188,15 @@ async function main() {
   await protocolFee.grantRole(VAULT_ROLE, lendingVaultAddress);
   console.log("   └─ ProtocolFee: VAULT_ROLE → LendingVault");
 
+  await protocolFee.grantRole(MULTISIG_ROLE, ethers.getAddress(deployer.address));
+  console.log("   └─ ProtocolFee: MULTISIG_ROLE → deployer");
+
   // Deployer retains DEFAULT_ADMIN on all contracts for local testing.
   // On mainnet, revoke DEFAULT_ADMIN from deployer and transfer to multisig.
   console.log("   └─ (deployer retains DEFAULT_ADMIN — revoke for production)");
 
   console.log("\n═══════════════════════════════════════════");
-  console.log("  ✅ Deployment complete — all 7 contracts");
+  console.log("  ✅ Deployment complete — all 8 contracts");
   console.log("═══════════════════════════════════════════\n");
 
   console.log("📋 Copy these into your .env:");
@@ -176,6 +206,7 @@ async function main() {
   console.log(`TRACE_LOG_ADDRESS=${traceLogAddress}`);
   console.log(`PURCHASE_ORDER_ADDRESS=${purchaseOrderAddress}`);
   console.log(`PROTOCOL_FEE_ADDRESS=${protocolFeeAddress}`);
+  console.log(`IDENTITY_REGISTRY_ADDRESS=${identityRegistryAddress}`);
   console.log(`LENDING_VAULT_ADDRESS=${lendingVaultAddress}`);
   console.log(`USDC_ADDRESS=${usdcAddress}`);
 }

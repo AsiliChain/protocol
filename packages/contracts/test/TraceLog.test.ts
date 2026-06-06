@@ -18,10 +18,12 @@ describe("TraceLog", function () {
         const FarmerRegistry = await ethers.getContractFactory("FarmerRegistry");
         farmerRegistry = await upgrades.deployProxy(FarmerRegistry, [ethers.getAddress(admin.address)]);
         await farmerRegistry.connect(admin).setIndependentAggregator(ethers.getAddress(coop.address));
+        await farmerRegistry.connect(admin).grantRole(await farmerRegistry.COOP_ROLE(), ethers.getAddress(admin.address));
         await farmerRegistry.connect(admin).grantRole(await farmerRegistry.AGENT_ROLE(), ethers.getAddress(agent.address));
         await farmerRegistry.connect(agent).registerFarmer(
             ethers.getAddress(farmer.address), "MAAIF-TL", ethers.getAddress(coop.address),
-            ethers.encodeBytes32String("ipfs"), 250, true
+            ethers.encodeBytes32String("ipfs"), 250, true,
+            "NIN-TL-001", "Test Farmer TL", "+256700000001"
         );
 
         const BatchToken = await ethers.getContractFactory("BatchToken");

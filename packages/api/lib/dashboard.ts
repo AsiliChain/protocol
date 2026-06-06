@@ -53,10 +53,14 @@ export interface FarmerInfo {
   farmerWallet: string;
   maaifFarmerId: string;
   cooperativeWallet: string;
+  farmBoundaryIpfsCid: string;
   farmAreaHectares: bigint;
   gfwDeforestationFree: boolean;
   active: boolean;
   registrationTimestamp: number;
+  nationalId: string;
+  farmerName: string;
+  phoneNumber: string;
 }
 
 export interface AgentIdentity {
@@ -385,10 +389,14 @@ export async function getFarmerInfo(
       farmerWallet: wallet,
       maaifFarmerId: f[0],
       cooperativeWallet: f[1],
+      farmBoundaryIpfsCid: f[2],
       farmAreaHectares: f[3],
       gfwDeforestationFree: f[4],
       active: f[5],
       registrationTimestamp: Number(f[6]),
+      nationalId: f[7],
+      farmerName: f[8],
+      phoneNumber: f[9],
     };
   } catch {
     return null;

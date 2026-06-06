@@ -9,6 +9,9 @@ interface RegisterBody {
   farmBoundaryIpfsCid: string; // hex bytes32
   farmAreaHectares: number;
   gfwDeforestationFree: boolean;
+  nationalId: string;
+  farmerName: string;
+  phoneNumber: string;
 }
 
 export async function POST(request: Request): Promise<Response> {
@@ -25,10 +28,10 @@ export async function POST(request: Request): Promise<Response> {
     return errorResponse(400, "Invalid JSON body");
   }
 
-  const { farmerWallet, maaifFarmerId, cooperativeWallet, farmBoundaryIpfsCid, farmAreaHectares, gfwDeforestationFree } = body;
+  const { farmerWallet, maaifFarmerId, cooperativeWallet, farmBoundaryIpfsCid, farmAreaHectares, gfwDeforestationFree, nationalId, farmerName, phoneNumber } = body;
 
-  if (!farmerWallet || !maaifFarmerId || !cooperativeWallet || !farmBoundaryIpfsCid) {
-    return errorResponse(400, "Missing required fields: farmerWallet, maaifFarmerId, cooperativeWallet, farmBoundaryIpfsCid");
+  if (!farmerWallet || !maaifFarmerId || !cooperativeWallet || !farmBoundaryIpfsCid || !nationalId || !farmerName || !phoneNumber) {
+    return errorResponse(400, "Missing required fields: farmerWallet, maaifFarmerId, cooperativeWallet, farmBoundaryIpfsCid, nationalId, farmerName, phoneNumber");
   }
 
   try {
@@ -46,6 +49,9 @@ export async function POST(request: Request): Promise<Response> {
         farmBoundaryIpfsCid as `0x${string}`,
         BigInt(farmAreaHectares),
         gfwDeforestationFree,
+        nationalId,
+        farmerName,
+        phoneNumber,
       ],
     });
 

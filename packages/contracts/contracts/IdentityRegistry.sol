@@ -81,6 +81,21 @@ contract IdentityRegistry is
     }
 
     /**
+     * @notice Register an agent and mint the identity NFT to a specific wallet.
+     * @dev Used by the agent invite flow to mint the NFT directly to the agent's wallet.
+     * @param agentWallet The wallet that will own the agent identity NFT.
+     * @return agentId The newly minted agent token ID.
+     */
+    function registerFor(address agentWallet) external returns (uint256 agentId) {
+        require(agentWallet != address(0), "IdentityRegistry: zero address");
+        agentId = _lastId;
+        _lastId++;
+
+        _safeMint(agentWallet, agentId);
+        emit Registered(agentId, "", agentWallet);
+    }
+
+    /**
      * @notice Update an agent's metadata URI.
      * @param agentId The agent token ID.
      * @param newURI  New URI pointing to the agent registration file.

@@ -49,6 +49,17 @@ contract LendingVault is
     // =====================================
 
     bytes32 public constant VAULT_ROLE = keccak256("VAULT_ROLE");
+    /// @notice Multisig role — can deploy reserve to cover defaults.
+    bytes32 public constant MULTISIG_ROLE = keccak256("MULTISIG_ROLE");
+
+    // =====================================
+    //                        Fee Rates (APR)
+    // =====================================
+
+    /// @notice Protocol fee rate in basis points (4% APR).
+    uint256 public constant PROTOCOL_FEE_RATE_BPS = 400;
+    /// @notice Credit loss reserve rate in basis points (2% APR).
+    uint256 public constant RESERVE_RATE_BPS = 200;
 
     // =====================================
     //                              Types
@@ -121,6 +132,10 @@ contract LendingVault is
     mapping(address => uint256) public mfiDeposits;
     uint256 public activeLoanBook;
 
+    // === Credit loss reserve (v3) ===
+    /// @notice Cumulative 2% reserve withheld from settlements to cover defaults.
+    uint256 public creditLossReserve;
+
     // =====================================
     //                            Events
     // =====================================
@@ -143,7 +158,15 @@ contract LendingVault is
         uint256 indexed batchTokenId,
         address indexed farmerWallet,
         uint256 totalRepaid,
-        uint256 protocolFeeCollected
+        uint256 protocolFeeCollected,
+        uint256 reserveAmount
+    );
+
+    /// @notice Emitted when MULTISIG deploys reserve to cover a default.
+    event ReserveDeployed(
+        address indexed recipient,
+        uint256 amount,
+        address indexed triggeredBy
     );
 
     event CoffeePriceUpdated(
@@ -421,7 +444,9 @@ contract LendingVault is
 
     /**
      * @notice Settles a loan after repayment. Called by API on TraceLog EXPORTED events.
-     * @dev Unlocks collateral, collects 4% protocol fee, returns net to farmer.
+     * @dev Unlocks collateral, collects APR-based protocol fee + reserve, returns net to farmer.
+     *      Total cost to farmer: interestRateBps + PROTOCOL_FEE_RATE_BPS + RESERVE_RATE_BPS.
+     *      Default: 10% + 4% + 2% = 16% APR.
      * @param batchTokenId The BatchToken ID whose loan is being settled.
      * @param usdcAmount   Total USDC received from buyer (gross repayment).
      */
@@ -431,17 +456,30 @@ contract LendingVault is
         require(usdcAmount >= loan.principalUsdc, "LendingVault: insufficient repayment");
 
         uint256 totalDue = loan.principalUsdc + loan.interestUsdc;
-        uint256 protocolFeeAmount = (totalDue * 4) / 100;
+        uint256 loanDuration = loan.expiresAt - loan.originatedAt;
 
-        // Pay protocol fee
+        // APR-based fees (same formula as interest — annualized on principal)
+        uint256 protocolFeeAmount = (loan.principalUsdc * PROTOCOL_FEE_RATE_BPS * loanDuration)
+            / (365 days * 10000);
+        uint256 reserveAmount = (loan.principalUsdc * RESERVE_RATE_BPS * loanDuration)
+            / (365 days * 10000);
+
+        // Transfer protocol fee USDC to ProtocolFee contract, then record it
+        require(
+            usdc.transfer(address(protocolFee), protocolFeeAmount),
+            "LendingVault: fee transfer failed"
+        );
         protocolFee.collect(protocolFeeAmount);
+
+        // Accrue credit loss reserve (USDC stays in vault)
+        creditLossReserve += reserveAmount;
 
         // Unlock and burn
         batchToken.unlockCollateral(batchTokenId);
         batchToken.burnSettled(batchTokenId);
 
         // Return net to farmer
-        uint256 netToFarmer = usdcAmount - totalDue - protocolFeeAmount;
+        uint256 netToFarmer = usdcAmount - totalDue - protocolFeeAmount - reserveAmount;
         if (netToFarmer > 0) {
             require(usdc.transfer(loan.farmerWallet, netToFarmer), "LendingVault: transfer failed");
         }
@@ -450,7 +488,7 @@ contract LendingVault is
         loan.status = LoanStatus.SETTLED;
         activeLoanBook -= loan.principalUsdc;
 
-        emit LoanSettled(batchTokenId, loan.farmerWallet, totalDue, protocolFeeAmount);
+        emit LoanSettled(batchTokenId, loan.farmerWallet, totalDue, protocolFeeAmount, reserveAmount);
     }
 
     /**
@@ -469,6 +507,26 @@ contract LendingVault is
         creditScore.recordDefault(loan.farmerWallet);
 
         emit LoanDefaulted(batchTokenId, loan.forbearanceExpiry);
+    }
+
+    // =====================================
+    //                      Reserve Management
+    // =====================================
+
+    /**
+     * @notice Deploys credit loss reserve to cover a default. MULTISIG_ROLE only.
+     * @param recipient Address to receive the USDC (typically an MFI).
+     * @param amount    Amount of USDC to deploy from the reserve.
+     */
+    function deployReserve(address recipient, uint256 amount) external onlyRole(MULTISIG_ROLE) {
+        require(recipient != address(0), "LendingVault: zero recipient");
+        require(amount > 0, "LendingVault: zero amount");
+        require(amount <= creditLossReserve, "LendingVault: insufficient reserve");
+
+        creditLossReserve -= amount;
+        require(usdc.transfer(recipient, amount), "LendingVault: reserve transfer failed");
+
+        emit ReserveDeployed(recipient, amount, msg.sender);
     }
 
     // =====================================

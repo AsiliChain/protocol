@@ -28,6 +28,7 @@ contract FarmerRegistry is Initializable, UUPSUpgradeable, AccessControlUpgradea
 
     // ─── Structs ────────────────────
     struct Farmer {
+        // ─── Original fields ───
         string  maaifFarmerId;          // MAAIF government ID
         address cooperativeWallet;      // cooperative that receives settlement share
         bytes32 farmBoundaryIpfsCid;    // IPFS CID of GeoJSON polygon (EUDR DDS)
@@ -35,6 +36,10 @@ contract FarmerRegistry is Initializable, UUPSUpgradeable, AccessControlUpgradea
         bool    gfwDeforestationFree;   // Global Forest Watch verification result (GFW)
         bool    active;                 // false = deactivated
         uint256 registrationTimestamp;  // block.timestamp at registration
+        // ─── Sprint 1 fields (append only — storage safe) ───
+        string  nationalId;             // Uganda NIN — primary on-chain identity
+        string  farmerName;             // Human-readable name (Fonbnk recipientName)
+        string  phoneNumber;            // MTN phone (+2567XXXXXXXX) — Fonbnk recipientPhone
     }
 
     // ─── Storage ────────────────────
@@ -44,15 +49,31 @@ contract FarmerRegistry is Initializable, UUPSUpgradeable, AccessControlUpgradea
     /// @notice MAAIF government ID → wallet address (reverse lookup)
     mapping(string => address) public maaifToWallet;
 
+    /// @notice Uganda NIN → wallet address (uniqueness guard)
+    /// @dev Separate from maaifToWallet because NIN and MAAIF ID may collide as strings.
+    mapping(string => address) public ninToWallet;
+
+    /// @notice Approximate count of farmers registered under each cooperative wallet.
+    /// @dev Used by the API layer for agent cap enforcement: max(3, ceil(count/50)).
+    ///      Incremented on registration, NOT decremented on deactivation (Sprint 1).
+    mapping(address => uint256) public cooperativeFarmerCount;
+
     /// @notice Protocol-managed multisig for independent farmers.
     ///         Set post-deploy via setIndependentAggregator().
     address public INDEPENDENT_AGGREGATOR;
+
+    /// @notice Sprint 3: Global farmer count for agent cap computation.
+    uint256 public totalFarmers;
+
+    /// @notice Sprint 3: Current number of AGENT_ROLE holders.
+    uint256 public agentCount;
 
     // ─── Events ─────────────────────
     event FarmerRegistered(
         address indexed farmerWallet,
         string maaifId,
-        address indexed cooperativeWallet
+        address indexed cooperativeWallet,
+        string indexed nationalId
     );
     event FarmerVerified(address indexed farmerWallet, bool gfwDeforestationFree);
     event FarmerDeactivated(address indexed farmerWallet);
@@ -81,6 +102,9 @@ contract FarmerRegistry is Initializable, UUPSUpgradeable, AccessControlUpgradea
         require(defaultAdmin != address(0), "FarmerRegistry: zero admin");
         __AccessControl_init();
         _grantRole(DEFAULT_ADMIN_ROLE, defaultAdmin);
+
+        // Sprint 1: Cooperatives self-manage their agents. No protocol admin bottleneck.
+        _setRoleAdmin(AGENT_ROLE, COOP_ROLE);
     }
 
     // ─── Registration ───────────────────────
@@ -94,6 +118,9 @@ contract FarmerRegistry is Initializable, UUPSUpgradeable, AccessControlUpgradea
      * @param farmBoundaryIpfsCid IPFS CID of the farm's GeoJSON boundary (bytes32).
      * @param farmAreaHectares    Farm area × 100 (e.g., 250 = 2.50 hectares).
      * @param gfwDeforestationFree GlobalFarmingWatch verification result.
+     * @param nationalId          Uganda NIN (National ID). Must be unique.
+     * @param farmerName          Human-readable farmer name (for Fonbnk payouts).
+     * @param phoneNumber         MTN phone number (+2567XXXXXXXX).
      */
     function registerFarmer(
         address farmerWallet,
@@ -101,7 +128,10 @@ contract FarmerRegistry is Initializable, UUPSUpgradeable, AccessControlUpgradea
         address cooperativeWallet,
         bytes32 farmBoundaryIpfsCid,
         uint256 farmAreaHectares,
-        bool gfwDeforestationFree
+        bool gfwDeforestationFree,
+        string calldata nationalId,
+        string calldata farmerName,
+        string calldata phoneNumber
     )
         external
         onlyRole(AGENT_ROLE)
@@ -111,25 +141,37 @@ contract FarmerRegistry is Initializable, UUPSUpgradeable, AccessControlUpgradea
         require(cooperativeWallet != address(0), "FarmerRegistry: invalid coop wallet");
         require(farmBoundaryIpfsCid != bytes32(0), "FarmerRegistry: empty IPFS CID");
         require(farmAreaHectares > 0, "FarmerRegistry: zero farm area");
+        require(bytes(nationalId).length > 0, "FarmerRegistry: empty NIN");
+        require(bytes(farmerName).length > 0, "FarmerRegistry: empty farmer name");
         require(farmers[farmerWallet].registrationTimestamp == 0, "FarmerRegistry: already registered");
         require(
             maaifToWallet[maaifFarmerId] == address(0),
             "FarmerRegistry: MAAIF ID already registered"
         );
+        require(
+            ninToWallet[nationalId] == address(0),
+            "FarmerRegistry: NIN already registered"
+        );
 
-        farmers[farmerWallet] = Farmer({
-            maaifFarmerId:          maaifFarmerId,
-            cooperativeWallet:      cooperativeWallet,
-            farmBoundaryIpfsCid:    farmBoundaryIpfsCid,
-            farmAreaHectares:       farmAreaHectares,
-            gfwDeforestationFree:   gfwDeforestationFree,
-            active:                 true,
-            registrationTimestamp:  block.timestamp
-        });
+        // Individual field assignment avoids "stack too deep" from 10-field struct literal
+        Farmer storage f = farmers[farmerWallet];
+        f.maaifFarmerId          = maaifFarmerId;
+        f.cooperativeWallet      = cooperativeWallet;
+        f.farmBoundaryIpfsCid    = farmBoundaryIpfsCid;
+        f.farmAreaHectares       = farmAreaHectares;
+        f.gfwDeforestationFree   = gfwDeforestationFree;
+        f.active                 = true;
+        f.registrationTimestamp  = block.timestamp;
+        f.nationalId             = nationalId;
+        f.farmerName             = farmerName;
+        f.phoneNumber            = phoneNumber;
 
         maaifToWallet[maaifFarmerId] = farmerWallet;
+        ninToWallet[nationalId] = farmerWallet;
+        cooperativeFarmerCount[cooperativeWallet]++;
+        totalFarmers++;
 
-        emit FarmerRegistered(farmerWallet, maaifFarmerId, cooperativeWallet);
+        emit FarmerRegistered(farmerWallet, maaifFarmerId, cooperativeWallet, nationalId);
     }
 
     // ─── Queries ────────────────────
@@ -161,6 +203,15 @@ contract FarmerRegistry is Initializable, UUPSUpgradeable, AccessControlUpgradea
             "FarmerRegistry: not registered"
         );
         return farmers[farmerWallet];
+    }
+
+    /**
+     * @notice Returns the number of farmers registered under a cooperative wallet.
+     * @dev Used by the API to enforce the agent cap: max(3, ceil(count / 50)).
+     *      Returns 0 for unknown wallets. Not decremented on deactivation.
+     */
+    function getFarmerCount(address cooperativeWallet) external view returns (uint256) {
+        return cooperativeFarmerCount[cooperativeWallet];
     }
 
     /**
@@ -247,6 +298,42 @@ contract FarmerRegistry is Initializable, UUPSUpgradeable, AccessControlUpgradea
         farmers[farmerWallet].cooperativeWallet = newCooperativeWallet;
 
         emit FarmerMigrated(farmerWallet, oldCooperative, newCooperativeWallet);
+    }
+
+    // ─── Agent Cap Enforcement (Sprint 3) ───
+
+    /**
+     * @notice Computes the maximum number of agents allowed based on total farmer count.
+     * @dev Formula: max(3, ceil(totalFarmers / 50)). Allows small cooperatives
+     *      a minimum of 3 agents while scaling with growth.
+     */
+    function _computeMaxAgents() internal view returns (uint256) {
+        uint256 minAgents = 3;
+        // ceil division: (a + b - 1) / b
+        uint256 computed = (totalFarmers + 49) / 50;
+        return computed > minAgents ? computed : minAgents;
+    }
+
+    /**
+     * @notice Override to enforce agent cap on role grant.
+     * @dev Automatically tracks agent count. Reverts if cap would be exceeded.
+     */
+    function _grantRole(bytes32 role, address account) internal override returns (bool) {
+        if (role == AGENT_ROLE) {
+            require(agentCount < _computeMaxAgents(), "FarmerRegistry: agent cap reached");
+            agentCount++;
+        }
+        return super._grantRole(role, account);
+    }
+
+    /**
+     * @notice Override to decrement agent count on role revocation.
+     */
+    function _revokeRole(bytes32 role, address account) internal override returns (bool) {
+        if (role == AGENT_ROLE) {
+            agentCount--;
+        }
+        return super._revokeRole(role, account);
     }
 
     // ─── UUPS Upgrade ───────────────────────

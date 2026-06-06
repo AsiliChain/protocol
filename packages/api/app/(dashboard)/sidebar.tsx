@@ -34,7 +34,13 @@ function NavIcon({ href }: { href: string }) {
     case "/agents":
       return (
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={className}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 0 0-2.455 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12.972l1.796-.539A4.5 4.5 0 0 0 7.1 9.995l1.213-2.42A4.5 4.5 0 0 1 12 6m0 0c.56 0 1.119.123 1.687.363l1.213 2.42a4.5 4.5 0 0 0 3.054 2.438l1.796.539-1.796.539a4.5 4.5 0 0 0-3.054 2.438l-1.213 2.42A4.5 4.5 0 0 1 12 18m0 0V6" />
+        </svg>
+      );
+    case "/agents/workspace":
+      return (
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={className}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M11.42 15.17a2.5 2.5 0 0 1-1.584 0l-1.296-.42a3 3 0 0 1-1.92-2.814V9m6.364 6.17a2.5 2.5 0 0 0 1.584 0l1.296-.42a3 3 0 0 0 1.92-2.814V9m0 0V4.5a1.5 1.5 0 0 0-1.5-1.5h-9a1.5 1.5 0 0 0-1.5 1.5V9m15 0v6.75A2.25 2.25 0 0 1 16.5 18H12m0 0v3m0 0H9m3 0h3" />
         </svg>
       );
     case "/ccip":
@@ -54,6 +60,7 @@ const navItems = [
   { href: "/batches", label: "Batches" },
   { href: "/loans", label: "Loans" },
   { href: "/agents", label: "AI Agents" },
+  { href: "/agents/workspace", label: "Agent Workspace" },
   { href: "/ccip", label: "CCIP Bridge" },
 ];
 

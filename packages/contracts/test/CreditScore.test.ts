@@ -33,6 +33,7 @@ describe("CreditScore", function () {
         FarmerRegistry = await ethers.getContractFactory("FarmerRegistry");
         farmerRegistry = await upgrades.deployProxy(FarmerRegistry, [admin.address]);
         await farmerRegistry.connect(admin).setIndependentAggregator(cooperative.address);
+        await farmerRegistry.connect(admin).grantRole(await farmerRegistry.COOP_ROLE(), admin.address);
         await farmerRegistry.connect(admin).grantRole(await farmerRegistry.AGENT_ROLE(), agent.address);
 
         // Deploy CreditScore
@@ -46,7 +47,8 @@ describe("CreditScore", function () {
         // Register farmer1
         await farmerRegistry.connect(agent).registerFarmer(
             farmer1.address, "MAAIF-001", cooperative.address,
-            ethers.encodeBytes32String("ipfs-cid"), 250, true
+            ethers.encodeBytes32String("ipfs-cid"), 250, true,
+            "NIN-CS-001", "Test Farmer 1", "+256700000001"
         );
     });
 
@@ -148,7 +150,8 @@ describe("CreditScore", function () {
         it("should not allow score to go below SCORE_FLOOR", async function () {
             await farmerRegistry.connect(agent).registerFarmer(
                 farmer2.address, "MAAIF-FLOOR-004",
-                cooperative.address, ethers.encodeBytes32String("ipfs-fl4"), 300, true
+                cooperative.address, ethers.encodeBytes32String("ipfs-fl4"), 300, true,
+                "NIN-CS-002", "Test Farmer 2", "+256700000002"
             );
             const f = await farmerRegistry.getFarmer(farmer2.address);
             expect(f.active).to.be.true;

@@ -35,10 +35,12 @@ describe("LendingVault", function () {
         const FR = await ethers.getContractFactory("FarmerRegistry");
         farmerRegistry = await upgrades.deployProxy(FR, [ethers.getAddress(adminAddr)]);
         await farmerRegistry.connect(admin).setIndependentAggregator(ethers.getAddress(coopAddr));
+        await farmerRegistry.connect(admin).grantRole(await farmerRegistry.COOP_ROLE(), ethers.getAddress(admin.address));
         await farmerRegistry.connect(admin).grantRole(await farmerRegistry.AGENT_ROLE(), ethers.getAddress(agentAddr));
         await farmerRegistry.connect(agent).registerFarmer(
             ethers.getAddress(farmerAddr), "MAAIF-LV", ethers.getAddress(coopAddr),
-            ethers.encodeBytes32String("ipfs"), 250, true
+            ethers.encodeBytes32String("ipfs"), 250, true,
+            "NIN-LV-001", "Test Farmer LV", "+256700000001"
         );
 
         // Deploy BatchToken

@@ -5,6 +5,7 @@ import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Ini
 import {UUPSUpgradeable} from "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import {AccessControlUpgradeable} from "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 import {IBatchToken} from "./interfaces/IBatchToken.sol";
+import {IFarmerRegistry} from "./interfaces/IFarmerRegistry.sol";
 
 /**
  * @title TraceLog
@@ -51,6 +52,10 @@ contract TraceLog is Initializable, AccessControlUpgradeable, UUPSUpgradeable {
     /// @dev BatchToken is only read to verify token existence before stage updates.
     address public batchToken;
 
+    /// @notice The FarmerRegistry contract (set at V2 upgrade).
+    /// @dev Read to check isIndependent() for role gating of independent farmers.
+    IFarmerRegistry public farmerRegistry;
+
     // =====================================
     //                            Events
     // =====================================
@@ -86,6 +91,15 @@ contract TraceLog is Initializable, AccessControlUpgradeable, UUPSUpgradeable {
     }
 
     /**
+     * @notice V2 reinitializer: sets the FarmerRegistry address for independent farmer role gating.
+     * @param farmerRegistryAddress Address of the deployed FarmerRegistry contract.
+     */
+    function initializeV2(address farmerRegistryAddress) external reinitializer(2) {
+        require(farmerRegistryAddress != address(0), "TraceLog: zero farmerRegistry address");
+        farmerRegistry = IFarmerRegistry(farmerRegistryAddress);
+    }
+
+    /**
      * @dev Authorizes an upgrade. Restricted to DEFAULT_ADMIN_ROLE per Invariant #6.
      * @param newImplementation Address of the new implementation contract.
      */
@@ -115,7 +129,7 @@ contract TraceLog is Initializable, AccessControlUpgradeable, UUPSUpgradeable {
         // We use a separate bool to track whether the token was ever initialised.
         if (current == Stage(0) && !_isInitialized(tokenId)) {
             require(newStage == Stage.DELIVERED, "TraceLog: first stage must be DELIVERED");
-            _checkStageRole(newStage);
+            _checkStageRole(tokenId, newStage);
             _initialized[tokenId] = true;
             stages[tokenId] = Stage.DELIVERED;
             emit StageUpdated(tokenId, Stage(0), Stage.DELIVERED, msg.sender, block.timestamp);
@@ -127,7 +141,7 @@ contract TraceLog is Initializable, AccessControlUpgradeable, UUPSUpgradeable {
             uint8(newStage) == uint8(current) + 1,
             "TraceLog: stages must increase by exactly 1"
         );
-        _checkStageRole(newStage);
+        _checkStageRole(tokenId, newStage);
 
         stages[tokenId] = newStage;
         emit StageUpdated(tokenId, current, newStage, msg.sender, block.timestamp);
@@ -159,14 +173,26 @@ contract TraceLog is Initializable, AccessControlUpgradeable, UUPSUpgradeable {
 
     /**
      * @dev Maps the target stage to the required role.
-     * @param stage The stage to check access for.
+     *      For GRADED / MILLED / WAREHOUSED / EXPORTED:
+     *        - Cooperative farmers: requires COOP_ROLE (cooperative manager).
+     *        - Independent farmers: allows AGENT_ROLE (field agent can self-manage).
+     * @param tokenId The BatchToken ID (used to check if farmer is independent).
+     * @param stage   The target stage to check access for.
      */
-    function _checkStageRole(Stage stage) private view {
+    function _checkStageRole(uint256 tokenId, Stage stage) private view {
         bytes32 role;
         if (stage == Stage.DELIVERED) {
             role = AGENT_ROLE;
         } else if (stage == Stage.GRADED || stage == Stage.MILLED || stage == Stage.WAREHOUSED || stage == Stage.EXPORTED) {
-            role = COOP_ROLE;
+            // Check if the batch belongs to an independent farmer
+            address farmerWallet = _batchToken().getFarmerWallet(tokenId);
+            if (address(farmerRegistry) != address(0) && farmerRegistry.isIndependent(farmerWallet)) {
+                // Independent farmers: AGENT_ROLE can advance stages
+                role = AGENT_ROLE;
+            } else {
+                // Cooperative farmers: requires COOP_ROLE
+                role = COOP_ROLE;
+            }
         } else if (stage == Stage.COMMITTED) {
             role = PURCHASE_ORDER_ROLE;
         } else if (stage == Stage.SETTLED) {

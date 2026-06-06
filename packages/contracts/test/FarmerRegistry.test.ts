@@ -20,6 +20,8 @@ async function deployFarmerRegistry() {
   // Grant roles
   const AGENT_ROLE = await registry.AGENT_ROLE();
   const COOP_ROLE = await registry.COOP_ROLE();
+  await registry.connect(admin).grantRole(COOP_ROLE, ethers.getAddress(admin.address));
+  await registry.connect(admin).grantRole(COOP_ROLE, ethers.getAddress(admin.address));
   await registry.connect(admin).grantRole(AGENT_ROLE, ethers.getAddress(agent.address));
   await registry.connect(admin).grantRole(COOP_ROLE, ethers.getAddress(coopMember.address));
 
@@ -37,7 +39,10 @@ async function deployFarmerRegistry() {
     cooperativeWallet?: string,
     cid?: string,
     area?: bigint,
-    gfw?: boolean
+    gfw?: boolean,
+    nationalId?: string,
+    farmerName?: string,
+    phoneNumber?: string
   ) =>
     [
       wallet,
@@ -46,6 +51,9 @@ async function deployFarmerRegistry() {
       cid ?? ethers.encodeBytes32String("cid1"),
       area ?? 250n,
       gfw ?? true,
+      nationalId ?? "NIN-001",
+      farmerName ?? "Test Farmer",
+      phoneNumber ?? "+256700000001",
     ] as const;
 
   return {
@@ -130,7 +138,7 @@ describe("FarmerRegistry — registerFarmer", () => {
         )
     )
       .to.emit(registry, "FarmerRegistered")
-      .withArgs(farmer1.address, "MAAIF-001", realCoopWallet);
+      .withArgs(farmer1.address, "MAAIF-001", realCoopWallet, "NIN-001");
   });
 
   it("registers an independent farmer (cooperativeWallet = INDEPENDENT_AGGREGATOR)", async () => {
@@ -217,7 +225,10 @@ describe("FarmerRegistry — registerFarmer", () => {
           ethers.ZeroAddress,
           ethers.encodeBytes32String("cid1"),
           250n,
-          true
+          true,
+          "NIN-ZC",
+          "Test Farmer ZC",
+          "+256700000001"
         )
     ).to.be.revertedWith("FarmerRegistry: invalid coop wallet");
   });
@@ -235,7 +246,10 @@ describe("FarmerRegistry — registerFarmer", () => {
           await registry.INDEPENDENT_AGGREGATOR(),
           ethers.ZeroHash,
           250n,
-          true
+          true,
+          "NIN-ZCID",
+          "Test Farmer ZCID",
+          "+256700000001"
         )
     ).to.be.revertedWith("FarmerRegistry: empty IPFS CID");
   });
@@ -253,7 +267,10 @@ describe("FarmerRegistry — registerFarmer", () => {
           await registry.INDEPENDENT_AGGREGATOR(),
           ethers.encodeBytes32String("cid1"),
           0n,
-          true
+          true,
+          "NIN-ZA",
+          "Test Farmer ZA",
+          "+256700000001"
         )
     ).to.be.revertedWith("FarmerRegistry: zero farm area");
   });
@@ -302,7 +319,7 @@ describe("FarmerRegistry — registerFarmer", () => {
         .registerFarmer(...validArgs(farmer1.address, "MAAIF-EVT"))
     )
       .to.emit(registry, "FarmerRegistered")
-      .withArgs(farmer1.address, "MAAIF-EVT", aggregator);
+      .withArgs(farmer1.address, "MAAIF-EVT", aggregator, "NIN-001");
   });
 });
 
@@ -438,6 +455,9 @@ describe("FarmerRegistry — isIndependent", () => {
     );
     await registry
       .connect(admin)
+      .grantRole(await registry.COOP_ROLE(), ethers.getAddress(admin.address));
+    await registry
+      .connect(admin)
       .grantRole(await registry.AGENT_ROLE(), ethers.getAddress(agent.address));
 
     // Register with INDEPENDENT_AGGREGATOR still at address(0)
@@ -451,7 +471,10 @@ describe("FarmerRegistry — isIndependent", () => {
         realCoopWallet,
         ethers.encodeBytes32String("cid1"),
         250n,
-        true
+        true,
+        "NIN-ZEROAGG",
+        "Test Farmer ZEROAGG",
+        "+256700000001"
       );
 
     expect(
@@ -484,7 +507,10 @@ describe("FarmerRegistry — verifyFarmer", () => {
         await registry.INDEPENDENT_AGGREGATOR(),
         ethers.encodeBytes32String("cid1"),
         250n,
-        false
+        false,
+        "NIN-VFY",
+        "Test Farmer VFY",
+        "+256700000001"
       );
 
     await registry.connect(agent).verifyFarmer(farmer1.address, true);
@@ -591,7 +617,10 @@ describe("FarmerRegistry — deactivateFarmer", () => {
         realCoopWallet,
         ethers.encodeBytes32String("cidX"),
         300n,
-        true
+        true,
+        "NIN-CROSS",
+        "Test Farmer CROSS",
+        "+256700000002"
       );
 
     // coopMember's cooperative is INDEPENDENT_AGGREGATOR
@@ -853,7 +882,10 @@ describe("FarmerRegistry — migrateFarmer", () => {
         realCoopWallet,
         ethers.encodeBytes32String("cidN"),
         250n,
-        true
+        true,
+        "NIN-NOTIND",
+        "Test Farmer NOTIND",
+        "+256700000001"
       );
 
     await expect(

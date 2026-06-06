@@ -54,12 +54,12 @@ function Badge({
   const colors =
     variant === "green"
       ? "bg-risk-healthy/10 text-risk-healthy"
-      : "text-navy-400";
-  const bgStyle =
+      : "";
+  const variantStyle =
     variant === "green"
       ? {}
-      : { backgroundColor: "oklch(24% 0.008 55)" };
-  return <span className={`${base} ${colors}`} style={bgStyle}>{children}</span>;
+      : { backgroundColor: "oklch(24% 0.008 55)", color: "oklch(42% 0.012 55)" };
+  return <span className={`${base} ${colors}`} style={variantStyle}>{children}</span>;
 }
 
 function StatusDot({ status }: { status: string }) {

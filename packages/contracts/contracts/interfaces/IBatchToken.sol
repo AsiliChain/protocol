@@ -7,4 +7,5 @@ interface IBatchToken {
     function lockAsCollateral(uint256 tokenId) external;
     function unlockCollateral(uint256 tokenId) external;
     function burnSettled(uint256 tokenId) external;
+    function getFarmerWallet(uint256 tokenId) external view returns (address);
 }

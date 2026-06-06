@@ -31,8 +31,9 @@ describe("BatchToken", function () {
         farmerRegistry = await upgrades.deployProxy(FarmerRegistryFactory, [admin.address]);
         await farmerRegistry.connect(admin).setIndependentAggregator(other.address);
 
-        // Grant AGENT_ROLE to agent signer in FarmerRegistry
+        const REGISTRY_COOP_ROLE = await farmerRegistry.COOP_ROLE();
         const REGISTRY_AGENT_ROLE = await farmerRegistry.AGENT_ROLE();
+        await farmerRegistry.connect(admin).grantRole(REGISTRY_COOP_ROLE, admin.address);
         await farmerRegistry.connect(admin).grantRole(REGISTRY_AGENT_ROLE, agent.address);
 
         // Register farmer1
@@ -42,7 +43,10 @@ describe("BatchToken", function () {
             cooperative.address,
             IPFS_CID,
             250,
-            true
+            true,
+            "NIN-BT-001",
+            "Test Farmer 1",
+            "+256700000001"
         );
 
         // Deploy BatchToken
