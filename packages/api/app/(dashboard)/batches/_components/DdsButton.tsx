@@ -82,35 +82,53 @@ export function DdsButton({
 
       {/* Modal overlay */}
       {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-          <div className="mx-4 w-full max-w-lg rounded-xl border border-navy-200 bg-white p-6 shadow-xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+          <div
+            className="mx-4 w-full max-w-lg rounded-xl p-6 shadow-xl"
+            style={{
+              backgroundColor: "oklch(17% 0.008 55)",
+              border: "1px solid oklch(24% 0.008 55)",
+            }}
+          >
             <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-lg font-bold text-navy-900">
+              <h3 className="text-lg font-bold" style={{ color: "oklch(93% 0.006 60)" }}>
                 EUDR Due Diligence Statement
               </h3>
-              <span className="rounded-full bg-brand-100 px-3 py-1 text-xs font-medium text-brand-700">
+              <span
+                className="rounded-full px-3 py-1 text-xs font-medium"
+                style={{
+                  backgroundColor: "oklch(72% 0.16 80 / 0.15)",
+                  color: "oklch(72% 0.16 80)",
+                }}
+              >
                 DRAFT
               </span>
             </div>
 
-            <div className="space-y-3 border-t border-navy-100 pt-4">
+            <div
+              className="space-y-3 pt-4"
+              style={{ borderTop: "1px solid oklch(24% 0.008 55)" }}
+            >
               <Row label="Batch Token" value={`#${tokenId} — ${batchId}`} />
               <Row label="Farmer Wallet" value={farmer} />
               <Row label="Grade" value={grade} />
               <Row label="Weight" value={`${weightKg} kg`} />
               <Row label="Supply Chain Stage" value={stage} />
-              <Row label="GPS Verified" value="✅ Yes — MAAIF registered" />
-              <Row label="Deforestation-Free" value="✅ GFW verified" />
+              <Row label="GPS Verified" value="MAAIF registered" />
+              <Row label="Deforestation-Free" value="GFW verified" />
               <Row label="Issued" value={new Date().toISOString().split("T")[0]} />
             </div>
 
-            <div className="mt-5 flex items-center justify-between border-t border-navy-100 pt-4">
-              <p className="text-xs text-navy-400">
-                This is a preview. Full integration with MAAIF NTS API pending.
+            <div
+              className="mt-5 flex items-center justify-between pt-4"
+              style={{ borderTop: "1px solid oklch(24% 0.008 55)" }}
+            >
+              <p className="text-xs" style={{ color: "oklch(42% 0.012 55)" }}>
+                Preview. Full MAAIF NTS API integration pending.
               </p>
               <button
                 onClick={() => setOpen(false)}
-                className="rounded-lg bg-navy-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-navy-800"
+                className="dash-btn-primary text-sm"
               >
                 Close
               </button>
@@ -125,10 +143,15 @@ export function DdsButton({
 function Row({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex justify-between">
-      <span className="text-xs font-medium uppercase tracking-wide text-navy-400">
+      <span
+        className="text-xs font-medium uppercase tracking-wide"
+        style={{ color: "oklch(42% 0.012 55)" }}
+      >
         {label}
       </span>
-      <span className="text-sm text-navy-900">{value}</span>
+      <span className="text-sm" style={{ color: "oklch(93% 0.006 60)" }}>
+        {value}
+      </span>
     </div>
   );
 }

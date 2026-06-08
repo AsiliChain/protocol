@@ -189,6 +189,18 @@ export const purchaseOrderAbi = [
     outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
     stateMutability: "view",
   },
+  {
+    type: "function",
+    name: "createPurchaseOrder",
+    inputs: [
+      { name: "batchTokenId", type: "uint256", internalType: "uint256" },
+      { name: "buyerWallet", type: "address", internalType: "address" },
+      { name: "buyerOrganisation", type: "string", internalType: "string" },
+      { name: "agreedPriceUsdc", type: "uint256", internalType: "uint256" },
+    ],
+    outputs: [{ name: "orderId", type: "uint256", internalType: "uint256" }],
+    stateMutability: "nonpayable",
+  },
 ] as const;
 
 export const lendingVaultAbi = [
