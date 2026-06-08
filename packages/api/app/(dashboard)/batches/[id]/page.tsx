@@ -248,7 +248,6 @@ export default async function BatchDetailPage({
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div>
         <a
           href="/batches"

@@ -9,7 +9,7 @@ AsiliChain is on-chain financial infrastructure for Uganda's 3.5 million smallho
 Status: PRE-LAUNCH. Phase 1 pilot Q3 2026.
 Gate: 50 loans auto-repaid on Mantle mainnet.
 Contact: hello@asilichain.xyz
-Docs: https://asilichain.github.io/docs
+Docs: https://docs.asilichain.xyz
 
 ## Local Directory Structure
 
@@ -248,7 +248,7 @@ Env vars: `CONTRACT_IDENTITY_REGISTRY` in `packages/api/.env.local`, `IDENTITY_R
 ## Development Rules
 
 1. Read packages/../docs before writing any code
-2. Source of truth: https://asilichain.github.io/docs
+2. Source of truth: https://docs.asilichain.xyz
 3. Solidity: 0.8.28 only (OZ 5.6.1 minimum)
 4. TypeScript strict mode everywhere
 5. Never commit .env files

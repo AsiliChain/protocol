@@ -73,6 +73,14 @@ export function TopBar() {
       </div>
       <div className="flex items-center gap-3">
         <a
+          href="https://docs.asilichain.xyz"
+          target="_blank"
+          rel="noreferrer"
+          className="dash-btn-ghost no-underline"
+        >
+          Docs
+        </a>
+        <a
           href="https://sepolia.mantlescan.org"
           target="_blank"
           rel="noreferrer"
