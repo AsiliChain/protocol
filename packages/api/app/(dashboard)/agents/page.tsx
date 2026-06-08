@@ -1,4 +1,5 @@
 import { getAgentsIdentity, type AgentIdentity } from "@/lib/dashboard";
+export const dynamic = "force-dynamic";
 import { agents as agentRegistry } from "@/lib/agents/registry";
 import { RunAgentButton } from "./_components/RunAgentButton";
 

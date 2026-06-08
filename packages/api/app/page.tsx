@@ -546,12 +546,12 @@ export default function LandingPage() {
               IdentityRegistry on MantleScan
             </a>
             <a
-              href="https://asilichain.github.io/docs"
-              target="_blank"
-              rel="noreferrer"
-              className="rounded-none border border-white/15 px-8 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-white/70 transition-all hover:border-white/30 hover:text-white"
-            >
-              Read the Docs &rarr;
+href="https://docs.asilichain.xyz"
+               target="_blank"
+               rel="noreferrer"
+               className="rounded-none border border-white/15 px-8 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-white/70 transition-all hover:border-white/30 hover:text-white"
+             >
+               Read the Docs &rarr;
             </a>
           </div>
         </div>
@@ -573,7 +573,7 @@ export default function LandingPage() {
             </div>
             <div className="flex items-center gap-6 text-sm text-white/40">
               <a
-                href="https://asilichain.github.io/docs"
+                href="https://docs.asilichain.xyz"
                 target="_blank"
                 rel="noreferrer"
                 className="hover:text-white"

@@ -1,4 +1,6 @@
+import Link from "next/link";
 import { getDashboardStats, getRecentBatches, stageLabel, stageColor } from "@/lib/dashboard";
+export const dynamic = "force-dynamic";
 
 export default async function BatchesPage() {
   const [stats, batches] = await Promise.all([
@@ -17,6 +19,15 @@ export default async function BatchesPage() {
               : "Coffee batch lifecycle"}
           </p>
         </div>
+        <Link
+          href="/agents/workspace"
+          className="dash-btn-primary inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-4 w-4">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+          </svg>
+          Record Delivery
+        </Link>
       </div>
 
       {batches.length === 0 ? (

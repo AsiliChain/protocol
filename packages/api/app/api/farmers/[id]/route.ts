@@ -4,9 +4,10 @@ import { errorResponse } from "@/api/_lib/auth";
 
 export async function GET(
   _request: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ): Promise<Response> {
-  const farmerWallet = params.id as `0x${string}`;
+  const { id } = await params;
+  const farmerWallet = id as `0x${string}`;
 
   if (!farmerWallet || farmerWallet === "0x0") {
     return errorResponse(400, "Invalid farmer wallet address");

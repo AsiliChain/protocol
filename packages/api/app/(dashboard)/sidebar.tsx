@@ -69,7 +69,7 @@ const navItems = [
   { href: "/purchase-orders", label: "Purchase Orders" },
   { href: "/cooperatives", label: "Cooperatives" },
   { href: "/agents", label: "AI Agents" },
-  { href: "/agents/workspace", label: "Agent Workspace" },
+  { href: "/agents/workspace", label: "Workspace" },
   { href: "/ccip", label: "CCIP Bridge" },
 ];
 

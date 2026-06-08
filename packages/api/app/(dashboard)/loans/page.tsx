@@ -1,4 +1,6 @@
+import Link from "next/link";
 import { getDashboardStats, getAllLoans, formatUsdc, formatDate } from "@/lib/dashboard";
+export const dynamic = "force-dynamic";
 import { getPublicClient } from "@/lib/mantle";
 import { addresses, lendingVaultAbi, batchTokenAbi } from "@/lib/contracts";
 
@@ -89,10 +91,21 @@ export default async function LoansPage() {
           className="rounded-xl p-6"
           style={{ backgroundColor: "oklch(17% 0.008 55)", border: "1px solid oklch(24% 0.008 55)" }}
         >
-          <p className="text-sm" style={{ color: "oklch(42% 0.012 55)" }}>
-            No active loans. Loans are created when batches are used as
-            collateral.
-          </p>
+      <p className="text-sm" style={{ color: "oklch(42% 0.012 55)" }}>
+        No active loans. Loans are created when batches are used as
+        collateral.
+      </p>
+      <p className="mt-3 text-sm" style={{ color: "oklch(55% 0.01 55)" }}>
+        Loans are originated automatically when a batch reaches EXPORTED stage.{" "}
+        <Link
+          href="/batches"
+          className="font-medium transition-colors hover:underline"
+          style={{ color: "oklch(72% 0.16 80)" }}
+        >
+          Advance a batch to EXPORTED
+        </Link>{" "}
+        from the Batches page.
+      </p>
         </div>
       ) : (
         <div

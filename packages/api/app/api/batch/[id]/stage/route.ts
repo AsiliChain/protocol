@@ -14,7 +14,7 @@ interface StageUpdateBody {
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ): Promise<Response> {
   try {
     await verifyBearer(request);
@@ -22,7 +22,7 @@ export async function PATCH(
     return errorResponse(401, "Unauthorized");
   }
 
-  const tokenId = params.id;
+  const { id: tokenId } = await params;
   if (!tokenId || tokenId === "0") {
     return errorResponse(400, "Invalid token ID");
   }

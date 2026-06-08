@@ -1,3 +1,5 @@
+import Link from "next/link";
+export const dynamic = "force-dynamic";
 import {
   getDashboardStats,
   getRecentBatches,
@@ -41,8 +43,102 @@ export default async function DashboardPage() {
   const MANTLESCAN_TOKENHOLDER =
     "https://sepolia.mantlescan.org/address/0x27A445d5DfbbfB0B1fcE7D9199859C000B9070F3?tab=tokenholder";
 
+  const isFirstVisit = stats.totalBatches === 0;
+
+  const onboardingSteps = [
+    { number: 1, label: "Register Cooperative", href: "/cooperatives" },
+    { number: 2, label: "Invite Agents", href: "/agents/workspace" },
+    { number: 3, label: "Register Farmers", href: "/agents/workspace" },
+    { number: 4, label: "Record Deliveries", href: "/agents/workspace" },
+    { number: 5, label: "Track Batches", href: "/batches" },
+  ];
+
   return (
     <div className="space-y-8">
+      {/* Onboarding / Quick Actions */}
+      {isFirstVisit ? (
+        <div
+          className="dash-card"
+          style={{ padding: "24px" }}
+        >
+          <h2
+            className="text-lg font-bold"
+            style={{ color: "oklch(93% 0.006 60)", fontFamily: "'Archivo Black', sans-serif" }}
+          >
+            Get Started
+          </h2>
+          <p className="mt-1 text-sm" style={{ color: "oklch(55% 0.01 55)" }}>
+            Follow these steps to set up your supply chain on AsiliChain
+          </p>
+          <div className="mt-5 flex flex-col gap-4 sm:flex-row sm:items-start">
+            {onboardingSteps.map((step, i) => (
+              <div key={step.number} className="flex items-start gap-3 sm:flex-1">
+                <div className="flex flex-col items-center">
+                  <span
+                    className="flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold"
+                    style={{
+                      backgroundColor: "oklch(72% 0.16 80 / 0.15)",
+                      color: "oklch(72% 0.16 80)",
+                    }}
+                  >
+                    {step.number}
+                  </span>
+                  {i < onboardingSteps.length - 1 && (
+                    <div
+                      className="mt-2 hidden h-6 w-px sm:block"
+                      style={{ backgroundColor: "oklch(30% 0.008 55)" }}
+                    />
+                  )}
+                </div>
+                <Link
+                  href={step.href}
+                  className="text-sm font-medium transition-colors hover:underline"
+                  style={{ color: "oklch(72% 0.16 80)" }}
+                >
+                  {step.label}
+                </Link>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div
+          className="flex flex-wrap items-center gap-3 rounded-xl px-5 py-3"
+          style={{
+            backgroundColor: "oklch(17% 0.008 55)",
+            border: "1px solid oklch(24% 0.008 55)",
+          }}
+        >
+          <span className="text-xs font-medium uppercase tracking-wide" style={{ color: "oklch(55% 0.01 55)" }}>
+            Quick Actions
+          </span>
+          <Link
+            href="/agents/workspace"
+            className="dash-btn-primary inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium"
+          >
+            Register Farmer
+          </Link>
+          <Link
+            href="/agents/workspace"
+            className="dash-btn-ghost inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium"
+          >
+            Record Delivery
+          </Link>
+          <Link
+            href="/batches"
+            className="dash-btn-ghost inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium"
+          >
+            View Batches
+          </Link>
+          <Link
+            href="/loans"
+            className="dash-btn-ghost inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium"
+          >
+            View Loans
+          </Link>
+        </div>
+      )}
+
       {/* Stats Bar */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard

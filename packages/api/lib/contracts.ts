@@ -6,16 +6,19 @@ function envAddress(key: string): `0x${string}` {
   return getAddress(val);
 }
 
+// Lazy getters — env vars are read at first property access, not at module import time.
+// This prevents build failures when API routes transitively import this module
+// but only need the ABIs, not the addresses.
 export const addresses = {
-  farmerRegistry: envAddress("CONTRACT_FARMER_REGISTRY"),
-  creditScore: envAddress("CONTRACT_CREDIT_SCORE"),
-  batchToken: envAddress("CONTRACT_BATCH_TOKEN"),
-  traceLog: envAddress("CONTRACT_TRACE_LOG"),
-  purchaseOrder: envAddress("CONTRACT_PURCHASE_ORDER"),
-  protocolFee: envAddress("CONTRACT_PROTOCOL_FEE"),
-  lendingVault: envAddress("CONTRACT_LENDING_VAULT"),
-  identityRegistry: envAddress("CONTRACT_IDENTITY_REGISTRY"),
-} as const;
+  get farmerRegistry() { return envAddress("CONTRACT_FARMER_REGISTRY"); },
+  get creditScore() { return envAddress("CONTRACT_CREDIT_SCORE"); },
+  get batchToken() { return envAddress("CONTRACT_BATCH_TOKEN"); },
+  get traceLog() { return envAddress("CONTRACT_TRACE_LOG"); },
+  get purchaseOrder() { return envAddress("CONTRACT_PURCHASE_ORDER"); },
+  get protocolFee() { return envAddress("CONTRACT_PROTOCOL_FEE"); },
+  get lendingVault() { return envAddress("CONTRACT_LENDING_VAULT"); },
+  get identityRegistry() { return envAddress("CONTRACT_IDENTITY_REGISTRY"); },
+};
 
 // Minimal ABIs — only the functions the API calls.
 // Generated from hardhat artifacts; keep in sync with deployed contracts.

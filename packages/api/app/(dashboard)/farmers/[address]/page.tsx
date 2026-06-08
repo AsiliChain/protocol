@@ -1,4 +1,5 @@
 import Link from "next/link";
+export const dynamic = "force-dynamic";
 import {
   getFarmerInfo,
   getFarmerCreditScore,
@@ -15,9 +16,10 @@ import {
 export default async function FarmerDetailPage({
   params,
 }: {
-  params: { address: string };
+  params: Promise<{ address: string }>;
 }) {
-  const wallet = params.address as `0x${string}`;
+  const { address } = await params;
+  const wallet = address as `0x${string}`;
 
   let farmer = null;
   let creditScore: number | null = null;

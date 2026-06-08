@@ -1,4 +1,5 @@
 import { getPublicClient } from "@/lib/mantle";
+export const dynamic = "force-dynamic";
 import { addresses, purchaseOrderAbi, batchTokenAbi } from "@/lib/contracts";
 import { formatUsdc, formatDate } from "@/lib/dashboard";
 import { CommitPoForm } from "./_components/CommitPoForm";

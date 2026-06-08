@@ -4,9 +4,9 @@ import { errorResponse } from "@/api/_lib/auth";
 
 export async function GET(
   _request: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ): Promise<Response> {
-  const tokenId = params.id;
+  const { id: tokenId } = await params;
   if (!tokenId || tokenId === "0") {
     return errorResponse(400, "Invalid token ID");
   }
