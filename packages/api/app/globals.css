@@ -305,51 +305,161 @@
   }
 }
 
-/* ── Header (Landing) ────────────────────────────────── */
+/* ── Header (Landing) — flareapp.io-style pill navbar ── */
 
+/* Default: contracted (scrollY > 60) — narrow pill flush to edges */
 .landing-header {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 50;
-  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  height: 88px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.landing-header.compact {
-  background-color: oklch(100% 0 0 / 0.88);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  box-shadow: 0 1px 3px oklch(0% 0 0 / 0.04), 0 1px 2px oklch(0% 0 0 / 0.02);
-  border-bottom: 1px solid oklch(88% 0.006 60);
+/* Scrolled: expanded (scrollY === 0, top of page) — taller header, pill pulled inward */
+.landing-header.scrolled {
+  height: 104px;
 }
 
-.landing-header.compact .header-logo-img {
-  height: 2rem;
-  width: 2rem;
+/* Outer container — default contracted, expands inward when scrolled */
+.nav-container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0;
+  transition: max-width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              margin    0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.landing-header.compact .header-logo-text {
-  font-size: 0.8125rem;
+.landing-header.scrolled .nav-container {
+  max-width: 1024px;
+  margin: 0 104px;
 }
 
-.landing-header.compact .header-logo-sub {
-  font-size: 0.625rem;
+/* Inner pill — default flat, gains padding/height/bg when scrolled (top of page) */
+.nav-pill {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0;
+  height: 40px;
+  border-radius: 9999px;
+  background: oklch(100% 0 0 / 0.2);
+  border: 1px solid transparent;
+  transition: padding 0.3s cubic-bezier(0.4, 0, 0.2, 1) 0.1s,
+              height  0.3s cubic-bezier(0.4, 0, 0.2, 1) 0.1s;
 }
 
-.landing-header.compact .header-inner {
-  height: 3.5rem;
+.landing-header.scrolled .nav-pill {
+  padding: 8px 8px 8px 20px;
+  height: 56px;
+  border-radius: 9999px;
+  background: oklch(100% 0 0 / 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 1px 3px oklch(0% 0 0 / 0.06), 0 1px 2px oklch(0% 0 0 / 0.04);
+  border: 1px solid oklch(88% 0.006 60 / 0.6);
 }
 
-.header-inner {
-  height: 4rem;
-  transition: height 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+/* Nav link styling inside pill */
+.nav-link {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: oklch(45% 0.012 60);
+  transition: color 0.15s ease;
+  text-decoration: none;
 }
 
-.header-logo-img {
-  height: 2.25rem;
-  width: 2.25rem;
-  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+.nav-link:hover {
+  color: oklch(15% 0.015 60);
+}
+
+/* Logo inside pill */
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.nav-logo-img {
+  height: 1.75rem;
+  width: 1.75rem;
+  flex-shrink: 0;
+}
+
+.nav-logo-text {
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.025em;
+  color: oklch(18% 0.01 60);
+  white-space: nowrap;
+}
+
+/* CTA button inside pill */
+.nav-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 0 1.25rem;
+  border-radius: 9999px;
+  background: oklch(15% 0.015 60);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  transition: background 0.15s ease, transform 0.15s ease;
+  white-space: nowrap;
+}
+
+.nav-cta:hover {
+  background: oklch(28% 0.015 60);
+  transform: translateY(-0.5px);
+}
+
+/* Links container inside pill */
+.nav-links {
+  display: none;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .nav-links {
+    display: flex;
+  }
+}
+
+/* Mobile hamburger inside pill */
+.nav-hamburger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.375rem;
+  border-radius: 0.5rem;
+  color: oklch(45% 0.012 60);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.nav-hamburger:hover {
+  color: oklch(15% 0.015 60);
+  background: oklch(95% 0.006 85);
+}
+
+@media (min-width: 768px) {
+  .nav-hamburger {
+    display: none;
+  }
 }
 
 /* ── Dashboard light theme ───────────────────────────── */

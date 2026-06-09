@@ -55,22 +55,26 @@ export default function LandingPage() {
 
   return (
     <div ref={rootRef} className="min-h-screen" style={{ backgroundColor: "oklch(97.5% 0.005 85)" }}>
-      {/* Navigation */}
-      <nav className={`landing-header ${scrolled ? "compact" : ""}`}>
-        <div className="header-inner mx-auto flex max-w-[72rem] items-center justify-between px-6">
-          <Link href="/" className="flex items-center gap-3 no-underline">
-            <img src="/asilichain-symbol.svg" alt="AsiliChain" className="header-logo-img" />
-            <span className="header-logo-text text-sm font-bold tracking-wide" style={{ color: "oklch(18% 0.01 60)" }}>AsiliChain</span>
-          </Link>
-          <div className="hidden md:flex items-center gap-6">
-            <a href={MANTLESCAN_LINK} target="_blank" rel="noreferrer" className="text-sm font-medium text-fg-muted transition-colors hover:text-fg-default">MantleScan</a>
-            <Link href="/dashboard" className="inline-flex items-center justify-center rounded-lg bg-fg-default px-5 py-2 text-xs font-semibold uppercase tracking-[0.06em] text-white transition-all hover:bg-[oklch(28%_0.015_60)] hover:-translate-y-0.5">Dashboard</Link>
+      {/* Navigation — flareapp.io pill navbar */}
+      <header className={`landing-header ${scrolled ? "scrolled" : ""}`}>
+        <div className="nav-container">
+          <div className="nav-pill">
+            <Link href="/" className="nav-logo">
+              <img src="/asilichain-symbol.svg" alt="AsiliChain" className="nav-logo-img" />
+              <span className="nav-logo-text">AsiliChain</span>
+            </Link>
+
+            <div className="nav-links">
+              <a href={MANTLESCAN_LINK} target="_blank" rel="noreferrer" className="nav-link">MantleScan</a>
+              <Link href="/dashboard" className="nav-cta">Dashboard</Link>
+            </div>
+
+            <button onClick={() => setMobileOpen(true)} className="nav-hamburger" aria-label="Open menu">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-6 w-6"><path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>
+            </button>
           </div>
-          <button onClick={() => setMobileOpen(true)} className="flex md:hidden items-center justify-center p-2 -mr-2 rounded-lg text-fg-muted hover:text-fg-default hover:bg-bg-subtle transition-colors" aria-label="Open menu">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-6 w-6"><path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>
-          </button>
         </div>
-      </nav>
+      </header>
       {mobileOpen && <div className="fixed inset-0 z-55 bg-black/20 md:hidden" onClick={() => setMobileOpen(false)} />}
       <div className={`landing-mobile-menu ${mobileOpen ? "open" : ""} md:hidden`}>
         <div className="flex justify-end">
@@ -85,12 +89,12 @@ export default function LandingPage() {
       </div>
 
       {/* Hero */}
-      <section className="relative min-h-[85vh] overflow-hidden">
+      <section className="relative flex min-h-screen flex-col overflow-hidden pt-[120px] pb-[60px]">
         <div className="hero-orb" /><div className="hero-orb" /><div className="hero-orb" />
         <div className="hero-ring" style={{ width: "600px", height: "600px", top: "-15%", right: "-10%" }} />
         <div className="hero-ring" style={{ width: "400px", height: "400px", bottom: "5%", left: "55%" }} />
-        <div className="relative z-10 mx-auto grid min-h-[85vh] max-w-[72rem] grid-cols-1 gap-0 md:grid-cols-2">
-          <div className="flex flex-col justify-center gap-6 px-8 py-28 md:px-12 md:py-32">
+        <div className="relative z-10 mx-auto grid w-full max-w-[72rem] grid-cols-1 items-start gap-0 md:grid-cols-2">
+          <div className="flex flex-col gap-4 px-8 pt-0 pb-8 md:px-12 md:pb-12">
             <h1 className="reveal font-['var(--font-archivo)'] text-4xl font-black leading-[1.05] tracking-[-0.025em] text-fg-default sm:text-5xl md:text-[clamp(2.5rem,4vw,4rem)]">
               AsiliChain is the financial infrastructure maximizing value for farmers across the{" "}
               <span className="text-gold-accent">African coffee supply chain</span>.
@@ -98,7 +102,7 @@ export default function LandingPage() {
             <p className="reveal max-w-md text-lg leading-relaxed text-fg-muted">
               GPS-verified crops on Mantle Network. Instant mobile money payments. Automated EUDR compliance. One platform uniting farmers, exporters, and regulators.
             </p>
-            <div className="reveal flex flex-wrap gap-8 border-t border-border-light pt-7">
+            <div className="reveal flex flex-wrap gap-6 border-t border-border-light pt-4">
               <div className="stats-reveal flex flex-col gap-0.5">
                 <span className="text-2xl font-bold tabular-nums text-gold-accent">3.5M</span>
                 <span className="text-xs text-fg-subtle">Farmers targeted</span>
@@ -112,32 +116,28 @@ export default function LandingPage() {
                 <span className="text-xs text-fg-subtle">Payment speed</span>
               </div>
             </div>
-            <div className="reveal flex flex-col items-start gap-4 sm:flex-row sm:items-center">
-              <Link href="/dashboard" className="inline-flex items-center justify-center rounded-lg bg-fg-default px-8 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-white transition-all hover:bg-[oklch(28%_0.015_60)] hover:-translate-y-0.5">Explore Dashboard</Link>
-              <a href={MANTLESCAN_LINK} target="_blank" rel="noreferrer" className="inline-flex items-center justify-center rounded-lg border border-border-med px-8 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-fg-muted transition-all hover:border-fg-subtle hover:text-fg-default">View on MantleScan</a>
-            </div>
           </div>
-          <div className="reveal-right flex items-start justify-center px-8 py-12 md:justify-end md:py-24 md:pl-8 md:pr-12">
-            <div className="w-full max-w-sm space-y-2.5">
-              <div className="card-hover flex items-center gap-3 rounded-lg border border-brand-200 bg-white px-4 py-3.5">
+          <div className="reveal-right flex items-start justify-center px-8 pt-0 pb-12 md:justify-end md:pb-16 md:pl-8 md:pr-12">
+            <div className="w-full max-w-sm space-y-2">
+              <div className="card-hover flex items-center gap-3 rounded-lg border border-brand-200 bg-white px-4 py-3">
                 <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-md bg-brand-100">
                   <svg className="h-4 w-4 text-brand-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1M4.22 4.22l.707.707m12.02 12.02.707.707M1 12h2m18 0h2M4.22 19.78l.707-.707M18.95 5.636l-.707.707M12 7a5 5 0 0 1 5 5m-5-5a5 5 0 0 0-5 5m5-5v2m0 6v2" /></svg>
                 </div>
                 <div><div className="text-sm font-semibold text-fg-default">Farmer</div><div className="text-xs text-fg-subtle">Registers, delivers coffee, receives payment</div></div>
               </div>
-              <div className="card-hover flex items-center gap-3 rounded-lg border border-gold-200 bg-white px-4 py-3.5">
+              <div className="card-hover flex items-center gap-3 rounded-lg border border-gold-200 bg-white px-4 py-3">
                 <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-md bg-gold-100">
                   <svg className="h-4 w-4 text-gold-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" /></svg>
                 </div>
                 <div><div className="text-sm font-semibold text-fg-default">Cooperative</div><div className="text-xs text-fg-subtle">Manages agents, represents farmer collective</div></div>
               </div>
-              <div className="card-hover flex items-center gap-3 rounded-lg border border-earth-200 bg-white px-4 py-3.5">
+              <div className="card-hover flex items-center gap-3 rounded-lg border border-earth-200 bg-white px-4 py-3">
                 <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-md bg-earth-100">
                   <svg className="h-4 w-4 text-earth-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z" /></svg>
                 </div>
                 <div><div className="text-sm font-semibold text-fg-default">Batch Token</div><div className="text-xs text-fg-subtle">NFT-backed traceability from farm to export</div></div>
               </div>
-              <div className="card-hover flex items-center gap-3 rounded-lg border border-gold-200 bg-white px-4 py-3.5">
+              <div className="card-hover flex items-center gap-3 rounded-lg border border-gold-200 bg-white px-4 py-3">
                 <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-md bg-gold-100">
                   <svg className="h-4 w-4 text-gold-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 0 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m0 0v.375c0 .621-.504 1.125-1.125 1.125H6.75" /></svg>
                 </div>
@@ -146,7 +146,7 @@ export default function LandingPage() {
               <div className="flex justify-center py-2">
                 <svg className="h-6 w-6 text-gold-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3" /></svg>
               </div>
-              <div className="dash-card-glow flex items-center gap-3 rounded-lg border-2 border-gold-300 bg-white px-4 py-3.5">
+              <div className="dash-card-glow flex items-center gap-3 rounded-lg border-2 border-gold-300 bg-white px-4 py-3">
                 <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-md bg-gold-100">
                   <svg className="h-4 w-4 text-gold-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
                 </div>
