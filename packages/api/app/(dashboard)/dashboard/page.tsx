@@ -63,11 +63,11 @@ export default async function DashboardPage() {
         >
           <h2
             className="text-lg font-bold"
-            style={{ color: "oklch(93% 0.006 60)", fontFamily: "'Archivo Black', sans-serif" }}
+            style={{ color: "oklch(18% 0.01 60)", fontFamily: "'Archivo Black', sans-serif" }}
           >
             Get Started
           </h2>
-          <p className="mt-1 text-sm" style={{ color: "oklch(55% 0.01 55)" }}>
+          <p className="mt-1 text-sm" style={{ color: "oklch(55% 0.012 60)" }}>
             Follow these steps to set up your supply chain on AsiliChain
           </p>
           <div className="mt-5 flex flex-col gap-4 sm:flex-row sm:items-start">
@@ -105,11 +105,11 @@ export default async function DashboardPage() {
         <div
           className="flex flex-wrap items-center gap-3 rounded-xl px-5 py-3"
           style={{
-            backgroundColor: "oklch(17% 0.008 55)",
-            border: "1px solid oklch(24% 0.008 55)",
+            backgroundColor: "oklch(95% 0.006 60)",
+            border: "1px solid oklch(88% 0.006 60)",
           }}
         >
-          <span className="text-xs font-medium uppercase tracking-wide" style={{ color: "oklch(55% 0.01 55)" }}>
+          <span className="text-xs font-medium uppercase tracking-wide" style={{ color: "oklch(55% 0.012 60)" }}>
             Quick Actions
           </span>
           <Link
@@ -198,7 +198,7 @@ export default async function DashboardPage() {
 
         {/* Agent Status */}
         <div className="dash-card">
-          <h2 className="text-base font-semibold" style={{ color: "oklch(93% 0.006 60)" }}>
+          <h2 className="text-base font-semibold" style={{ color: "oklch(18% 0.01 60)" }}>
             Agent Status
           </h2>
 
@@ -214,14 +214,14 @@ export default async function DashboardPage() {
               >
                 <p
                   className="flex items-center gap-1.5 text-sm font-semibold"
-                  style={{ color: "oklch(93% 0.006 60)" }}
+                  style={{ color: "oklch(18% 0.01 60)" }}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-4 w-4" style={{ color: "oklch(62% 0.17 155)" }}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 0 0-2.455 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z" />
                   </svg>
                   {agent.name}
                 </p>
-                <p className="mt-1 text-xs" style={{ color: "oklch(42% 0.012 55)" }}>
+                <p className="mt-1 text-xs" style={{ color: "oklch(55% 0.012 60)" }}>
                   Agent ID: {agent.agentId}
                 </p>
                 {agent.owner ? (
@@ -235,7 +235,7 @@ export default async function DashboardPage() {
                     {truncateAddress(agent.owner)}
                   </a>
                 ) : (
-                  <p className="mt-1 text-xs italic" style={{ color: "oklch(42% 0.012 55)" }}>
+                  <p className="mt-1 text-xs italic" style={{ color: "oklch(55% 0.012 60)" }}>
                     Not registered on-chain
                   </p>
                 )}
@@ -243,7 +243,7 @@ export default async function DashboardPage() {
             ))}
 
             {agentsIdentity.length === 0 && (
-              <p className="col-span-full text-sm" style={{ color: "oklch(42% 0.012 55)" }}>
+              <p className="col-span-full text-sm" style={{ color: "oklch(55% 0.012 60)" }}>
                 No agents registered
               </p>
             )}
@@ -253,7 +253,7 @@ export default async function DashboardPage() {
 
       {/* Recent Batches */}
       <div className="dash-card">
-        <h2 className="text-base font-semibold" style={{ color: "oklch(93% 0.006 60)" }}>
+        <h2 className="text-base font-semibold" style={{ color: "oklch(18% 0.01 60)" }}>
           Recent Batches
         </h2>
 
@@ -283,7 +283,7 @@ export default async function DashboardPage() {
                     <td className="pr-6 font-mono text-xs" style={{ color: "oklch(68% 0.01 58)" }}>
                       {truncateAddress(b.farmerWallet)}
                     </td>
-                    <td className="pr-6" style={{ color: "oklch(93% 0.006 60)" }}>
+                    <td className="pr-6" style={{ color: "oklch(18% 0.01 60)" }}>
                       {Number(b.weightKg).toLocaleString()}
                     </td>
                     <td className="pr-6 capitalize" style={{ color: "oklch(68% 0.01 58)" }}>
@@ -309,7 +309,7 @@ export default async function DashboardPage() {
                           Yes
                         </span>
                       ) : (
-                        <span className="text-xs" style={{ color: "oklch(42% 0.012 55)" }}>
+                        <span className="text-xs" style={{ color: "oklch(55% 0.012 60)" }}>
                           No
                         </span>
                       )}
@@ -320,7 +320,7 @@ export default async function DashboardPage() {
             </table>
           </div>
         ) : (
-          <p className="mt-4 text-sm" style={{ color: "oklch(42% 0.012 55)" }}>
+          <p className="mt-4 text-sm" style={{ color: "oklch(55% 0.012 60)" }}>
             No batches recorded yet
           </p>
         )}
@@ -349,8 +349,8 @@ function StatCard({
   const valColor = valueGold
     ? "oklch(72% 0.16 80)"
     : valueGreen
-      ? "oklch(62% 0.17 155)"
-      : "oklch(93% 0.006 60)";
+      ? "oklch(58% 0.16 155)"
+      : "oklch(18% 0.01 60)";
 
   const card = (
     <div className="dash-card dash-card-glow cursor-pointer transition-colors hover:border-[oklch(50%_0.10_80)]">
@@ -371,7 +371,7 @@ function StatCard({
         <div>
           <p
             className="text-xs font-medium uppercase tracking-[0.04em]"
-            style={{ color: "oklch(42% 0.012 55)" }}
+            style={{ color: "oklch(55% 0.012 60)" }}
           >
             {label}
           </p>

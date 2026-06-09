@@ -12,8 +12,8 @@ export default async function BatchesPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold" style={{ color: "oklch(93% 0.006 60)" }}>Batches</h2>
-          <p className="mt-1 text-sm" style={{ color: "oklch(42% 0.012 55)" }}>
+          <h2 className="text-2xl font-bold" style={{ color: "oklch(18% 0.01 60)" }}>Batches</h2>
+          <p className="mt-1 text-sm" style={{ color: "oklch(55% 0.012 60)" }}>
             {stats !== null
               ? `${stats.totalBatches} total batches`
               : "Coffee batch lifecycle"}
@@ -33,14 +33,14 @@ export default async function BatchesPage() {
       {batches.length === 0 ? (
         <div
           className="rounded-xl p-6"
-          style={{ backgroundColor: "oklch(17% 0.008 55)", border: "1px solid oklch(24% 0.008 55)" }}
+          style={{ backgroundColor: "oklch(100% 0 0)", border: "1px solid oklch(88% 0.006 60)" }}
         >
-          <p className="text-sm" style={{ color: "oklch(42% 0.012 55)" }}>No batches recorded yet</p>
+          <p className="text-sm" style={{ color: "oklch(55% 0.012 60)" }}>No batches recorded yet</p>
         </div>
       ) : (
         <div
           className="overflow-hidden rounded-xl shadow-sm"
-          style={{ backgroundColor: "oklch(17% 0.008 55)", border: "1px solid oklch(24% 0.008 55)" }}
+          style={{ backgroundColor: "oklch(100% 0 0)", border: "1px solid oklch(88% 0.006 60)" }}
         >
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">

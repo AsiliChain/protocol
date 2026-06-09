@@ -35,8 +35,8 @@ function StageTimeline({ current }: { current: number }) {
                       ? "oklch(72% 0.16 80)"
                       : isCurrent
                       ? "oklch(62% 0.14 65)"
-                      : "oklch(24% 0.008 55)",
-                    color: isDone || isCurrent ? "oklch(12% 0.005 60)" : "oklch(42% 0.012 55)",
+                      : "oklch(88% 0.006 60)",
+                    color: isDone || isCurrent ? "oklch(12% 0.005 60)" : "oklch(55% 0.012 60)",
                     boxShadow: isCurrent ? "0 0 0 3px oklch(72% 0.16 80 / 0.3)" : undefined,
                   }}
                 >
@@ -49,8 +49,8 @@ function StageTimeline({ current }: { current: number }) {
                       backgroundColor: isDone
                         ? "oklch(72% 0.16 80)"
                         : isCurrent
-                        ? "oklch(42% 0.012 55)"
-                        : "oklch(24% 0.008 55)",
+                        ? "oklch(55% 0.012 60)"
+                        : "oklch(88% 0.006 60)",
                     }}
                   />
                 )}
@@ -58,7 +58,7 @@ function StageTimeline({ current }: { current: number }) {
               <span
                 className="mt-2 text-center text-[10px] font-medium leading-tight"
                 style={{
-                  color: isDone || isCurrent ? "oklch(93% 0.006 60)" : "oklch(42% 0.012 55)",
+                  color: isDone || isCurrent ? "oklch(18% 0.01 60)" : "oklch(55% 0.012 60)",
                 }}
               >
                 {label}
@@ -88,12 +88,12 @@ export default async function BatchDetailPage({
       <div className="space-y-6">
         <h2
           className="text-2xl font-bold"
-          style={{ fontFamily: "'Archivo Black', sans-serif", color: "oklch(93% 0.006 60)" }}
+          style={{ fontFamily: "'Archivo Black', sans-serif", color: "oklch(18% 0.01 60)" }}
         >
           Invalid Batch
         </h2>
         <div className="dash-card p-6">
-          <p className="text-sm" style={{ color: "oklch(42% 0.012 55)" }}>
+          <p className="text-sm" style={{ color: "oklch(55% 0.012 60)" }}>
             Token ID must be a positive number
           </p>
           <a
@@ -158,13 +158,13 @@ export default async function BatchDetailPage({
       <div className="space-y-6">
         <h2
           className="text-2xl font-bold"
-          style={{ fontFamily: "'Archivo Black', sans-serif", color: "oklch(93% 0.006 60)" }}
+          style={{ fontFamily: "'Archivo Black', sans-serif", color: "oklch(18% 0.01 60)" }}
         >
           Batch Not Found
         </h2>
         <div className="dash-card p-6">
-          <p className="text-sm" style={{ color: "oklch(42% 0.012 55)" }}>
-            No batch with token ID <strong style={{ color: "oklch(93% 0.006 60)" }}>#{tokenId}</strong> exists on Mantle Sepolia
+          <p className="text-sm" style={{ color: "oklch(55% 0.012 60)" }}>
+            No batch with token ID <strong style={{ color: "oklch(18% 0.01 60)" }}>#{tokenId}</strong> exists on Mantle Sepolia
           </p>
           <a
             href="/batches"
@@ -258,18 +258,17 @@ export default async function BatchDetailPage({
         </a>
         <h2
           className="mt-1 text-2xl font-bold"
-          style={{ fontFamily: "'Archivo Black', sans-serif", color: "oklch(93% 0.006 60)" }}
+          style={{ fontFamily: "'Archivo Black', sans-serif", color: "oklch(18% 0.01 60)" }}
         >
           Batch #{tokenId}
         </h2>
       </div>
 
-      {/* Batch Info Card */}
       <div className="dash-card">
         <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
           <div>
             <p className="dash-table-header">Batch ID</p>
-            <p className="mt-0.5 font-mono text-sm" style={{ color: "oklch(93% 0.006 60)" }}>{batchId}</p>
+            <p className="mt-0.5 font-mono text-sm" style={{ color: "oklch(18% 0.01 60)" }}>{batchId}</p>
           </div>
           <div>
             <p className="dash-table-header">Farmer</p>
@@ -289,23 +288,23 @@ export default async function BatchDetailPage({
           </div>
           <div>
             <p className="dash-table-header">Minted</p>
-            <p className="mt-0.5 text-sm" style={{ color: "oklch(93% 0.006 60)" }}>
+            <p className="mt-0.5 text-sm" style={{ color: "oklch(18% 0.01 60)" }}>
               {formatDate(Number(mintTimestamp))}
             </p>
           </div>
           <div>
             <p className="dash-table-header">Weight</p>
-            <p className="mt-0.5 text-sm" style={{ color: "oklch(93% 0.006 60)" }}>
+            <p className="mt-0.5 text-sm" style={{ color: "oklch(18% 0.01 60)" }}>
               {weightKg.toString()} kg
             </p>
           </div>
           <div>
             <p className="dash-table-header">Grade</p>
-            <p className="mt-0.5 text-sm font-medium" style={{ color: "oklch(93% 0.006 60)" }}>{grade}</p>
+            <p className="mt-0.5 text-sm font-medium" style={{ color: "oklch(18% 0.01 60)" }}>{grade}</p>
           </div>
           <div>
             <p className="dash-table-header">Moisture</p>
-            <p className="mt-0.5 text-sm" style={{ color: "oklch(93% 0.006 60)" }}>
+            <p className="mt-0.5 text-sm" style={{ color: "oklch(18% 0.01 60)" }}>
               {moisturePct.toString()}%
             </p>
           </div>
@@ -321,7 +320,7 @@ export default async function BatchDetailPage({
             ) : (
               <span
                 className="mt-0.5 inline-block rounded-full px-2.5 py-0.5 text-xs font-medium"
-                style={{ backgroundColor: "oklch(24% 0.008 55)", color: "oklch(42% 0.012 55)" }}
+                style={{ backgroundColor: "oklch(88% 0.006 60)", color: "oklch(55% 0.012 60)" }}
               >
                 Inactive
               </span>
@@ -333,7 +332,7 @@ export default async function BatchDetailPage({
       {/* Stage Timeline + Controls */}
       <div className="dash-card">
         <div className="mb-2 flex items-center justify-between">
-          <h3 className="text-sm font-semibold" style={{ color: "oklch(93% 0.006 60)" }}>
+          <h3 className="text-sm font-semibold" style={{ color: "oklch(18% 0.01 60)" }}>
             Supply Chain Stage
           </h3>
         </div>
@@ -343,13 +342,13 @@ export default async function BatchDetailPage({
 
       {/* Farmer Info Card */}
       <div className="dash-card">
-        <h3 className="mb-3 text-sm font-semibold" style={{ color: "oklch(93% 0.006 60)" }}>
+        <h3 className="mb-3 text-sm font-semibold" style={{ color: "oklch(18% 0.01 60)" }}>
           Farmer Information
         </h3>
         <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
           <div>
             <p className="dash-table-header">Name</p>
-            <p className="mt-0.5 text-sm" style={{ color: "oklch(93% 0.006 60)" }}>
+            <p className="mt-0.5 text-sm" style={{ color: "oklch(18% 0.01 60)" }}>
               {farmerName ?? "Unknown"}
             </p>
           </div>
@@ -386,25 +385,25 @@ export default async function BatchDetailPage({
 
       {/* Batch Metadata Card */}
       <div className="dash-card">
-        <h3 className="mb-3 text-sm font-semibold" style={{ color: "oklch(93% 0.006 60)" }}>
+        <h3 className="mb-3 text-sm font-semibold" style={{ color: "oklch(18% 0.01 60)" }}>
           Batch Metadata
         </h3>
         <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
           <div>
             <p className="dash-table-header">Weight</p>
-            <p className="mt-0.5 text-sm font-medium" style={{ color: "oklch(93% 0.006 60)" }}>
+            <p className="mt-0.5 text-sm font-medium" style={{ color: "oklch(18% 0.01 60)" }}>
               {weightKg.toString()} kg
             </p>
           </div>
           <div>
             <p className="dash-table-header">Grade</p>
-            <p className="mt-0.5 text-sm font-medium" style={{ color: "oklch(93% 0.006 60)" }}>
+            <p className="mt-0.5 text-sm font-medium" style={{ color: "oklch(18% 0.01 60)" }}>
               {grade}
             </p>
           </div>
           <div>
             <p className="dash-table-header">Moisture</p>
-            <p className="mt-0.5 text-sm" style={{ color: "oklch(93% 0.006 60)" }}>
+            <p className="mt-0.5 text-sm" style={{ color: "oklch(18% 0.01 60)" }}>
               {moisturePct.toString()}%
             </p>
           </div>
@@ -437,7 +436,7 @@ export default async function BatchDetailPage({
         <div className="dash-card">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <h3 className="text-sm font-semibold" style={{ color: "oklch(93% 0.006 60)" }}>
+              <h3 className="text-sm font-semibold" style={{ color: "oklch(18% 0.01 60)" }}>
                 EUDR Compliance Document
               </h3>
               <p className="mt-1 text-sm" style={{ color: "oklch(60% 0.01 60)" }}>
@@ -459,19 +458,19 @@ export default async function BatchDetailPage({
       {/* Loan Info Card */}
       {loan && (
         <div className="dash-card">
-          <h3 className="mb-3 text-sm font-semibold" style={{ color: "oklch(93% 0.006 60)" }}>
+          <h3 className="mb-3 text-sm font-semibold" style={{ color: "oklch(18% 0.01 60)" }}>
             Loan Details
           </h3>
           <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
             <div>
               <p className="dash-table-header">Principal</p>
-              <p className="mt-0.5 text-sm font-medium" style={{ color: "oklch(93% 0.006 60)" }}>
+              <p className="mt-0.5 text-sm font-medium" style={{ color: "oklch(18% 0.01 60)" }}>
                 {formatUsdc(loan[2])} USDC
               </p>
             </div>
             <div>
               <p className="dash-table-header">Interest</p>
-              <p className="mt-0.5 text-sm" style={{ color: "oklch(93% 0.006 60)" }}>
+              <p className="mt-0.5 text-sm" style={{ color: "oklch(18% 0.01 60)" }}>
                 {formatUsdc(loan[3])} USDC
               </p>
             </div>
@@ -492,12 +491,12 @@ export default async function BatchDetailPage({
                       : ltvBps < 10000
                       ? "oklch(70% 0.15 75)"
                       : "oklch(55% 0.2 25)"
-                    : "oklch(42% 0.012 55)",
+                    : "oklch(55% 0.012 60)",
                 }}
               >
                 {ltvBps !== null ? `${(ltvBps / 100).toFixed(1)}%` : "N/A"}
                 {maxLtvBps !== null && ltvBps !== null && (
-                  <span style={{ color: "oklch(42% 0.012 55)" }}> / {(maxLtvBps / 100).toFixed(0)}% max</span>
+                  <span style={{ color: "oklch(55% 0.012 60)" }}> / {(maxLtvBps / 100).toFixed(0)}% max</span>
                 )}
               </p>
             </div>
@@ -525,7 +524,7 @@ export default async function BatchDetailPage({
                       ? "oklch(72% 0.16 80 / 0.15)"
                       : loan[7] === 2
                       ? "oklch(55% 0.2 25 / 0.15)"
-                      : "oklch(24% 0.008 55)",
+                      : "oklch(88% 0.006 60)",
                   color:
                     loan[7] === 1
                       ? "oklch(62% 0.17 155)"
@@ -533,7 +532,7 @@ export default async function BatchDetailPage({
                       ? "oklch(72% 0.16 80)"
                       : loan[7] === 2
                       ? "oklch(55% 0.2 25)"
-                      : "oklch(42% 0.012 55)",
+                      : "oklch(55% 0.012 60)",
                 }}
               >
                 {LOAN_STATUS[loan[7]] ?? `Unknown (${loan[7]})`}
@@ -546,13 +545,13 @@ export default async function BatchDetailPage({
       {/* Purchase Order Card */}
       {order ? (
         <div className="dash-card">
-          <h3 className="mb-3 text-sm font-semibold" style={{ color: "oklch(93% 0.006 60)" }}>
+          <h3 className="mb-3 text-sm font-semibold" style={{ color: "oklch(18% 0.01 60)" }}>
             Purchase Order
           </h3>
           <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
             <div>
               <p className="dash-table-header">Order ID</p>
-              <p className="mt-0.5 text-sm" style={{ color: "oklch(93% 0.006 60)" }}>
+              <p className="mt-0.5 text-sm" style={{ color: "oklch(18% 0.01 60)" }}>
                 #{Number(orderId).toString()}
               </p>
             </div>
@@ -564,11 +563,11 @@ export default async function BatchDetailPage({
             </div>
             <div>
               <p className="dash-table-header">Organisation</p>
-              <p className="mt-0.5 text-sm" style={{ color: "oklch(93% 0.006 60)" }}>{order[3]}</p>
+              <p className="mt-0.5 text-sm" style={{ color: "oklch(18% 0.01 60)" }}>{order[3]}</p>
             </div>
             <div>
               <p className="dash-table-header">Agreed Price</p>
-              <p className="mt-0.5 text-sm font-medium" style={{ color: "oklch(93% 0.006 60)" }}>
+              <p className="mt-0.5 text-sm font-medium" style={{ color: "oklch(18% 0.01 60)" }}>
                 {formatUsdc(order[4])} USDC
               </p>
             </div>
@@ -589,8 +588,8 @@ export default async function BatchDetailPage({
               <span
                 className="mt-0.5 inline-block rounded-full px-2.5 py-0.5 text-xs font-medium"
                 style={{
-                  backgroundColor: Number(order[7]) > 0 ? "oklch(72% 0.16 80 / 0.15)" : "oklch(24% 0.008 55)",
-                  color: Number(order[7]) > 0 ? "oklch(72% 0.16 80)" : "oklch(42% 0.012 55)",
+                  backgroundColor: Number(order[7]) > 0 ? "oklch(72% 0.16 80 / 0.15)" : "oklch(88% 0.006 60)",
+                  color: Number(order[7]) > 0 ? "oklch(72% 0.16 80)" : "oklch(55% 0.012 60)",
                 }}
               >
                 {Number(order[7]) === 0 ? "Pending" : Number(order[7]) === 1 ? "Confirmed" : `Status ${order[7]}`}
@@ -601,7 +600,7 @@ export default async function BatchDetailPage({
       ) : (
         loanActive && (
           <div className="dash-card">
-            <h3 className="mb-1 text-sm font-semibold" style={{ color: "oklch(93% 0.006 60)" }}>
+            <h3 className="mb-1 text-sm font-semibold" style={{ color: "oklch(18% 0.01 60)" }}>
               Purchase Order
             </h3>
             <p className="text-sm" style={{ color: "oklch(60% 0.01 60)" }}>

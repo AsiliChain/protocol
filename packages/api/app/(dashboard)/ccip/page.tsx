@@ -80,7 +80,7 @@ function BridgeCard({
   return (
     <div
       className="rounded-xl p-5"
-      style={{ backgroundColor: "oklch(17% 0.008 55)", border: "1px solid oklch(24% 0.008 55)", transition: "transform 200ms, border-color 200ms, box-shadow 200ms" }}
+      style={{ backgroundColor: "oklch(100% 0 0)", border: "1px solid oklch(88% 0.006 60)", transition: "transform 200ms, border-color 200ms, box-shadow 200ms" }}
     >
       <div className="flex items-start gap-3">
         <span
@@ -90,13 +90,13 @@ function BridgeCard({
           {icon}
         </span>
         <div className="min-w-0 flex-1">
-          <p className="text-xs font-medium uppercase tracking-wide" style={{ color: "oklch(42% 0.012 55)" }}>
+          <p className="text-xs font-medium uppercase tracking-wide" style={{ color: "oklch(55% 0.012 60)" }}>
             {title}
           </p>
-          <p className="mt-0.5 break-all font-mono text-sm" style={{ color: "oklch(93% 0.006 60)" }}>
+          <p className="mt-0.5 break-all font-mono text-sm" style={{ color: "oklch(18% 0.01 60)" }}>
             {value}
           </p>
-          <p className="mt-1 text-xs" style={{ color: "oklch(42% 0.012 55)" }}>{detail}</p>
+          <p className="mt-1 text-xs" style={{ color: "oklch(55% 0.012 60)" }}>{detail}</p>
         </div>
       </div>
     </div>
@@ -108,10 +108,10 @@ export default function CcipPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h2 className="text-2xl font-bold" style={{ color: "oklch(93% 0.006 60)" }}>
+        <h2 className="text-2xl font-bold" style={{ color: "oklch(18% 0.01 60)" }}>
           Cross-Chain Bridge (CCIP)
         </h2>
-        <p className="mt-1 text-sm" style={{ color: "oklch(42% 0.012 55)" }}>
+        <p className="mt-1 text-sm" style={{ color: "oklch(55% 0.012 60)" }}>
           Chainlink CCIP powers cross-chain settlements between Mantle Sepolia
           and Base Sepolia. Batches originate on Mantle; payouts settle on Base.
         </p>
@@ -127,14 +127,14 @@ export default function CcipPage() {
       {/* MantleScan link */}
       <div
         className="rounded-xl p-5"
-        style={{ backgroundColor: "oklch(17% 0.008 55)", border: "1px solid oklch(24% 0.008 55)" }}
+        style={{ backgroundColor: "oklch(100% 0 0)", border: "1px solid oklch(88% 0.006 60)" }}
       >
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="font-semibold" style={{ color: "oklch(93% 0.006 60)" }}>
+            <h3 className="font-semibold" style={{ color: "oklch(18% 0.01 60)" }}>
               Latest Bridge Transaction
             </h3>
-            <p className="mt-1 text-sm" style={{ color: "oklch(42% 0.012 55)" }}>
+            <p className="mt-1 text-sm" style={{ color: "oklch(55% 0.012 60)" }}>
               1 CCIP-BnM bridged Mantle Sepolia → Base Sepolia via Router. View
               on MantleScan for full details.
             </p>
@@ -153,23 +153,23 @@ export default function CcipPage() {
       {/* Fee info */}
       <div
         className="rounded-xl p-5"
-        style={{ backgroundColor: "oklch(17% 0.008 55)", border: "1px solid oklch(24% 0.008 55)" }}
+        style={{ backgroundColor: "oklch(100% 0 0)", border: "1px solid oklch(88% 0.006 60)" }}
       >
-        <h3 className="font-semibold" style={{ color: "oklch(93% 0.006 60)" }}>Fee Configuration</h3>
+        <h3 className="font-semibold" style={{ color: "oklch(18% 0.01 60)" }}>Fee Configuration</h3>
         <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <p className="text-xs font-medium uppercase tracking-wide" style={{ color: "oklch(42% 0.012 55)" }}>
+            <p className="text-xs font-medium uppercase tracking-wide" style={{ color: "oklch(55% 0.012 60)" }}>
               Fee Token
             </p>
-            <p className="mt-0.5 font-mono text-sm" style={{ color: "oklch(93% 0.006 60)" }}>
+            <p className="mt-0.5 font-mono text-sm" style={{ color: "oklch(18% 0.01 60)" }}>
               address(0) — native MNT
             </p>
           </div>
           <div>
-            <p className="text-xs font-medium uppercase tracking-wide" style={{ color: "oklch(42% 0.012 55)" }}>
+            <p className="text-xs font-medium uppercase tracking-wide" style={{ color: "oklch(55% 0.012 60)" }}>
               ExtraArgs
             </p>
-            <p className="mt-0.5 font-mono text-sm" style={{ color: "oklch(93% 0.006 60)" }}>
+            <p className="mt-0.5 font-mono text-sm" style={{ color: "oklch(18% 0.01 60)" }}>
               0x97a657c9 + abi.encode(uint256(gasLimit))
             </p>
           </div>

@@ -18,19 +18,19 @@ export default function FarmersPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold" style={{ color: "oklch(93% 0.006 60)" }}>
+        <h1 className="text-2xl font-bold" style={{ color: "oklch(18% 0.01 60)" }}>
           Farmers
         </h1>
-        <p className="mt-1 text-sm" style={{ color: "oklch(42% 0.012 55)" }}>
+        <p className="mt-1 text-sm" style={{ color: "oklch(55% 0.012 60)" }}>
           Registered farmer profiles
         </p>
       </div>
 
       <div
         className="rounded-xl p-6"
-        style={{ backgroundColor: "oklch(17% 0.008 55)", border: "1px solid oklch(24% 0.008 55)" }}
+        style={{ backgroundColor: "oklch(100% 0 0)", border: "1px solid oklch(88% 0.006 60)" }}
       >
-        <h2 className="mb-4 font-semibold" style={{ color: "oklch(93% 0.006 60)" }}>
+        <h2 className="mb-4 font-semibold" style={{ color: "oklch(18% 0.01 60)" }}>
           Registered Farmers
         </h2>
         <div className="space-y-2">
@@ -39,7 +39,7 @@ export default function FarmersPage() {
               key={f.name}
               href={`/farmers/${f.address}`}
               className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm dash-card-border"
-              style={{ backgroundColor: "oklch(17% 0.008 55)", color: "oklch(93% 0.006 60)" }}
+              style={{ backgroundColor: "oklch(100% 0 0)", color: "oklch(18% 0.01 60)" }}
             >
               <span
                 className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold"
@@ -48,14 +48,14 @@ export default function FarmersPage() {
                 {f.name.split(" ").map((n) => n[0]).join("")}
               </span>
               <div className="flex-1 min-w-0">
-                <span className="font-medium" style={{ color: "oklch(93% 0.006 60)" }}>
+                <span className="font-medium" style={{ color: "oklch(18% 0.01 60)" }}>
                   {f.name}
                 </span>
                 <span className="ml-2 text-xs" style={{ color: "oklch(72% 0.16 80)" }}>
                   {f.region}
                 </span>
               </div>
-              <span className="font-mono text-xs" style={{ color: "oklch(42% 0.012 55)" }}>
+              <span className="font-mono text-xs" style={{ color: "oklch(55% 0.012 60)" }}>
                 {f.address.slice(0, 6)}...{f.address.slice(-4)}
               </span>
             </a>
@@ -65,9 +65,9 @@ export default function FarmersPage() {
 
       <div
         className="rounded-xl p-6"
-        style={{ backgroundColor: "oklch(17% 0.008 55)", border: "1px solid oklch(24% 0.008 55)" }}
+        style={{ backgroundColor: "oklch(100% 0 0)", border: "1px solid oklch(88% 0.006 60)" }}
       >
-        <h2 className="mb-3 font-semibold" style={{ color: "oklch(93% 0.006 60)" }}>
+        <h2 className="mb-3 font-semibold" style={{ color: "oklch(18% 0.01 60)" }}>
           Search by Wallet Address
         </h2>
         <form action={lookupFarmer} className="flex gap-3">

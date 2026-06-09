@@ -51,10 +51,10 @@ export default async function LoansPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold" style={{ color: "oklch(93% 0.006 60)" }}>
+        <h2 className="text-2xl font-bold" style={{ color: "oklch(18% 0.01 60)" }}>
           Loans
         </h2>
-        <p className="mt-1 text-sm" style={{ color: "oklch(42% 0.012 55)" }}>
+        <p className="mt-1 text-sm" style={{ color: "oklch(55% 0.012 60)" }}>
           Active loan positions with LTV status
         </p>
       </div>
@@ -63,9 +63,9 @@ export default async function LoansPage() {
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
         <div
           className="rounded-xl p-4"
-          style={{ backgroundColor: "oklch(17% 0.008 55)", border: "1px solid oklch(24% 0.008 55)", transition: "transform 200ms, border-color 200ms, box-shadow 200ms" }}
+          style={{ backgroundColor: "oklch(100% 0 0)", border: "1px solid oklch(88% 0.006 60)", transition: "transform 200ms, border-color 200ms, box-shadow 200ms" }}
         >
-          <p className="text-xs font-medium uppercase tracking-wide" style={{ color: "oklch(42% 0.012 55)" }}>
+          <p className="text-xs font-medium uppercase tracking-wide" style={{ color: "oklch(55% 0.012 60)" }}>
             Active Loans
           </p>
           <p className="mt-1 text-2xl font-bold" style={{ color: "oklch(72% 0.16 80)" }}>
@@ -74,9 +74,9 @@ export default async function LoansPage() {
         </div>
         <div
           className="rounded-xl p-4"
-          style={{ backgroundColor: "oklch(17% 0.008 55)", border: "1px solid oklch(24% 0.008 55)", transition: "transform 200ms, border-color 200ms, box-shadow 200ms" }}
+          style={{ backgroundColor: "oklch(100% 0 0)", border: "1px solid oklch(88% 0.006 60)", transition: "transform 200ms, border-color 200ms, box-shadow 200ms" }}
         >
-          <p className="text-xs font-medium uppercase tracking-wide" style={{ color: "oklch(42% 0.012 55)" }}>
+          <p className="text-xs font-medium uppercase tracking-wide" style={{ color: "oklch(55% 0.012 60)" }}>
             Total Outstanding
           </p>
           <p className="mt-1 text-2xl font-bold" style={{ color: "oklch(72% 0.16 80)" }}>
@@ -89,13 +89,13 @@ export default async function LoansPage() {
       {loansWithLtv.length === 0 ? (
         <div
           className="rounded-xl p-6"
-          style={{ backgroundColor: "oklch(17% 0.008 55)", border: "1px solid oklch(24% 0.008 55)" }}
+          style={{ backgroundColor: "oklch(100% 0 0)", border: "1px solid oklch(88% 0.006 60)" }}
         >
-      <p className="text-sm" style={{ color: "oklch(42% 0.012 55)" }}>
+      <p className="text-sm" style={{ color: "oklch(55% 0.012 60)" }}>
         No active loans. Loans are created when batches are used as
         collateral.
       </p>
-      <p className="mt-3 text-sm" style={{ color: "oklch(55% 0.01 55)" }}>
+      <p className="mt-3 text-sm" style={{ color: "oklch(55% 0.012 60)" }}>
         Loans are originated automatically when a batch reaches EXPORTED stage.{" "}
         <Link
           href="/batches"
@@ -110,7 +110,7 @@ export default async function LoansPage() {
       ) : (
         <div
           className="overflow-hidden rounded-xl shadow-sm"
-          style={{ backgroundColor: "oklch(17% 0.008 55)", border: "1px solid oklch(24% 0.008 55)" }}
+          style={{ backgroundColor: "oklch(100% 0 0)", border: "1px solid oklch(88% 0.006 60)" }}
         >
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
@@ -147,10 +147,10 @@ export default async function LoansPage() {
                         {l.farmerWallet.slice(-4)}
                       </a>
                     </td>
-                    <td className="px-4 py-3" style={{ color: "oklch(93% 0.006 60)" }}>
+                    <td className="px-4 py-3" style={{ color: "oklch(18% 0.01 60)" }}>
                       {formatUsdc(l.principalUsdc)}
                     </td>
-                    <td className="px-4 py-3" style={{ color: "oklch(93% 0.006 60)" }}>
+                    <td className="px-4 py-3" style={{ color: "oklch(18% 0.01 60)" }}>
                       {formatUsdc(l.interestUsdc)}
                     </td>
                     <td className="px-4 py-3" style={{ color: "oklch(68% 0.01 58)" }}>
@@ -201,7 +201,7 @@ export default async function LoansPage() {
       {/* Legend */}
       <div
         className="flex flex-wrap items-center gap-4 rounded-xl px-5 py-3 text-xs"
-        style={{ backgroundColor: "oklch(17% 0.008 55)", border: "1px solid oklch(24% 0.008 55)", color: "oklch(55% 0.01 55)" }}
+        style={{ backgroundColor: "oklch(100% 0 0)", border: "1px solid oklch(88% 0.006 60)", color: "oklch(55% 0.012 60)" }}
       >
         <span className="font-medium" style={{ color: "oklch(80% 0.005 60)" }}>LTV Risk:</span>
         <div className="flex items-center gap-1.5">

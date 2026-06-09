@@ -45,10 +45,10 @@ export function PortfolioDonut({
   if (!health || health.totalAssessed === 0) {
     return (
       <div className="dash-card">
-        <h2 className="text-base font-semibold" style={{ color: "oklch(93% 0.006 60)" }}>
+        <h2 className="text-base font-semibold" style={{ color: "oklch(18% 0.01 60)" }}>
           Portfolio Health
         </h2>
-        <p className="mt-4 text-sm" style={{ color: "oklch(42% 0.012 55)" }}>
+        <p className="mt-4 text-sm" style={{ color: "oklch(55% 0.012 60)" }}>
           No active loans to assess.
         </p>
       </div>
@@ -60,7 +60,7 @@ export function PortfolioDonut({
   return (
     <div className="dash-card dash-card-glow">
       <div className="relative z-10">
-        <h2 className="text-base font-semibold" style={{ color: "oklch(93% 0.006 60)" }}>
+        <h2 className="text-base font-semibold" style={{ color: "oklch(18% 0.01 60)" }}>
           Portfolio Health
         </h2>
 
@@ -91,7 +91,7 @@ export function PortfolioDonut({
                 <circle
                   r={RADIUS}
                   fill="none"
-                  stroke="oklch(24% 0.008 55)"
+                  stroke="oklch(88% 0.006 60)"
                   strokeWidth={STROKE}
                   strokeDasharray={`${CIRCUMFERENCE} ${CIRCUMFERENCE}`}
                 />
@@ -108,7 +108,7 @@ export function PortfolioDonut({
                 />
                 <span className="text-sm" style={{ color: "oklch(68% 0.01 58)" }}>
                   {seg.label}{" "}
-                  <span className="font-semibold" style={{ color: "oklch(93% 0.006 60)" }}>
+                  <span className="font-semibold" style={{ color: "oklch(18% 0.01 60)" }}>
                     {seg.count}
                   </span>
                 </span>
@@ -117,12 +117,12 @@ export function PortfolioDonut({
             <div
               className="pt-2 text-xs"
               style={{
-                borderTop: "1px solid oklch(24% 0.008 55)",
-                color: "oklch(42% 0.012 55)",
+                borderTop: "1px solid oklch(88% 0.006 60)",
+                color: "oklch(55% 0.012 60)",
               }}
             >
               Weighted avg LTV:{" "}
-              <span style={{ color: "oklch(93% 0.006 60)" }}>
+              <span style={{ color: "oklch(18% 0.01 60)" }}>
                 {(health.weightedAvgLtvBps / 100).toFixed(1)}%
               </span>
             </div>

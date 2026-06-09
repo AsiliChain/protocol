@@ -7,7 +7,7 @@ export default async function CooperativesPage() {
       <div>
         <h1
           className="text-2xl font-bold"
-          style={{ fontFamily: "'Archivo Black', sans-serif", color: "oklch(93% 0.006 60)" }}
+          style={{ fontFamily: "'Archivo Black', sans-serif", color: "oklch(18% 0.01 60)" }}
         >
           Cooperatives
         </h1>

@@ -86,12 +86,12 @@ export function DdsButton({
           <div
             className="mx-4 w-full max-w-lg rounded-xl p-6 shadow-xl"
             style={{
-              backgroundColor: "oklch(17% 0.008 55)",
-              border: "1px solid oklch(24% 0.008 55)",
+              backgroundColor: "oklch(100% 0 0)",
+              border: "1px solid oklch(88% 0.006 60)",
             }}
           >
             <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-lg font-bold" style={{ color: "oklch(93% 0.006 60)" }}>
+              <h3 className="text-lg font-bold" style={{ color: "oklch(18% 0.01 60)" }}>
                 EUDR Due Diligence Statement
               </h3>
               <span
@@ -107,7 +107,7 @@ export function DdsButton({
 
             <div
               className="space-y-3 pt-4"
-              style={{ borderTop: "1px solid oklch(24% 0.008 55)" }}
+              style={{ borderTop: "1px solid oklch(88% 0.006 60)" }}
             >
               <Row label="Batch Token" value={`#${tokenId} — ${batchId}`} />
               <Row label="Farmer Wallet" value={farmer} />
@@ -121,9 +121,9 @@ export function DdsButton({
 
             <div
               className="mt-5 flex items-center justify-between pt-4"
-              style={{ borderTop: "1px solid oklch(24% 0.008 55)" }}
+              style={{ borderTop: "1px solid oklch(88% 0.006 60)" }}
             >
-              <p className="text-xs" style={{ color: "oklch(42% 0.012 55)" }}>
+              <p className="text-xs" style={{ color: "oklch(55% 0.012 60)" }}>
                 Preview. Full MAAIF NTS API integration pending.
               </p>
               <button
@@ -145,11 +145,11 @@ function Row({ label, value }: { label: string; value: string }) {
     <div className="flex justify-between">
       <span
         className="text-xs font-medium uppercase tracking-wide"
-        style={{ color: "oklch(42% 0.012 55)" }}
+        style={{ color: "oklch(55% 0.012 60)" }}
       >
         {label}
       </span>
-      <span className="text-sm" style={{ color: "oklch(93% 0.006 60)" }}>
+      <span className="text-sm" style={{ color: "oklch(18% 0.01 60)" }}>
         {value}
       </span>
     </div>

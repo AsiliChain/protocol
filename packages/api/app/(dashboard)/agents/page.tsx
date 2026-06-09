@@ -59,7 +59,7 @@ function Badge({
   const variantStyle =
     variant === "green"
       ? {}
-      : { backgroundColor: "oklch(24% 0.008 55)", color: "oklch(42% 0.012 55)" };
+      : { backgroundColor: "oklch(88% 0.006 60)", color: "oklch(55% 0.012 60)" };
   return <span className={`${base} ${colors}`} style={variantStyle}>{children}</span>;
 }
 
@@ -141,7 +141,7 @@ function AgentIdentityCard({
   return (
     <div
       className="rounded-xl p-6"
-      style={{ backgroundColor: "oklch(17% 0.008 55)", border: "1px solid oklch(24% 0.008 55)", boxShadow: "0 1px 3px oklch(0% 0 0 / 0.1)" }}
+      style={{ backgroundColor: "oklch(100% 0 0)", border: "1px solid oklch(88% 0.006 60)", boxShadow: "0 1px 3px oklch(0% 0 0 / 0.1)" }}
     >
       <div className="flex items-start justify-between">
         <div className="flex items-start gap-3">
@@ -165,10 +165,10 @@ function AgentIdentityCard({
             </svg>
           </span>
           <div>
-            <h3 className="text-lg font-semibold" style={{ color: "oklch(93% 0.006 60)" }}>
+            <h3 className="text-lg font-semibold" style={{ color: "oklch(18% 0.01 60)" }}>
               {agentMeta?.name ?? identity.name}
             </h3>
-            <p className="mt-0.5 text-xs" style={{ color: "oklch(42% 0.012 55)" }}>
+            <p className="mt-0.5 text-xs" style={{ color: "oklch(55% 0.012 60)" }}>
               Agent ID {identity.agentId} &middot;{" "}
               {agentMeta?.version ?? "—"}
             </p>
@@ -189,31 +189,31 @@ function AgentIdentityCard({
         className="mt-4 rounded-lg p-4"
         style={{ backgroundColor: "oklch(13% 0.005 58)", border: "1px solid oklch(22% 0.008 55)" }}
       >
-        <h4 className="text-xs font-semibold uppercase tracking-wider" style={{ color: "oklch(42% 0.012 55)" }}>
+        <h4 className="text-xs font-semibold uppercase tracking-wider" style={{ color: "oklch(55% 0.012 60)" }}>
           On-Chain Identity
         </h4>
         <dl className="mt-2 space-y-2">
           <div className="flex items-center justify-between">
-            <dt className="text-sm" style={{ color: "oklch(55% 0.01 55)" }}>Owner</dt>
+            <dt className="text-sm" style={{ color: "oklch(55% 0.012 60)" }}>Owner</dt>
             <dd>
               {isRegistered ? (
                 <TruncateAddress address={identity.owner as string} />
               ) : (
-                <span className="text-xs" style={{ color: "oklch(42% 0.012 55)" }}>—</span>
+                <span className="text-xs" style={{ color: "oklch(55% 0.012 60)" }}>—</span>
               )}
             </dd>
           </div>
           <div className="flex items-center justify-between">
-            <dt className="text-sm" style={{ color: "oklch(55% 0.01 55)" }}>Token URI</dt>
+            <dt className="text-sm" style={{ color: "oklch(55% 0.012 60)" }}>Token URI</dt>
             <dd
               className="max-w-[200px] truncate text-xs font-mono"
-              style={{ color: "oklch(55% 0.01 55)" }}
+              style={{ color: "oklch(55% 0.012 60)" }}
             >
               {identity.tokenUri ?? "—"}
             </dd>
           </div>
           <div className="flex items-center justify-between">
-            <dt className="text-sm" style={{ color: "oklch(55% 0.01 55)" }}>Registry</dt>
+            <dt className="text-sm" style={{ color: "oklch(55% 0.012 60)" }}>Registry</dt>
             <dd>
               <a
                 href={registryUrl}
@@ -230,7 +230,7 @@ function AgentIdentityCard({
 
       {apiData && (
         <div className="mt-4">
-          <h4 className="text-xs font-semibold uppercase tracking-wider" style={{ color: "oklch(42% 0.012 55)" }}>
+          <h4 className="text-xs font-semibold uppercase tracking-wider" style={{ color: "oklch(55% 0.012 60)" }}>
             Capabilities
           </h4>
           <CapabilityList items={apiData.agent.capabilities} />
@@ -244,7 +244,7 @@ function AgentIdentityCard({
           ) : (
             <StatusDot status="unknown" />
           )}
-          <span className="text-xs" style={{ color: "oklch(42% 0.012 55)" }}>
+          <span className="text-xs" style={{ color: "oklch(55% 0.012 60)" }}>
             {agentMeta?.trigger === "scheduled"
               ? `Every ${agentMeta.runIntervalSeconds / 60} min`
               : agentMeta?.triggerEvent
@@ -271,16 +271,16 @@ function AgentReportCard({
   return (
     <div
       className="rounded-xl p-6"
-      style={{ backgroundColor: "oklch(17% 0.008 55)", border: "1px solid oklch(24% 0.008 55)", boxShadow: "0 1px 3px oklch(0% 0 0 / 0.1)" }}
+      style={{ backgroundColor: "oklch(100% 0 0)", border: "1px solid oklch(88% 0.006 60)", boxShadow: "0 1px 3px oklch(0% 0 0 / 0.1)" }}
     >
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold" style={{ color: "oklch(93% 0.006 60)" }}>{title}</h3>
+        <h3 className="text-lg font-semibold" style={{ color: "oklch(18% 0.01 60)" }}>{title}</h3>
         {data && <StatusDot status={data.agent.status} />}
       </div>
 
       {data ? (
         <>
-          <p className="mt-2 text-sm" style={{ color: "oklch(55% 0.01 55)" }}>
+          <p className="mt-2 text-sm" style={{ color: "oklch(55% 0.012 60)" }}>
             Version {data.agent.version} &middot;{" "}
             {data.runIntervalSeconds > 0
               ? `Runs every ${data.runIntervalSeconds / 60} min`
@@ -288,7 +288,7 @@ function AgentReportCard({
           </p>
 
           <div className="mt-4">
-            <h4 className="text-xs font-semibold uppercase tracking-wider" style={{ color: "oklch(42% 0.012 55)" }}>
+            <h4 className="text-xs font-semibold uppercase tracking-wider" style={{ color: "oklch(55% 0.012 60)" }}>
               Capabilities
             </h4>
             <CapabilityList items={data.agent.capabilities} />
@@ -299,19 +299,19 @@ function AgentReportCard({
             style={{ backgroundColor: "oklch(13% 0.005 58)", border: "1px solid oklch(22% 0.008 55)" }}
           >
             <div className="flex items-center justify-between">
-              <span className="text-sm" style={{ color: "oklch(55% 0.01 55)" }}>Last Run</span>
+              <span className="text-sm" style={{ color: "oklch(55% 0.012 60)" }}>Last Run</span>
               <span className="text-sm font-medium" style={{ color: "oklch(80% 0.005 60)" }}>
                 {data.lastRun ? String(data.lastRun) : "No runs yet"}
               </span>
             </div>
           </div>
 
-          <p className="mt-3 text-xs" style={{ color: "oklch(42% 0.012 55)" }}>{data.docs}</p>
+          <p className="mt-3 text-xs" style={{ color: "oklch(55% 0.012 60)" }}>{data.docs}</p>
         </>
       ) : (
         <div
           className="mt-4 rounded-lg p-4"
-          style={{ backgroundColor: "oklch(17% 0.008 55)", border: "1px solid oklch(24% 0.008 55)" }}
+          style={{ backgroundColor: "oklch(100% 0 0)", border: "1px solid oklch(88% 0.006 60)" }}
         >
           <p className="text-sm" style={{ color: "oklch(68% 0.01 58)" }}>
             No report available yet.
@@ -333,12 +333,12 @@ function RegistryCard({ agentCount }: { agentCount: number }) {
   return (
     <div
       className="rounded-xl p-6"
-      style={{ backgroundColor: "oklch(17% 0.008 55)", border: "1px solid oklch(24% 0.008 55)", boxShadow: "0 1px 3px oklch(0% 0 0 / 0.1)" }}
+      style={{ backgroundColor: "oklch(100% 0 0)", border: "1px solid oklch(88% 0.006 60)", boxShadow: "0 1px 3px oklch(0% 0 0 / 0.1)" }}
     >
-      <h3 className="text-lg font-semibold" style={{ color: "oklch(93% 0.006 60)" }}>
+      <h3 className="text-lg font-semibold" style={{ color: "oklch(18% 0.01 60)" }}>
         ERC-8004 Identity Registry
       </h3>
-      <p className="mt-1 text-sm" style={{ color: "oklch(55% 0.01 55)" }}>
+      <p className="mt-1 text-sm" style={{ color: "oklch(55% 0.012 60)" }}>
         On-chain registry for AI agent identity tokens (ERC-8004). Each agent
         is minted as an NFT with metadata describing its capabilities, owner,
         and audit trail configuration.
@@ -349,7 +349,7 @@ function RegistryCard({ agentCount }: { agentCount: number }) {
           className="rounded-lg p-4 text-center"
           style={{ backgroundColor: "oklch(13% 0.005 58)", border: "1px solid oklch(22% 0.008 55)" }}
         >
-          <dt className="text-xs font-medium uppercase tracking-wider" style={{ color: "oklch(42% 0.012 55)" }}>
+          <dt className="text-xs font-medium uppercase tracking-wider" style={{ color: "oklch(55% 0.012 60)" }}>
             Contract
           </dt>
           <dd className="mt-1">
@@ -368,7 +368,7 @@ function RegistryCard({ agentCount }: { agentCount: number }) {
           className="rounded-lg p-4 text-center"
           style={{ backgroundColor: "oklch(13% 0.005 58)", border: "1px solid oklch(22% 0.008 55)" }}
         >
-          <dt className="text-xs font-medium uppercase tracking-wider" style={{ color: "oklch(42% 0.012 55)" }}>
+          <dt className="text-xs font-medium uppercase tracking-wider" style={{ color: "oklch(55% 0.012 60)" }}>
             Registered Agents
           </dt>
           <dd className="mt-1 text-2xl font-bold" style={{ color: "oklch(72% 0.16 80)" }}>
@@ -379,7 +379,7 @@ function RegistryCard({ agentCount }: { agentCount: number }) {
           className="rounded-lg p-4 text-center"
           style={{ backgroundColor: "oklch(13% 0.005 58)", border: "1px solid oklch(22% 0.008 55)" }}
         >
-          <dt className="text-xs font-medium uppercase tracking-wider" style={{ color: "oklch(42% 0.012 55)" }}>
+          <dt className="text-xs font-medium uppercase tracking-wider" style={{ color: "oklch(55% 0.012 60)" }}>
             Standard
           </dt>
           <dd className="mt-1 text-sm font-semibold" style={{ color: "oklch(72% 0.16 80)" }}>
@@ -397,7 +397,7 @@ function RegistryCard({ agentCount }: { agentCount: number }) {
         >
           View on MantleScan
         </a>
-        <span className="text-xs" style={{ color: "oklch(42% 0.012 55)" }}>
+        <span className="text-xs" style={{ color: "oklch(55% 0.012 60)" }}>
           Mantle Sepolia &middot; Chain 5003
         </span>
       </div>
@@ -430,8 +430,8 @@ export default async function AgentsPage() {
     <div className="space-y-8">
       {/* Page header */}
       <div>
-        <h2 className="text-2xl font-bold" style={{ color: "oklch(93% 0.006 60)" }}>AI Agents</h2>
-        <p className="mt-1 text-sm" style={{ color: "oklch(55% 0.01 55)" }}>
+        <h2 className="text-2xl font-bold" style={{ color: "oklch(18% 0.01 60)" }}>AI Agents</h2>
+        <p className="mt-1 text-sm" style={{ color: "oklch(55% 0.012 60)" }}>
           On-chain autonomous agents with ERC-8004 identity and Hedera HCS
           audit trails
         </p>
@@ -439,7 +439,7 @@ export default async function AgentsPage() {
 
       {/* Section 1: Agent Identity Cards */}
       <section>
-        <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider" style={{ color: "oklch(42% 0.012 55)" }}>
+        <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider" style={{ color: "oklch(55% 0.012 60)" }}>
           Agent Identities
         </h3>
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -458,9 +458,9 @@ export default async function AgentsPage() {
           {identities.length === 0 && (
             <div
               className="col-span-full rounded-xl p-8 text-center"
-              style={{ backgroundColor: "oklch(17% 0.008 55)", border: "1px solid oklch(24% 0.008 55)" }}
+              style={{ backgroundColor: "oklch(100% 0 0)", border: "1px solid oklch(88% 0.006 60)" }}
             >
-              <p className="text-sm" style={{ color: "oklch(55% 0.01 55)" }}>
+              <p className="text-sm" style={{ color: "oklch(55% 0.012 60)" }}>
                 No agent identities found on-chain. Ensure the
                 IdentityRegistry is deployed.
               </p>
@@ -471,7 +471,7 @@ export default async function AgentsPage() {
 
       {/* Section 2 & 3: Agent Reports */}
       <section>
-        <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider" style={{ color: "oklch(42% 0.012 55)" }}>
+        <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider" style={{ color: "oklch(55% 0.012 60)" }}>
           Agent Reports
         </h3>
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
