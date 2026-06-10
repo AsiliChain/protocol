@@ -11,7 +11,7 @@ contracts + Hardhat test suite + Next.js dashboard + marketing landing page.
 
 ## Current state
 ### Contracts
-All 7 contracts deployed to Mantle Sepolia.
+All 8 contracts deployed to Mantle Sepolia.
 ERC-8004 IdentityRegistry deployed: `0x62a6b58f8c3625F0c5f46D6C86A65595AA769C89`
 AI agents registered: risk-monitor (id=0), anomaly-detector (id=1)
 

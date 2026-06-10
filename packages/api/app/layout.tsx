@@ -13,6 +13,11 @@ export const metadata: Metadata = {
   title: "Asilichain — Coffee Supply Chain Finance on Mantle",
   description:
     "On-chain financial infrastructure for Uganda's coffee farmers. GPS-verified crops, instant payments, automated EUDR compliance.",
+  icons: {
+    icon: "/favicon.svg",
+    shortcut: "/favicon.svg",
+    apple: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({

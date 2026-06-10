@@ -302,7 +302,7 @@ Flag this in CreditScore (score=0 ambiguity) and TraceLog (stage=0 ambiguity).
 
 ## Test Suite Status (Phase 1 Gate)
 
-- **216 tests passing, 0 failing** across 7 contracts
+- **216 tests passing, 0 failing** across 8 contracts
 - Run: `pnpm exec hardhat test` from `packages/contracts/`
 - Pre-commit: `pnpm turbo test`
 - Coverage: `COVERAGE=true pnpm exec hardhat coverage` — **94.3% lines, 92.68% functions**
@@ -310,7 +310,7 @@ Flag this in CreditScore (score=0 ambiguity) and TraceLog (stage=0 ambiguity).
 
 ## Deployment
 
-`scripts/deploy.ts` deploys all 7 contracts in order + MockUSDC + 4 post-deploy
+`scripts/deploy.ts` deploys all 8 contracts in order + MockUSDC + 4 post-deploy
 VAULT_ROLE grants. For mainnet, replace MockUSDC with real USDC address and
 supply real Pyth oracle params (currently using placeholder non-zero values).
 

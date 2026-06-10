@@ -49,7 +49,7 @@
 
 ## Infrastructure
 
-- [x] All 7 contracts deployed to Mantle Sepolia
+- [x] All 8 contracts deployed to Mantle Sepolia
 - [x] CCIP bridge (Mantle → Base) tested
 - [x] ERC-8004 IdentityRegistry deployed
 - [x] tsx installed as devDependency

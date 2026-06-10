@@ -201,7 +201,7 @@ Wrote and successfully ran 11-step end-to-end test on Mantle Sepolia:
 ### Deployment
 - Installed Foundry (cast 1.7.1)
 - Added `mantleSepolia` network to hardhat.config.ts (chainId 5003)
-- All 7 contracts deployed to Mantle Sepolia via `hardhat run --network mantleSepolia`
+- All 8 contracts deployed to Mantle Sepolia via `hardhat run --network mantleSepolia`
 - Deployer: `0xB70f03dE20c9D4c90246c830F81D44f377A652C0`
 - 900 MNT faucet-funded for gas
 
