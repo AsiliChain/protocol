@@ -29,10 +29,11 @@ const MANTLESCAN_BASE = "https://sepolia.mantlescan.org";
 async function fetchAgentData(
   slug: string,
 ): Promise<AgentApiResponse | null> {
-  const base = process.env.NEXT_PUBLIC_API_URL ?? "";
+  const base = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
   try {
     const res = await fetch(`${base}/api/agents/${slug}`, {
       next: { revalidate: 60 },
+      signal: AbortSignal.timeout(5000),
     });
     if (!res.ok) return null;
     return (await res.json()) as AgentApiResponse;
@@ -187,7 +188,7 @@ function AgentIdentityCard({
 
       <div
         className="mt-4 rounded-lg p-4"
-        style={{ backgroundColor: "oklch(13% 0.005 58)", border: "1px solid oklch(22% 0.008 55)" }}
+        style={{ backgroundColor: "oklch(97% 0.006 85)", border: "1px solid oklch(88% 0.006 60)" }}
       >
         <h4 className="text-xs font-semibold uppercase tracking-wider" style={{ color: "oklch(55% 0.012 60)" }}>
           On-Chain Identity
@@ -237,7 +238,7 @@ function AgentIdentityCard({
         </div>
       )}
 
-      <div className="mt-4 flex items-center justify-between pt-4" style={{ borderTop: "1px solid oklch(22% 0.008 55)" }}>
+      <div className="mt-4 flex items-center justify-between pt-4" style={{ borderTop: "1px solid oklch(88% 0.006 60)" }}>
         <div className="flex items-center gap-2">
           {apiData ? (
             <StatusDot status={apiData.agent.status} />
@@ -296,11 +297,11 @@ function AgentReportCard({
 
           <div
             className="mt-4 rounded-lg p-3"
-            style={{ backgroundColor: "oklch(13% 0.005 58)", border: "1px solid oklch(22% 0.008 55)" }}
+            style={{ backgroundColor: "oklch(97% 0.006 85)", border: "1px solid oklch(88% 0.006 60)" }}
           >
             <div className="flex items-center justify-between">
               <span className="text-sm" style={{ color: "oklch(55% 0.012 60)" }}>Last Run</span>
-              <span className="text-sm font-medium" style={{ color: "oklch(80% 0.005 60)" }}>
+              <span className="text-sm font-medium" style={{ color: "oklch(18% 0.01 60)" }}>
                 {data.lastRun ? String(data.lastRun) : "No runs yet"}
               </span>
             </div>
@@ -347,7 +348,7 @@ function RegistryCard({ agentCount }: { agentCount: number }) {
       <dl className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
         <div
           className="rounded-lg p-4 text-center"
-          style={{ backgroundColor: "oklch(13% 0.005 58)", border: "1px solid oklch(22% 0.008 55)" }}
+          style={{ backgroundColor: "oklch(97% 0.006 85)", border: "1px solid oklch(88% 0.006 60)" }}
         >
           <dt className="text-xs font-medium uppercase tracking-wider" style={{ color: "oklch(55% 0.012 60)" }}>
             Contract
@@ -366,7 +367,7 @@ function RegistryCard({ agentCount }: { agentCount: number }) {
         </div>
         <div
           className="rounded-lg p-4 text-center"
-          style={{ backgroundColor: "oklch(13% 0.005 58)", border: "1px solid oklch(22% 0.008 55)" }}
+          style={{ backgroundColor: "oklch(97% 0.006 85)", border: "1px solid oklch(88% 0.006 60)" }}
         >
           <dt className="text-xs font-medium uppercase tracking-wider" style={{ color: "oklch(55% 0.012 60)" }}>
             Registered Agents
@@ -377,7 +378,7 @@ function RegistryCard({ agentCount }: { agentCount: number }) {
         </div>
         <div
           className="rounded-lg p-4 text-center"
-          style={{ backgroundColor: "oklch(13% 0.005 58)", border: "1px solid oklch(22% 0.008 55)" }}
+          style={{ backgroundColor: "oklch(97% 0.006 85)", border: "1px solid oklch(88% 0.006 60)" }}
         >
           <dt className="text-xs font-medium uppercase tracking-wider" style={{ color: "oklch(55% 0.012 60)" }}>
             Standard
@@ -408,18 +409,24 @@ function RegistryCard({ agentCount }: { agentCount: number }) {
 // ─── Page ───────────────────────────────────────────────
 
 export default async function AgentsPage() {
-  // Fetch on-chain identity data
-  let identities: AgentIdentity[] = [];
-  try {
-    identities = await getAgentsIdentity();
-  } catch {
-    // contract read failed — will show fallback
-  }
+  // Fetch with timeout — never block longer than 10s total
+  const fetchWithTimeout = async <T,>(fn: () => Promise<T>, fallback: T): Promise<T> => {
+    try {
+      const result = await Promise.race([
+        fn(),
+        new Promise<never>((_, reject) => setTimeout(() => reject(new Error("timeout")), 8000)),
+      ]);
+      return result;
+    } catch {
+      return fallback;
+    }
+  };
 
-  // Fetch agent API metadata in parallel
+  const identities = await fetchWithTimeout(() => getAgentsIdentity(), []);
+
   const [riskMonitorData, anomalyDetectorData] = await Promise.all([
-    fetchAgentData("risk-monitor"),
-    fetchAgentData("anomaly-detector"),
+    fetchWithTimeout(() => fetchAgentData("risk-monitor"), null),
+    fetchWithTimeout(() => fetchAgentData("anomaly-detector"), null),
   ]);
 
   const registeredCount = identities.filter(
