@@ -1,8 +1,8 @@
 import "../globals.css";
 import { Sidebar } from "./sidebar";
-import { TopBar } from "./top-bar";
 import { MobileNav } from "./mobile-nav";
 import { SidebarProvider } from "./sidebar-context";
+import { MainContent } from "./main-content";
 
 export default function DashboardLayout({
   children,
@@ -13,10 +13,7 @@ export default function DashboardLayout({
     <SidebarProvider>
       <div className="dash-body">
         <Sidebar />
-        <div className="dash-main flex flex-col min-h-dvh">
-          <TopBar />
-          <main className="flex-1 p-6 md:p-8 pb-24 md:pb-8">{children}</main>
-        </div>
+        <MainContent>{children}</MainContent>
         <MobileNav />
       </div>
     </SidebarProvider>

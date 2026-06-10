@@ -1,105 +1,121 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 400" fill="none">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1000 440" fill="none">
   <style>
     text { font-family: 'Inter', system-ui, sans-serif; }
-    .col-title { font-size: 15px; font-weight: 700; letter-spacing: -0.01em; }
-    .col-tagline { font-size: 10px; fill: #6b7280; }
-    .ai-title { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
-    .ai-card-title { font-size: 11px; font-weight: 600; }
-    .ai-card-desc { font-size: 9px; fill: #6b7280; }
-    .ai-badge { font-size: 7px; font-weight: 600; }
+    .col-title { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; }
+    .col-tagline { font-size: 11px; fill: #6b7280; }
+    .ai-title { font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+    .ai-card-title { font-size: 12px; font-weight: 700; }
+    .ai-card-desc { font-size: 10px; fill: #6b7280; }
+    .ai-badge { font-size: 8px; font-weight: 700; }
   </style>
 
   <!-- Column 1: Ethereum -->
   <g transform="translate(40, 30)">
-    <rect x="0" y="0" width="190" height="180" rx="16" fill="oklch(98% 0.005 260)" stroke="oklch(88% 0.02 260)" stroke-width="1"/>
-    <!-- Ethereum diamond logo -->
-    <g transform="translate(77, 30)">
-      <polygon points="18,0 36,18 18,36 0,18" fill="#627EEA"/>
-      <polygon points="18,4 30,18 18,26 6,18" fill="#fff" opacity="0.8"/>
-      <polygon points="18,26 30,18 18,22 6,18" fill="#fff" opacity="0.35"/>
+    <rect x="0" y="0" width="200" height="190" rx="16" fill="oklch(98% 0.005 260)" stroke="oklch(72% 0.02 260)" stroke-width="2"/>
+    <!-- Ethereum logo: official CorelDRAW ETH diamond -->
+    <g transform="translate(74, 24) scale(0.065)">
+      <polygon fill="#343434" fill-rule="nonzero" points="392.07,0 383.5,29.11 383.5,873.74 392.07,882.29 784.13,650.54"/>
+      <polygon fill="#8C8C8C" fill-rule="nonzero" points="392.07,0 -0,650.54 392.07,882.29 392.07,472.33"/>
+      <polygon fill="#3C3C3B" fill-rule="nonzero" points="392.07,956.52 387.24,962.41 387.24,1263.28 392.07,1277.38 784.37,724.89"/>
+      <polygon fill="#8C8C8C" fill-rule="nonzero" points="392.07,1277.38 392.07,956.52 -0,724.89"/>
+      <polygon fill="#141414" fill-rule="nonzero" points="392.07,882.29 784.13,650.54 392.07,472.33"/>
+      <polygon fill="#393939" fill-rule="nonzero" points="0,650.54 392.07,882.29 392.07,472.33"/>
     </g>
-    <text x="95" y="100" text-anchor="middle" class="col-title" fill="#1A3557">Ethereum</text>
-    <text x="95" y="118" text-anchor="middle" class="col-tagline">Proof-of-Stake security</text>
+    <text x="100" y="135" text-anchor="middle" class="col-title" fill="#1A3557">Ethereum</text>
+    <text x="100" y="153" text-anchor="middle" class="col-tagline">Proof-of-Stake security</text>
   </g>
 
   <!-- Connector -->
-  <g transform="translate(230, 120)"><line x1="0" y1="0" x2="36" y2="0" stroke="#C8922A" stroke-width="1.5"/><polygon points="34,-3 40,0 34,3" fill="#C8922A"/></g>
+  <g transform="translate(240, 125)"><line x1="0" y1="0" x2="40" y2="0" stroke="#C8922A" stroke-width="2.5"/><polygon points="37,-4 44,0 37,4" fill="#C8922A"/></g>
 
   <!-- Column 2: Mantle -->
-  <g transform="translate(274, 30)">
-    <rect x="0" y="0" width="190" height="180" rx="16" fill="oklch(98% 0.005 90)" stroke="oklch(88% 0.02 90)" stroke-width="1"/>
-    <!-- Mantle M -->
-    <g transform="translate(77, 30)">
-      <rect x="2" y="2" width="32" height="32" rx="7" fill="#000"/>
-      <text x="18" y="26" text-anchor="middle" font-size="19" font-weight="800" fill="#fff" font-family="sans-serif">M</text>
+  <g transform="translate(285, 30)">
+    <rect x="0" y="0" width="200" height="190" rx="16" fill="oklch(98% 0.005 90)" stroke="oklch(72% 0.02 90)" stroke-width="2"/>
+    <!-- Mantle logo: exact paths from Matle-logo.ai -->
+    <g transform="translate(69, 34) scale(0.038)">
+      <rect width="1579.373" height="1579.373" rx="300" fill="#000000"/>
+      <path fill="#FFFFFF" d="M557.3 671.7 L437.5 610.7 C428.1 629.1,420.1 648.4,413.8 668.1 L541.7 709.4 C545.9 696.5,551.1 683.8,557.3 671.7"/>
+      <path fill="#FFFFFF" d="M659.0 564.2 L725.4 678.5 C735.1 672.9,745.4 668.6,756.2 665.7 L721.9 538.1 C730.6 535.7,739.5 533.8,748.4 532.4 L727.3 399.6 C706.9 402.8,686.7 407.7,667.1 414.1 L708.1 539.9 C695.0 544.1,682.3 549.4,670.1 555.7 L609.8 438.0 C591.4 447.4,573.7 458.3,557.0 470.4 L636.3 579.0 C643.6 573.7,651.2 568.8,659.0 564.2"/>
+      <path fill="#FFFFFF" d="M1015.1 658.9 L900.8 725.3 C906.4 735.0,910.7 745.4,913.6 756.2 L1041.3 721.8 C1043.6 730.5,1045.6 739.4,1047.0 748.3 L1179.8 727.1 C1176.5 706.7,1171.6 686.5,1165.2 666.8 L1039.5 708.0 C1035.2 694.9,1029.9 682.2,1023.6 670.0 L1141.3 609.6 C1131.9 591.3,1121.0 573.5,1108.8 556.9 L1000.3 636.2 C1005.6 643.5,1010.5 651.1,1015.1 658.9"/>
+      <path fill="#FFFFFF" d="M968.5 437.4 C950.0 428.0,930.7 420.1,911.1 413.7 L869.8 541.6 C882.7 545.8,895.4 551.1,907.6 557.2 Z"/>
+      <path fill="#FFFFFF" d="M920.7 561.9 L853.6 678.3 C863.3 683.9,872.3 690.8,880.3 698.8 L1068.5 509.9 C1053.9 495.3,1038.0 481.8,1021.4 469.7 L943.7 576.8 C936.3 571.4,928.7 566.4,920.7 561.9"/>
+      <path fill="#FFFFFF" d="M561.9 658.5 L678.4 725.7 C684.0 716.0,690.9 707.0,698.8 699.0 L510.0 510.7 C495.5 525.3,482.0 541.2,469.9 557.8 L576.9 635.5 C571.5 642.9,566.5 650.6,561.9 658.5"/>
+      <path fill="#FFFFFF" d="M830.4 530.1 L850.7 399.4 C830.7 396.3,810.1 394.7,789.7 394.7 L789.4 394.7 L789.4 661.3 L789.7 661.3 C800.9 661.3,812.0 662.8,822.7 665.6 L857.2 535.7 C848.4 533.3,839.5 531.5,830.4 530.1"/>
+      <path fill="#FFFFFF" d="M665.6 756.6 L535.7 722.0 C533.4 730.8,531.5 739.8,530.1 748.8 L399.4 728.4 C396.3 748.6,394.7 769.2,394.7 789.7 L661.3 789.7 C661.3 778.4,662.8 767.3,665.6 756.6"/>
+      <path fill="#FFFFFF" d="M1022.1 907.7 L1141.9 968.7 C1151.3 950.3,1159.2 931.0,1165.6 911.3 L1037.7 869.9 C1033.5 882.9,1028.3 895.6,1022.1 907.7"/>
+      <path fill="#FFFFFF" d="M920.3 1015.1 L854.0 900.8 C844.3 906.4,833.9 910.8,823.1 913.7 L857.5 1041.3 C848.7 1043.7,839.9 1045.6,830.9 1047.0 L852.0 1179.8 C872.4 1176.5,892.7 1171.7,912.3 1165.3 L871.3 1039.5 C884.3 1035.2,897.0 1030.0,909.3 1023.7 L969.6 1141.4 C987.9 1132.0,1005.7 1121.1,1022.3 1108.9 L943.1 1000.3 C935.8 1005.7,928.2 1010.6,920.3 1015.1"/>
+      <path fill="#FFFFFF" d="M564.3 920.5 L678.6 854.0 C673.0 844.4,668.6 834.0,665.7 823.2 L538.1 857.6 C535.7 848.9,533.8 840.0,532.4 831.1 L399.6 852.2 C402.9 872.6,407.8 892.9,414.2 912.5 L539.9 871.4 C544.2 884.5,549.5 897.2,555.7 909.4 L438.1 969.8 C447.5 988.1,458.4 1005.8,470.6 1022.5 L579.1 943.2 C573.8 935.9,568.8 928.3,564.3 920.5"/>
+      <path fill="#FFFFFF" d="M610.9 1142.0 C629.3 1151.4,648.6 1159.3,668.3 1165.7 L709.6 1037.7 C696.6 1033.6,683.9 1028.3,671.8 1022.2 Z"/>
+      <path fill="#FFFFFF" d="M658.6 1017.5 L725.7 901.0 C716.0 895.4,707.1 888.6,699.1 880.6 L510.9 1069.5 C525.5 1084.0,541.3 1097.5,558.0 1109.6 L635.6 1002.6 C643.0 1007.9,650.7 1012.9,658.6 1017.5"/>
+      <path fill="#FFFFFF" d="M1017.4 920.9 L901.0 853.7 C895.4 863.4,888.5 872.4,880.6 880.3 L1069.3 1068.6 C1083.9 1054.0,1097.4 1038.2,1109.5 1021.5 L1002.5 943.8 C1007.9 936.4,1012.9 928.8,1017.4 920.9"/>
+      <path fill="#FFFFFF" d="M756.6 913.8 L722.1 1043.7 C731.0 1046.0,739.9 1047.9,748.9 1049.3 L728.6 1180.0 C748.7 1183.1,769.2 1184.7,789.7 1184.7 L790.0 1184.7 L790.0 918.1 L789.7 918.1 C778.5 918.1,767.3 916.6,756.6 913.8"/>
+      <path fill="#FFFFFF" d="M918.1 789.7 C918.1 800.9,916.6 812.1,913.8 822.8 L1043.7 857.4 C1046.0 848.6,1047.9 839.6,1049.3 830.6 L1180.0 851.0 C1183.1 830.8,1184.7 810.2,1184.7 789.7 Z"/>
     </g>
-    <text x="95" y="100" text-anchor="middle" class="col-title" fill="#2D6A2D">Mantle</text>
-    <text x="95" y="118" text-anchor="middle" class="col-tagline">Low-cost gasless txs</text>
-    <!-- Smart contracts -->
-    <rect x="30" y="132" width="130" height="36" rx="8" fill="oklch(97% 0.008 85)" stroke="#C8922A" stroke-width="1" stroke-dasharray="3 2"/>
-    <text x="95" y="150" text-anchor="middle" font-size="9" font-weight="600" fill="#4B2E0A">Smart Contracts</text>
-    <text x="95" y="161" text-anchor="middle" font-size="8" fill="#6b7280">7 modules</text>
+    <text x="100" y="135" text-anchor="middle" class="col-title" fill="#2D6A2D">Mantle</text>
+    <text x="100" y="153" text-anchor="middle" class="col-tagline">Low-cost gasless txs</text>
+    <!-- Smart contracts badge -->
+    <rect x="30" y="170" width="140" height="18" rx="6" fill="oklch(97% 0.008 85)" stroke="#C8922A" stroke-width="1" stroke-dasharray="3 2"/>
+    <text x="100" y="183" text-anchor="middle" font-size="9" font-weight="700" fill="#4B2E0A">Smart Contracts · 7 modules</text>
   </g>
 
-  <g transform="translate(464, 120)"><line x1="0" y1="0" x2="36" y2="0" stroke="#C8922A" stroke-width="1.5"/><polygon points="34,-3 40,0 34,3" fill="#C8922A"/></g>
+  <g transform="translate(485, 125)"><line x1="0" y1="0" x2="40" y2="0" stroke="#C8922A" stroke-width="2.5"/><polygon points="37,-4 44,0 37,4" fill="#C8922A"/></g>
 
   <!-- Column 3: Hedera HCS -->
-  <g transform="translate(508, 30)">
-    <rect x="0" y="0" width="190" height="180" rx="16" fill="oklch(98% 0.005 260)" stroke="oklch(88% 0.02 260)" stroke-width="1"/>
-    <!-- Hedera H -->
-    <g transform="translate(74, 30)">
-      <circle cx="21" cy="18" r="18" fill="#000"/>
-      <rect x="10" y="10" width="8" height="16" rx="1.5" fill="#fff"/>
-      <rect x="24" y="10" width="8" height="16" rx="1.5" fill="#fff"/>
-      <rect x="14" y="15" width="14" height="3" rx="1" fill="#fff"/>
+  <g transform="translate(530, 30)">
+    <rect x="0" y="0" width="200" height="190" rx="16" fill="oklch(98% 0.005 260)" stroke="oklch(72% 0.02 260)" stroke-width="2"/>
+    <!-- Hedera logo: official H symbol -->
+    <g transform="translate(60, 20)">
+      <circle cx="40" cy="40" r="40" fill="#000000"/>
+      <rect x="18" y="22" width="14" height="36" rx="3" fill="#FFFFFF"/>
+      <rect x="48" y="22" width="14" height="36" rx="3" fill="#FFFFFF"/>
+      <rect x="26" y="34" width="28" height="6" rx="2" fill="#FFFFFF"/>
     </g>
-    <text x="95" y="100" text-anchor="middle" class="col-title" fill="#1A3557">Hedera HCS</text>
-    <text x="95" y="118" text-anchor="middle" class="col-tagline">Immutable audit trail</text>
+    <text x="100" y="135" text-anchor="middle" class="col-title" fill="#1A3557">Hedera HCS</text>
+    <text x="100" y="153" text-anchor="middle" class="col-tagline">Immutable audit trail</text>
   </g>
 
-  <g transform="translate(698, 120)"><line x1="0" y1="0" x2="36" y2="0" stroke="#C8922A" stroke-width="1.5"/><polygon points="34,-3 40,0 34,3" fill="#C8922A"/></g>
+  <g transform="translate(730, 125)"><line x1="0" y1="0" x2="40" y2="0" stroke="#C8922A" stroke-width="2.5"/><polygon points="37,-4 44,0 37,4" fill="#C8922A"/></g>
 
   <!-- Column 4: Mobile Money -->
-  <g transform="translate(742, 30)">
-    <rect x="0" y="0" width="190" height="180" rx="16" fill="oklch(98% 0.005 90)" stroke="oklch(88% 0.02 90)" stroke-width="1"/>
-    <g transform="translate(77, 30)">
-      <rect x="12" y="2" width="12" height="22" rx="3" stroke="#2D6A2D" stroke-width="2" fill="none"/>
-      <line x1="18" y1="20" x2="18" y2="22" stroke="#2D6A2D" stroke-width="1.5"/>
-      <text x="28" y="16" font-size="14" font-weight="800" fill="#C8922A">*</text>
-      <text x="28" y="28" font-size="7" font-weight="700" fill="#2D6A2D">384#</text>
+  <g transform="translate(775, 30)">
+    <rect x="0" y="0" width="200" height="190" rx="16" fill="oklch(98% 0.005 90)" stroke="oklch(72% 0.02 90)" stroke-width="2"/>
+    <g transform="translate(72, 32)">
+      <rect x="6" y="0" width="20" height="36" rx="5" stroke="#2D6A2D" stroke-width="3" fill="none"/>
+      <line x1="16" y1="32" x2="16" y2="36" stroke="#2D6A2D" stroke-width="2.5"/>
+      <text x="36" y="27" font-size="13" font-weight="800" fill="#2D6A2D" font-family="sans-serif">*384#</text>
     </g>
-    <text x="95" y="100" text-anchor="middle" class="col-title" fill="#2D6A2D">Mobile Money</text>
-    <text x="95" y="118" text-anchor="middle" class="col-tagline">Farmer payout in &lt;60s</text>
+    <text x="100" y="135" text-anchor="middle" class="col-title" fill="#2D6A2D">Mobile Money</text>
+    <text x="100" y="153" text-anchor="middle" class="col-tagline">Farmer payout in &lt;60s</text>
   </g>
 
   <!-- AI Layer -->
-  <line x1="30" y1="250" x2="930" y2="250" stroke="#C8922A" stroke-width="1" stroke-dasharray="5 4" opacity="0.4"/>
-  <g transform="translate(40, 244)">
-    <rect x="0" y="0" width="200" height="20" rx="4" fill="oklch(99% 0.008 85)"/>
-    <text x="100" y="13" text-anchor="middle" class="ai-title" fill="#C8922A">⚡ AI Intelligence Layer</text>
+  <line x1="30" y1="260" x2="970" y2="260" stroke="#C8922A" stroke-width="2" stroke-dasharray="6 5" opacity="0.5"/>
+  <g transform="translate(40, 252)">
+    <rect x="0" y="0" width="220" height="24" rx="6" fill="oklch(99% 0.008 85)" stroke="oklch(82% 0.008 60)" stroke-width="1"/>
+    <text x="110" y="16" text-anchor="middle" class="ai-title" fill="#C8922A">⚡ AI Intelligence Layer</text>
   </g>
-  <line x1="310" y1="280" x2="310" y2="250" stroke="#C8922A" stroke-width="1" opacity="0.5"/>
-  <line x1="620" y1="280" x2="620" y2="250" stroke="#C8922A" stroke-width="1" opacity="0.5"/>
+  <line x1="310" y1="300" x2="310" y2="260" stroke="#C8922A" stroke-width="1.5" opacity="0.6"/>
+  <line x1="640" y1="300" x2="640" y2="260" stroke="#C8922A" stroke-width="1.5" opacity="0.6"/>
 
   <!-- Risk Monitor -->
-  <g transform="translate(170, 280)">
-    <rect x="0" y="0" width="280" height="70" rx="12" fill="oklch(99% 0.008 85)" stroke="oklch(88% 0.02 90)" stroke-width="1"/>
-    <rect x="10" y="10" width="48" height="16" rx="6" fill="#C8922A" fill-opacity="0.15"/>
-    <text x="34" y="21" text-anchor="middle" class="ai-badge" fill="#C8922A">ERC-8004</text>
-    <text x="68" y="22" class="ai-card-title" fill="#1A3557">Risk Monitor</text>
-    <text x="15" y="40" class="ai-card-desc">Monitors loan health across LendingVault</text>
-    <text x="15" y="54" class="ai-card-desc">Alerts on LTV threshold breaches</text>
-    <circle cx="140" cy="35" r="3" fill="#C8922A" opacity="0.5"/>
+  <g transform="translate(140, 305)">
+    <rect x="0" y="0" width="320" height="85" rx="14" fill="oklch(99% 0.008 85)" stroke="oklch(82% 0.02 90)" stroke-width="2"/>
+    <rect x="12" y="12" width="56" height="18" rx="6" fill="#C8922A" fill-opacity="0.15" stroke="#C8922A" stroke-width="0.5"/>
+    <text x="40" y="25" text-anchor="middle" class="ai-badge" fill="#C8922A">ERC-8004</text>
+    <text x="78" y="26" class="ai-card-title" fill="#1A3557">Risk Monitor</text>
+    <text x="15" y="48" class="ai-card-desc">Monitors loan health across LendingVault</text>
+    <text x="15" y="64" class="ai-card-desc">Alerts on LTV threshold breaches</text>
+    <circle cx="160" cy="42" r="4" fill="#C8922A" opacity="0.4"/>
   </g>
 
   <!-- Anomaly Detector -->
-  <g transform="translate(500, 280)">
-    <rect x="0" y="0" width="290" height="70" rx="12" fill="oklch(99% 0.008 85)" stroke="oklch(88% 0.02 90)" stroke-width="1"/>
-    <rect x="10" y="10" width="48" height="16" rx="6" fill="#C8922A" fill-opacity="0.15"/>
-    <text x="34" y="21" text-anchor="middle" class="ai-badge" fill="#C8922A">ERC-8004</text>
-    <text x="68" y="22" class="ai-card-title" fill="#1A3557">Anomaly Detector</text>
-    <text x="15" y="40" class="ai-card-desc">Scans supply chain for irregularities</text>
-    <text x="15" y="54" class="ai-card-desc">Flags missing POs, grade gaps, stale exports</text>
-    <circle cx="145" cy="35" r="3" fill="#C8922A" opacity="0.5"/>
+  <g transform="translate(500, 305)">
+    <rect x="0" y="0" width="330" height="85" rx="14" fill="oklch(99% 0.008 85)" stroke="oklch(82% 0.02 90)" stroke-width="2"/>
+    <rect x="12" y="12" width="56" height="18" rx="6" fill="#C8922A" fill-opacity="0.15" stroke="#C8922A" stroke-width="0.5"/>
+    <text x="40" y="25" text-anchor="middle" class="ai-badge" fill="#C8922A">ERC-8004</text>
+    <text x="78" y="26" class="ai-card-title" fill="#1A3557">Anomaly Detector</text>
+    <text x="15" y="48" class="ai-card-desc">Scans supply chain for irregularities</text>
+    <text x="15" y="64" class="ai-card-desc">Flags missing POs, grade gaps, stale exports</text>
+    <circle cx="165" cy="42" r="4" fill="#C8922A" opacity="0.4"/>
   </g>
 </svg>

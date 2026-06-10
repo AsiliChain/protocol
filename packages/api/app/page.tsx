@@ -206,7 +206,8 @@ export default function LandingPage() {
           <div className="text-center">
             <p className="reveal text-xs font-semibold uppercase tracking-[0.08em] text-gold-accent">Built on</p>
             <h2 className="reveal mt-3 font-['var(--font-archivo)'] text-3xl font-bold tracking-[-0.015em] text-fg-default sm:text-4xl">Mantle Network</h2>
-            <p className="reveal mx-auto mt-4 max-w-2xl text-lg text-fg-muted leading-relaxed">Secured by Ethereum, Abstracted by Mantle, Monitored by AI — <span className="font-semibold" style={{ color: "#1A3557" }}>Secure, Auditable, Accessible</span></p>
+            <p className="reveal mx-auto mt-4 max-w-2xl text-base text-fg-muted leading-relaxed">Secured by Ethereum, Abstracted by Mantle, Auditable on Hedera with AI in the loop</p>
+            <p className="reveal mt-6 text-xl font-bold tracking-[-0.01em]" style={{ color: "#C8922A", fontFamily: "var(--font-archivo), system-ui" }}>Secure, Auditable, Accessible</p>
           </div>
           <div className="mt-12 flex justify-center">
             <img
@@ -259,7 +260,7 @@ export default function LandingPage() {
       {/* Key metrics */}
       <section className="bg-white py-24">
         <div className="mx-auto max-w-[72rem] px-6">
-          <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
+          <div className="flex flex-col items-center sm:flex-row sm:justify-center gap-8 sm:gap-16">
             {[
               { value: "16%", label: "APR all-in cost", sub: "Interest + fees + reserve" },
               { value: "2", label: "AI agents live", sub: "Risk monitor + anomaly detector" },
@@ -287,9 +288,28 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-border-light bg-white py-12">
-        <div className="mx-auto max-w-[72rem] px-6">
-          <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
+      <footer className="border-t border-border-light bg-white relative">
+        <div className="absolute inset-0 pointer-events-none select-none" style={{ zIndex: 0 }}>
+          <span
+            style={{
+              position: "absolute",
+              left: "50%",
+              bottom: -50,
+              transform: "translateX(-50%)",
+              fontSize: "clamp(70px, 22vw, 280px)",
+              fontWeight: 700,
+              color: "oklch(65% 0.16 75 / 0.07)",
+              letterSpacing: -2,
+              lineHeight: 0.7,
+              fontFamily: "var(--font-archivo), system-ui",
+              whiteSpace: "nowrap",
+              userSelect: "none",
+            }}>
+            AsiliChain
+          </span>
+        </div>
+        <div className="mx-auto max-w-[72rem] px-6 relative" style={{ zIndex: 1 }}>
+          <div className="flex flex-col items-center justify-between gap-6 pt-14 pb-10 md:flex-row">
             <div className="flex items-center gap-3">
               <img src="/asilichain-symbol.svg" alt="AsiliChain" className="h-7 w-7" />
               <div>
@@ -297,7 +317,12 @@ export default function LandingPage() {
                 <div className="text-[10px] font-bold tracking-widest text-fg-subtle">Origin. Finance. Trust.</div>
               </div>
             </div>
-            <p className="text-xs text-fg-subtle">AsiliChain Protocol &copy; 2026 &mdash; <a href="https://docs.asilichain.xyz" target="_blank" rel="noreferrer" className="text-fg-muted underline underline-offset-2 hover:text-fg-default transition-colors">Documentation</a></p>
+            <div>
+              <a href="https://docs.asilichain.xyz" target="_blank" rel="noreferrer" className="text-xs font-semibold text-fg-muted underline underline-offset-2 hover:text-fg-default transition-colors">Documentation</a>
+            </div>
+          </div>
+          <div className="border-t border-border-light pt-5 pb-8">
+            <p className="text-xs text-fg-subtle text-center">AsiliChain Protocol &copy; 2026</p>
           </div>
         </div>
       </footer>

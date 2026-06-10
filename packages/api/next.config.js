@@ -1,10 +1,9 @@
+const path = require("path");
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  outputFileTracingRoot: process.cwd(),
   output: "standalone",
-  experimental: {
-    outputFileTracingRoot: require("path").resolve(__dirname, "../.."),
-  },
+  outputFileTracingRoot: path.resolve(__dirname, "../.."),
 };
 
 module.exports = nextConfig;

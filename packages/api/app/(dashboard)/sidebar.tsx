@@ -147,7 +147,11 @@ export function Sidebar() {
               stroke="currentColor"
               className="dash-sidebar-toggle-icon h-4 w-4"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" d="m18.75 4.5-7.5 7.5 7.5 7.5m-6-15L5.25 12l7.5 7.5" />
+              {collapsed ? (
+                <path strokeLinecap="round" strokeLinejoin="round" d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5" />
+              ) : (
+                <path strokeLinecap="round" strokeLinejoin="round" d="m18.75 4.5-7.5 7.5 7.5 7.5m-6-15L5.25 12l7.5 7.5" />
+              )}
             </svg>
           </button>
         </div>

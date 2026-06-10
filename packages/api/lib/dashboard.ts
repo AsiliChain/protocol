@@ -460,42 +460,100 @@ export async function getAllLoans(): Promise<LoanInfo[]> {
     functionName: "nextTokenId",
   });
 
-  const loans: LoanInfo[] = [];
   const maxTokens = Number(nextTokenId);
+  if (maxTokens <= 1) return [];
 
-  for (let id = 1; id < maxTokens; id++) {
-    try {
-      const loan = await publicClient.readContract({
-        address: addresses.lendingVault,
-        abi: lendingVaultAbi,
-        functionName: "getLoan",
-        args: [BigInt(id)],
-      });
-      // status: 0 = ACTIVE
-      if (loan[7] !== 0) continue;
+  const start = Math.max(1, maxTokens - 200);
 
-      const batch = await publicClient.readContract({
-        address: addresses.batchToken,
-        abi: batchTokenAbi,
-        functionName: "batchData",
-        args: [BigInt(id)],
-      });
+  // Multicall getLoan for all batch tokens
+  const loanContracts: {
+    address: `0x${string}`;
+    abi: typeof lendingVaultAbi;
+    functionName: "getLoan";
+    args: readonly [bigint];
+  }[] = [];
 
-      loans.push({
-        batchTokenId: Number(loan[0]),
-        farmerWallet: loan[1],
+  for (let id = start; id < maxTokens; id++) {
+    loanContracts.push({
+      address: addresses.lendingVault,
+      abi: lendingVaultAbi,
+      functionName: "getLoan",
+      args: [BigInt(id)],
+    });
+  }
+
+  const loanResults = await publicClient.multicall({
+    contracts: loanContracts,
+    allowFailure: true,
+  });
+
+  // Collect active loans: ACTIVE = 1
+  interface RawLoan {
+    batchTokenId: bigint;
+    farmerWallet: `0x${string}`;
+    principalUsdc: bigint;
+    interestUsdc: bigint;
+    originatedAt: bigint;
+    expiresAt: bigint;
+    status: number;
+  }
+
+  const activeRaw: { tokenId: number; loan: RawLoan }[] = [];
+
+  for (let i = 0; i < loanResults.length; i++) {
+    const r = loanResults[i];
+    if (r.status === "failure") continue;
+    const loan = r.result as readonly [bigint, string, bigint, bigint, bigint, bigint, bigint, number];
+    if (loan[7] !== 1) continue; // LoanStatus: ACTIVE = 1
+    activeRaw.push({
+      tokenId: start + i,
+      loan: {
+        batchTokenId: loan[0],
+        farmerWallet: loan[1] as `0x${string}`,
         principalUsdc: loan[2],
         interestUsdc: loan[3],
-        originatedAt: Number(loan[4]),
-        expiresAt: Number(loan[5]),
+        originatedAt: loan[4],
+        expiresAt: loan[5],
         status: loan[7],
-        ltvBps: undefined, // computed client-side
-      });
-    } catch {
-      // no loan
-    }
+      },
+    });
   }
-  return loans;
+
+  if (activeRaw.length === 0) return [];
+
+  // Multicall batchData for active loans only
+  const batchContracts: {
+    address: `0x${string}`;
+    abi: typeof batchTokenAbi;
+    functionName: "batchData";
+    args: readonly [bigint];
+  }[] = [];
+
+  for (const a of activeRaw) {
+    batchContracts.push({
+      address: addresses.batchToken,
+      abi: batchTokenAbi,
+      functionName: "batchData",
+      args: [BigInt(a.tokenId)],
+    });
+  }
+
+  const batchResults = await publicClient.multicall({
+    contracts: batchContracts,
+    allowFailure: true,
+  });
+
+  // We don't actually need batch data for the loans list — only LoanInfo fields
+  return activeRaw.map((a) => ({
+    batchTokenId: a.tokenId,
+    farmerWallet: a.loan.farmerWallet,
+    principalUsdc: a.loan.principalUsdc,
+    interestUsdc: a.loan.interestUsdc,
+    originatedAt: Number(a.loan.originatedAt),
+    expiresAt: Number(a.loan.expiresAt),
+    status: a.loan.status,
+    ltvBps: undefined, // computed client-side
+  }));
 }
 
 export async function getAgentsIdentity(): Promise<AgentIdentity[]> {

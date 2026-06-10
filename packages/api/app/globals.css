@@ -931,6 +931,10 @@
     pointer-events: auto;
   }
 
+  .dash-sidebar-toggle {
+    display: none;
+  }
+
   .dash-main {
     margin-left: 0 !important;
   }

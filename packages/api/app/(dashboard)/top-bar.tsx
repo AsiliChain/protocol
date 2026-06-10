@@ -42,10 +42,10 @@ export function TopBar() {
   return (
     <header className="dash-topbar">
       <div className="flex items-center gap-3">
-        {/* Hamburger — visible on mobile, also visible on desktop as sidebar toggle */}
+        {/* Hamburger — mobile only */}
         <button
           type="button"
-          className="dash-btn-ghost p-1.5 md:hidden"
+          className="flex md:hidden items-center justify-center p-1.5 rounded-lg text-fg-muted hover:bg-[oklch(92%_0.008_60)] hover:text-fg-default transition-colors"
           onClick={() => setMobileOpen(true)}
           aria-label="Open sidebar"
         >
@@ -57,7 +57,7 @@ export function TopBar() {
         {/* Sidebar collapse toggle — desktop only */}
         <button
           type="button"
-          className="dash-btn-ghost p-1.5 hidden md:flex"
+          className="hidden md:inline-flex items-center justify-center p-1.5 rounded-lg text-fg-muted hover:bg-[oklch(92%_0.008_60)] hover:text-fg-default transition-colors"
           onClick={toggleCollapsed}
           aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
@@ -70,29 +70,29 @@ export function TopBar() {
             className="h-5 w-5"
           >
             {collapsed ? (
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
-            ) : (
               <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+            ) : (
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
             )}
           </svg>
         </button>
 
-        <div>
-          <h1 className="text-lg font-semibold" style={{ color: "oklch(18% 0.01 60)" }}>
+        <div className="min-w-0">
+          <h1 className="text-base md:text-lg font-semibold truncate" style={{ color: "oklch(18% 0.01 60)" }}>
             {page.title}
           </h1>
-          <p className="text-xs" style={{ color: "oklch(55% 0.012 60)" }}>
+          <p className="text-xs truncate hidden md:block" style={{ color: "oklch(55% 0.012 60)" }}>
             {page.subtitle}
           </p>
         </div>
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-1 md:gap-3">
         <a
           href="https://docs.asilichain.xyz"
           target="_blank"
           rel="noreferrer"
-          className="dash-btn-ghost no-underline"
+          className="dash-btn-ghost no-underline text-xs md:text-sm"
         >
           Docs
         </a>
@@ -100,7 +100,7 @@ export function TopBar() {
           href="https://sepolia.mantlescan.org"
           target="_blank"
           rel="noreferrer"
-          className="dash-btn-ghost no-underline"
+          className="dash-btn-ghost no-underline hidden sm:inline-flex"
         >
           MantleScan
         </a>

@@ -63,9 +63,10 @@ function StageCard({ stage, isActive }: { stage: typeof STAGES[number]; isActive
     <div ref={ref} data-stage={stage.num - 1}
       className="relative pl-16"
       style={{
-        minHeight: 320,
-        paddingTop: 40,
-        paddingBottom: 40,
+        minHeight: 280,
+        paddingTop: 48,
+        paddingBottom: 48,
+        marginBottom: 24,
         opacity: visible ? 1 : 0.25,
         transition: "opacity 0.5s ease",
       }}>
@@ -155,10 +156,10 @@ function OutputsHub() {
 
   // Diamond positions: top, right, bottom, left
   const positions = [
-    { x: "50%", y: "10%", data: OUTPUTS[0] },  // 60s payment - top
-    { x: "85%", y: "35%", data: OUTPUTS[1] },  // EUDR - right
-    { x: "50%", y: "60%", data: OUTPUTS[2] },  // Price - bottom
-    { x: "15%", y: "35%", data: OUTPUTS[3] },  // Credit - left
+    { x: "85%", y: "12%", data: OUTPUTS[0] },  // Payment - top right
+    { x: "85%", y: "54%", data: OUTPUTS[1] },  // EUDR - right
+    { x: "50%", y: "70%", data: OUTPUTS[2] },  // Price - bottom
+    { x: "15%", y: "32%", data: OUTPUTS[3] },  // Credit - left
   ];
 
   const stats = ["60s", "DDS", "Spot", "50+"];
@@ -177,8 +178,8 @@ function OutputsHub() {
           Four Outputs for Every Farmer
         </p>
 
-        {/* Hub-and-spoke layout */}
-        <div className="relative max-w-2xl mx-auto" style={{ height: 420 }}>
+        {/* Hub-and-spoke layout — desktop */}
+        <div className="hidden md:block relative max-w-2xl mx-auto" style={{ height: 420 }}>
           {/* Connecting lines from center to cards */}
           <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 1 }}>
             {positions.map((p, i) => (
@@ -224,6 +225,37 @@ function OutputsHub() {
               </span>
             </div>
           ))}
+        </div>
+
+        {/* Mobile: stacked layout */}
+        <div className="block md:hidden">
+          {/* Farmer hub */}
+          <div className="flex flex-col items-center mb-6">
+            <div className="flex items-center justify-center rounded-full"
+              style={{ width: 64, height: 64, background: `radial-gradient(circle, ${GREEN}30, ${BROWN}80)`, border: `2px solid ${GOLD}` }}>
+              <span className="text-2xl">👨‍🌾</span>
+            </div>
+            <span className="text-xs font-semibold mt-2 tracking-wide" style={{ color: GOLD }}>Every Farmer</span>
+          </div>
+
+          {/* 4 cards in a 2-column grid */}
+          <div className="grid grid-cols-2 gap-3 max-w-md mx-auto">
+            {OUTPUTS.map((item, i) => (
+              <div key={item.title}
+                className="flex flex-col items-center text-center rounded-xl p-3"
+                style={{ background: "rgba(255,255,255,0.04)", border: `1px solid ${GOLD}18` }}>
+                {/* Stat badge */}
+                <div className="flex items-center justify-center rounded-full mb-2"
+                  style={{ width: 36, height: 36, border: `2px solid ${GOLD}`, background: "rgba(0,0,0,0.3)" }}>
+                  <span className="text-[10px] font-bold" style={{ color: GOLD }}>{stats[i]}</span>
+                </div>
+                <span className="text-xs font-bold mb-0.5" style={{ color: "#fff" }}>{item.title}</span>
+                <span className="text-[10px] leading-tight" style={{ color: "oklch(70% 0.02 80)" }}>
+                  {item.desc}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
@@ -280,8 +312,10 @@ export function HowItWorks() {
         opacity: inView ? 1 : 0,
         transform: inView ? "translateY(0)" : "translateY(24px)",
         transition: "all 0.8s cubic-bezier(0.16, 1, 0.3, 1)",
+        paddingTop: 80,
+        paddingBottom: 40,
       }}>
-      <div className="text-center mb-20 px-4">
+      <div className="text-center mb-12 px-4">
         <p className="text-xs font-semibold uppercase tracking-[0.1em]" style={{ color: GOLD }}>How it works</p>
         <h2 className="mt-4 font-['var(--font-archivo)'] text-4xl font-bold tracking-[-0.02em] sm:text-5xl" style={{ color: NAVY }}>
           Automate all your workflows in one system
