@@ -20,7 +20,7 @@ export default async function BatchesPage() {
           </p>
         </div>
         <Link
-          href="/agents/workspace"
+          href="/field-ops"
           className="dash-btn-primary inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium"
         >
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-4 w-4">

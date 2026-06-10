@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { HowItWorks } from "./_components/HowItWorks";
 
 const MANTLESCAN_LINK =
   "https://sepolia.mantlescan.org/address/0x62a6b58f8c3625F0c5f46D6C86A65595AA769C89";
@@ -195,28 +196,8 @@ export default function LandingPage() {
       </section>
 
       {/* How it works */}
-      <section className="py-24" style={{ backgroundColor: "oklch(95% 0.006 85)" }}>
-        <div className="mx-auto max-w-[72rem] px-6">
-          <div className="mb-16 text-center">
-            <p className="reveal text-xs font-semibold uppercase tracking-[0.08em] text-gold-accent">Simple flow</p>
-            <h2 className="reveal mt-3 font-['var(--font-archivo)'] text-3xl font-bold tracking-[-0.015em] text-fg-default sm:text-4xl">How it works</h2>
-            <p className="reveal mx-auto mt-4 max-w-2xl text-lg text-fg-muted">From farm to payout — every step recorded on Mantle Network.</p>
-          </div>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {[
-              { step: "01", title: "Farmer registered", desc: "NIN-linked wallet created. Farm GPS polygon recorded on-chain. Identity verified through cooperative agents." },
-              { step: "02", title: "Coffee delivered", desc: "Batch token minted with weight, grade (screen 18), and origin. Tokenized coffee moves through supply chain with full traceability." },
-              { step: "03", title: "Loan originated", desc: "Verified batch data triggers credit evaluation. Funds disbursed in USDC via LendingVault. 16% APR, automated at settlement." },
-              { step: "04", title: "Export & payout", desc: "Buyer settles in USDC. Loan repaid, farmer receives net payout via mobile money (MTN MoMo). Hedera HCS audit trail recorded." },
-            ].map((item, i) => (
-              <div key={item.step} className="reveal rounded-xl bg-white p-6 shadow-sm border border-border-light" style={{ transitionDelay: `${i * 0.1}s` }}>
-                <span className="text-3xl font-black text-gold-300">{item.step}</span>
-                <h3 className="mt-3 text-base font-bold text-fg-default">{item.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-fg-muted">{item.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
+      <section style={{ backgroundColor: "oklch(97% 0.015 90)" }}>
+        <HowItWorks />
       </section>
 
       {/* Powered by Mantle Network */}
@@ -225,24 +206,14 @@ export default function LandingPage() {
           <div className="text-center">
             <p className="reveal text-xs font-semibold uppercase tracking-[0.08em] text-gold-accent">Built on</p>
             <h2 className="reveal mt-3 font-['var(--font-archivo)'] text-3xl font-bold tracking-[-0.015em] text-fg-default sm:text-4xl">Mantle Network</h2>
-            <p className="reveal mx-auto mt-4 max-w-2xl text-lg text-fg-muted">Eight smart contracts powering the entire supply chain finance lifecycle.</p>
+            <p className="reveal mx-auto mt-4 max-w-2xl text-lg text-fg-muted leading-relaxed">Secured by Ethereum, Abstracted by Mantle, Monitored by AI — <span className="font-semibold" style={{ color: "#1A3557" }}>Secure, Auditable, Accessible</span></p>
           </div>
-          <div className="mt-16 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {[
-              { title: "FarmerRegistry", desc: "NIN-based identity. Role-based access for cooperatives and agents." },
-              { title: "BatchToken", desc: "ERC-721 coffee batches. Grade, weight, origin stored on-chain." },
-              { title: "LendingVault", desc: "USDC lending pool. APR-based fees. Automated settlement." },
-              { title: "TraceLog", desc: "Stage-gated batch lifecycle. GPS polygon verification." },
-              { title: "CreditScore", desc: "Data-driven farmer credit profiles. Risk assessment engine." },
-              { title: "ProtocolFee", desc: "4% APR protocol fee. MULTISIG distribution to treasury." },
-              { title: "IdentityRegistry", desc: "ERC-8004 agent NFTs. On-chain AI agent identity." },
-              { title: "PurchaseOrder", desc: "Buyer PO creation. Loan origination trigger." },
-            ].map((contract, i) => (
-              <div key={contract.title} className="reveal rounded-xl border border-border-light bg-bg-base p-5" style={{ transitionDelay: `${i * 0.05}s` }}>
-                <h3 className="text-sm font-bold text-fg-default">{contract.title}</h3>
-                <p className="mt-1 text-xs leading-relaxed text-fg-muted">{contract.desc}</p>
-              </div>
-            ))}
+          <div className="mt-12 flex justify-center">
+            <img
+              src="/architecture-marketing.svg"
+              alt="AsiliChain architecture: Ethereum security, Mantle smart contracts, Hedera HCS audit, USSD mobile money payouts, with AI Risk Monitor and Anomaly Detector"
+              className="w-full max-w-[900px] h-auto"
+            />
           </div>
         </div>
       </section>
@@ -290,10 +261,8 @@ export default function LandingPage() {
         <div className="mx-auto max-w-[72rem] px-6">
           <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
             {[
-              { value: "8", label: "Smart contracts", sub: "Deployed on Mantle Sepolia" },
               { value: "16%", label: "APR all-in cost", sub: "Interest + fees + reserve" },
               { value: "2", label: "AI agents live", sub: "Risk monitor + anomaly detector" },
-              { value: "95+", label: "Doc pages", sub: "Full protocol documentation" },
             ].map((metric, i) => (
               <div key={metric.label} className="reveal text-center" style={{ transitionDelay: `${i * 0.1}s` }}>
                 <p className="text-3xl font-black text-gold-accent tabular-nums">{metric.value}</p>

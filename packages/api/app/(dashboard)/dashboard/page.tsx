@@ -47,9 +47,9 @@ export default async function DashboardPage() {
 
   const onboardingSteps = [
     { number: 1, label: "Register Cooperative", href: "/cooperatives" },
-    { number: 2, label: "Invite Agents", href: "/agents/workspace" },
-    { number: 3, label: "Register Farmers", href: "/agents/workspace" },
-    { number: 4, label: "Record Deliveries", href: "/agents/workspace" },
+    { number: 2, label: "Invite Agents", href: "/field-ops" },
+    { number: 3, label: "Register Farmers", href: "/field-ops" },
+    { number: 4, label: "Record Deliveries", href: "/field-ops" },
     { number: 5, label: "Track Batches", href: "/batches" },
   ];
 
@@ -113,13 +113,13 @@ export default async function DashboardPage() {
             Quick Actions
           </span>
           <Link
-            href="/agents/workspace"
+            href="/field-ops"
             className="dash-btn-primary inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium"
           >
             Register Farmer
           </Link>
           <Link
-            href="/agents/workspace"
+            href="/field-ops"
             className="dash-btn-ghost inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium"
           >
             Record Delivery

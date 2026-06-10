@@ -13,13 +13,13 @@ const AGENT_ROLE_HASH = keccak256(toBytes("AGENT_ROLE"));
 /**
  * POST /api/agents/invite
  *
- * Grants AGENT_ROLE to a field agent wallet under a cooperative.
+ * Grants AGENT_ROLE to a field operator wallet under a cooperative.
  * Requires Bearer JWT with COOP_ROLE matching the cooperative wallet.
  * Enforces agent cap: max(3, ceil(farmerCount / 50)).
  *
  * Body:
  *   cooperativeWallet — the cooperative that holds COOP_ROLE
- *   agentWallet       — the field agent to receive AGENT_ROLE
+ *   agentWallet       — the field operator to receive AGENT_ROLE
  */
 export async function POST(request: Request): Promise<Response> {
   let auth: { role: string; wallet: `0x${string}` };

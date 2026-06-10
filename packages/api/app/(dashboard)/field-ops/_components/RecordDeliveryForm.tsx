@@ -85,7 +85,7 @@ function Field({ label, value, onChange, type = "text", required }: any) {
     <div className="space-y-1">
       <label className="text-xs text-[oklch(70%_0.01_60)]">{label}{required && " *"}</label>
       <input type={type} value={value} onChange={(e) => onChange(e.target.value)}
-        className="w-full bg-[oklch(22%_0.01_55)] border border-[oklch(30%_0.01_55)] rounded-xl px-3 py-2 text-sm text-[oklch(90%_0.006_60)] outline-none focus:border-[#D4A053]"
+        className="w-full bg-white border border-[oklch(82%_0.008_60)] rounded-xl px-3 py-2 text-sm text-[oklch(18%_0.01_60)] outline-none focus:border-[#C8922A] focus:ring-2 focus:ring-[#C8922A]/10 placeholder:text-[oklch(60%_0.01_58)]"
         required={required} />
     </div>
   );

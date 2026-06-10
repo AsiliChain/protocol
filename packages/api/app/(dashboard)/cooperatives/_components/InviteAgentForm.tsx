@@ -63,7 +63,7 @@ export function InviteAgentForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-3">
       <h3 className="text-sm font-semibold" style={{ color: "oklch(72% 0.16 80)" }}>
-        Invite Field Agent
+        Invite Field Operator
       </h3>
 
       <div className="space-y-1">

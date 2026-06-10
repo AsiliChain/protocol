@@ -34,7 +34,7 @@ export default async function CooperativesPage() {
         </h2>
         <ul className="space-y-2 text-xs" style={{ color: "oklch(60% 0.01 60)" }}>
           <li>
-            • Cooperatives self-manage field agents. The cooperative wallet holder
+            • Cooperatives self-manage field operators. The cooperative wallet holder
             grants AGENT_ROLE to agent wallets.
           </li>
           <li>

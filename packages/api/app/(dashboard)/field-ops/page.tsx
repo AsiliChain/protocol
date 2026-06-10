@@ -7,7 +7,7 @@ export default function AgentWorkspacePage() {
     <div className="space-y-8">
       <div>
         <h1 className="text-2xl font-bold" style={{ fontFamily: "'Archivo Black', sans-serif" }}>
-          Agent Workspace
+          Field Operations
         </h1>
         <p className="text-sm text-[oklch(70%_0.01_60)] mt-1">
           Register farmers and record coffee deliveries

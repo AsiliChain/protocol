@@ -503,27 +503,37 @@ export async function getAgentsIdentity(): Promise<AgentIdentity[]> {
     { agentId: 0, name: "risk-monitor" },
     { agentId: 1, name: "anomaly-detector" },
   ];
-  const results: AgentIdentity[] = [];
-  for (const r of registry) {
+
+  const timeout = (ms: number) => new Promise<never>((_, reject) => setTimeout(() => reject(new Error("RPC timeout")), ms));
+
+  const fetchAgent = async (agentId: number): Promise<AgentIdentity> => {
     let owner: string | null = null;
     let tokenUri: string | null = null;
     try {
-      owner = await publicClient.readContract({
-        address: addresses.identityRegistry,
-        abi: identityRegistryAbi,
-        functionName: "ownerOf",
-        args: [BigInt(r.agentId)],
-      });
-      tokenUri = await publicClient.readContract({
-        address: addresses.identityRegistry,
-        abi: identityRegistryAbi,
-        functionName: "tokenURI",
-        args: [BigInt(r.agentId)],
-      });
+      [owner, tokenUri] = await Promise.race([
+        Promise.all([
+          publicClient.readContract({
+            address: addresses.identityRegistry,
+            abi: identityRegistryAbi,
+            functionName: "ownerOf",
+            args: [BigInt(agentId)],
+          }),
+          publicClient.readContract({
+            address: addresses.identityRegistry,
+            abi: identityRegistryAbi,
+            functionName: "tokenURI",
+            args: [BigInt(agentId)],
+          }),
+        ]),
+        timeout(8000),
+      ]);
     } catch {
-      // not registered
+      // RPC timeout or contract not registered
     }
-    results.push({ agentId: r.agentId, name: r.name, owner, tokenUri });
-  }
+    return { agentId, name: registry.find((r) => r.agentId === agentId)?.name ?? "", owner, tokenUri };
+  };
+
+  // Fetch both agents in parallel with a combined timeout
+  const results = await Promise.all(registry.map((r) => fetchAgent(r.agentId)));
   return results;
 }

@@ -156,6 +156,22 @@
   50%      { box-shadow: 0 0 60px oklch(72% 0.16 80 / 0.2); }
 }
 
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.05); }
+}
+
+/* Stage accordion — CSS Grid row-height transition */
+.stage-detail {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.35s ease;
+}
+
+.stage-detail.expanded {
+  grid-template-rows: 1fr;
+}
+
 /* ── Hero orbs (light theme) ─────────────────────────── */
 
 .hero-orb {
@@ -470,7 +486,7 @@
   min-height: 100dvh;
 }
 
-/* Sidebar — GPU-accelerated collapse */
+/* Sidebar — GPU-accelerated collapse (no width reflow) */
 .dash-sidebar {
   position: fixed;
   top: 0;
@@ -483,13 +499,12 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  contain: layout style;
-  transition: width 0.35s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateX(0);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .dash-sidebar.collapsed {
-  width: 4.5rem;
+  transform: translateX(-11.5rem);
 }
 
 .dash-sidebar-logo {
@@ -936,10 +951,6 @@
 
   .dash-main {
     margin-left: 16rem;
-  }
-
-  .dash-sidebar.collapsed + .dash-main {
-    margin-left: 4.5rem;
   }
 
   .dash-mobile-nav {

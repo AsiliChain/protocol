@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 580" fill="none">
+  <style>
+    text { font-family: 'Inter', system-ui, sans-serif; fill: #000; }
+    .title { font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+    .subtitle { font-size: 9px; }
+    .label { font-size: 10px; font-weight: 600; }
+    .small-label { font-size: 8px; }
+    .edge-label { font-size: 7.5px; font-weight: 500; }
+    .tag { font-size: 7px; }
+  </style>
+
+  <!-- Title -->
+  <text x="450" y="28" text-anchor="middle" class="title" fill="#000">AsiliChain Architecture Overview</text>
+
+  <!-- L1: Ethereum Mainnet -->
+  <rect x="340" y="48" width="220" height="52" rx="6" stroke="#000" stroke-width="1.5" fill="#fff"/>
+  <text x="450" y="70" text-anchor="middle" class="label" fill="#000">ETHEREUM MAINNET</text>
+  <text x="450" y="84" text-anchor="middle" class="subtitle" fill="#555">Proof-of-Stake · Ultimate Settlement</text>
+
+  <!-- Arrow: Ethereum → Mantle -->
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#000"/>
+    </marker>
+  </defs>
+  <line x1="450" y1="100" x2="450" y2="128" stroke="#000" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <text x="460" y="118" class="edge-label" fill="#444">ZK proofs verified</text>
+
+  <!-- L2: Mantle Network -->
+  <rect x="310" y="132" width="280" height="52" rx="6" stroke="#000" stroke-width="1.5" fill="#fff"/>
+  <text x="450" y="155" text-anchor="middle" class="label" fill="#000">MANTLE NETWORK — ZK ROLLUP</text>
+  <text x="450" y="169" text-anchor="middle" class="subtitle" fill="#555">OP Succinct/SP1 · Type-1 zkEVM · 1-hr Finality</text>
+
+  <!-- Arrow: Mantle → Contracts -->
+  <line x1="450" y1="184" x2="450" y2="210" stroke="#000" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <!-- AsiliChain Contracts -->
+  <rect x="280" y="214" width="340" height="66" rx="6" stroke="#000" stroke-width="1.5" fill="#fff"/>
+  <text x="450" y="238" text-anchor="middle" class="label" fill="#000">ASILICHAIN CONTRACTS</text>
+  <text x="450" y="254" text-anchor="middle" class="subtitle" fill="#555">
+    FarmerRegistry · BatchToken · TraceLog · CreditScore · PurchaseOrder · LendingVault · ProtocolFee
+  </text>
+  <rect x="450" y="262" width="100" height="10" rx="3" stroke="#000" stroke-width="0.8" fill="none"/>
+  <text x="500" y="270" text-anchor="middle" class="tag" fill="#333">7 contracts on Mantle</text>
+
+  <!-- Arrow: Contracts → Fonbnk -->
+  <line x1="620" y1="240" x2="710" y2="240" stroke="#000" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <text x="665" y="232" class="edge-label" fill="#444">Farmer payout trigger</text>
+
+  <!-- Fonbnk -->
+  <rect x="714" y="214" width="160" height="52" rx="6" stroke="#000" stroke-width="1.5" fill="#fff"/>
+  <text x="794" y="238" text-anchor="middle" class="label" fill="#000">FONBNK</text>
+  <text x="794" y="252" text-anchor="middle" class="subtitle" fill="#555">USDC → MTN MoMo Payouts</text>
+
+  <!-- Arrow: Fonbnk → Farmer -->
+  <line x1="874" y1="240" x2="920" y2="240" stroke="#000" stroke-width="1" marker-end="url(#arrow)" stroke-dasharray="4 2"/>
+  <text x="897" y="232" class="edge-label" fill="#444">To farmer phone</text>
+
+  <!-- TransFi → Contracts -->
+  <line x1="170" y1="240" x2="275" y2="240" stroke="#000" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <text x="222" y="232" class="edge-label" fill="#444">USDC deposit</text>
+
+  <!-- TransFi -->
+  <rect x="20" y="214" width="150" height="52" rx="6" stroke="#000" stroke-width="1.5" fill="#fff"/>
+  <text x="95" y="238" text-anchor="middle" class="label" fill="#000">TRANSFI</text>
+  <text x="95" y="252" text-anchor="middle" class="subtitle" fill="#555">MFI → USDC → LendingVault</text>
+
+  <!-- Contracts → Hedera HCS (dashed) -->
+  <line x1="450" y1="280" x2="450" y2="340" stroke="#000" stroke-width="1" marker-end="url(#arrow)" stroke-dasharray="5 3"/>
+  <text x="460" y="314" class="edge-label" fill="#444">Every stage event</text>
+
+  <!-- Hedera HCS -->
+  <rect x="310" y="344" width="280" height="52" rx="6" stroke="#000" stroke-width="1.5" fill="#fff" stroke-dasharray="5 3"/>
+  <text x="450" y="367" text-anchor="middle" class="label" fill="#000">HEDERA HCS — AUDIT LAYER</text>
+  <text x="450" y="381" text-anchor="middle" class="subtitle" fill="#555">IBM · Google · FedEx · Boeing Governance</text>
+
+  <!-- MAAIF → Contracts -->
+  <line x1="200" y1="450" x2="350" y2="300" stroke="#000" stroke-width="1" marker-end="url(#arrow)" stroke-dasharray="4 2"/>
+
+  <!-- MAAIF -->
+  <rect x="90" y="440" width="220" height="52" rx="6" stroke="#000" stroke-width="1.5" fill="#fff"/>
+  <text x="200" y="463" text-anchor="middle" class="label" fill="#000">MAAIF NTS</text>
+  <text x="200" y="477" text-anchor="middle" class="subtitle" fill="#555">GPS + Farmer IDs + Government Data</text>
+
+  <!-- IdentityRegistry → Contracts -->
+  <line x1="450" y1="430" x2="450" y2="400" stroke="#000" stroke-width="1" marker-end="url(#arrow)"/>
+
+  <!-- IdentityRegistry -->
+  <rect x="340" y="434" width="220" height="52" rx="6" stroke="#000" stroke-width="1.5" fill="#fff"/>
+  <text x="450" y="457" text-anchor="middle" class="label" fill="#000">IDENTITY REGISTRY</text>
+  <text x="450" y="471" text-anchor="middle" class="subtitle" fill="#555">ERC-8004 Agent NFT Identity</text>
+
+  <!-- Vertical dashed separator for layers -->
+  <line x1="940" y1="48" x2="940" y2="530" stroke="#bbb" stroke-width="0.5"/>
+  <text x="935" y="78" text-anchor="end" class="small-label" fill="#888">Layer 1</text>
+  <text x="935" y="162" text-anchor="end" class="small-label" fill="#888">Layer 2</text>
+  <text x="935" y="251" text-anchor="end" class="small-label" fill="#888">Application</text>
+  <text x="935" y="375" text-anchor="end" class="small-label" fill="#888">Audit</text>
+  <text x="935" y="465" text-anchor="end" class="small-label" fill="#888">Identity</text>
+
+  <!-- Layer brackets -->
+  <line x1="30" y1="48" x2="30" y2="100" stroke="#aaa" stroke-width="0.5"/>
+  <line x1="26" y1="48" x2="34" y2="48" stroke="#aaa" stroke-width="0.5"/>
+  <line x1="26" y1="100" x2="34" y2="100" stroke="#aaa" stroke-width="0.5"/>
+</svg>

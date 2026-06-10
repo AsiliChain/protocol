@@ -30,6 +30,26 @@ export default function FarmersPage() {
         className="rounded-xl p-6"
         style={{ backgroundColor: "oklch(100% 0 0)", border: "1px solid oklch(88% 0.006 60)" }}
       >
+        <h2 className="mb-3 font-semibold" style={{ color: "oklch(18% 0.01 60)" }}>
+          Search by Wallet Address
+        </h2>
+        <form action={lookupFarmer} className="flex gap-3">
+          <input
+            name="address"
+            type="text"
+            placeholder="0x..."
+            className="flex-1 rounded-xl px-4 py-2.5 text-sm dash-input"
+          />
+          <button type="submit" className="dash-btn-primary shrink-0">
+            View
+          </button>
+        </form>
+      </div>
+
+      <div
+        className="rounded-xl p-6"
+        style={{ backgroundColor: "oklch(100% 0 0)", border: "1px solid oklch(88% 0.006 60)" }}
+      >
         <h2 className="mb-4 font-semibold" style={{ color: "oklch(18% 0.01 60)" }}>
           Registered Farmers
         </h2>
@@ -61,26 +81,6 @@ export default function FarmersPage() {
             </a>
           ))}
         </div>
-      </div>
-
-      <div
-        className="rounded-xl p-6"
-        style={{ backgroundColor: "oklch(100% 0 0)", border: "1px solid oklch(88% 0.006 60)" }}
-      >
-        <h2 className="mb-3 font-semibold" style={{ color: "oklch(18% 0.01 60)" }}>
-          Search by Wallet Address
-        </h2>
-        <form action={lookupFarmer} className="flex gap-3">
-          <input
-            name="address"
-            type="text"
-            placeholder="0x..."
-            className="flex-1 rounded-xl px-4 py-2.5 text-sm dash-input"
-          />
-          <button type="submit" className="dash-btn-primary shrink-0">
-            View
-          </button>
-        </form>
       </div>
     </div>
   );
