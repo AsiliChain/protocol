@@ -150,25 +150,78 @@ function CreditFlow() {
   );
 }
 
-function OutputsGrid() {
-  const [hovered, setHovered] = useState<number | null>(null);
+function OutputsHub() {
+  const { ref, inView } = useInView(0.1);
+
+  // Diamond positions: top, right, bottom, left
+  const positions = [
+    { x: "50%", y: "10%", data: OUTPUTS[0] },  // 60s payment - top
+    { x: "85%", y: "35%", data: OUTPUTS[1] },  // EUDR - right
+    { x: "50%", y: "60%", data: OUTPUTS[2] },  // Price - bottom
+    { x: "15%", y: "35%", data: OUTPUTS[3] },  // Credit - left
+  ];
+
+  const stats = ["60s", "DDS", "Spot", "50+"];
+
   return (
-    <div className="w-full py-20 px-4 -mx-4" style={{ background: NAVY }}>
-      <div className="max-w-3xl mx-auto">
-        <p className="text-center text-xs font-semibold uppercase tracking-[0.1em] mb-10" style={{ color: GOLD }}>Four Outputs for Every Farmer</p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-          {OUTPUTS.map((o, i) => (
-            <div key={o.title} onMouseEnter={() => setHovered(i)} onMouseLeave={() => setHovered(null)}
-              className="rounded-2xl p-6 transition-all duration-300 ease-out"
-              style={{ background: hovered === i ? "oklch(100% 0 0)" : "oklch(98% 0.005 260)", border: `1px solid ${hovered === i ? GOLD : "oklch(40% 0.03 260)"}`, transform: hovered === i ? "translateY(-4px)" : "translateY(0)" }}>
-              <div className="flex items-center gap-3 mb-3">
-                <div className="flex items-center justify-center rounded-xl flex-shrink-0 transition-all duration-300"
-                  style={{ width: 40, height: 40, background: hovered === i ? o.color : "oklch(35% 0.03 260)" }}>
-                  <span className="text-lg leading-none">{o.icon}</span>
-                </div>
-                <span className="text-sm font-bold" style={{ color: hovered === i ? o.color : "#fff" }}>{o.title}</span>
+    <div ref={ref} className="relative w-full overflow-hidden">
+      {/* Wave divider: cream → brown */}
+      <div className="relative" style={{ background: "oklch(97% 0.015 90)" }}>
+        <svg viewBox="0 0 1440 80" className="w-full h-auto block" preserveAspectRatio="none">
+          <path d="M0,40 C360,80 720,0 1080,40 C1260,60 1380,30 1440,40 L1440,80 L0,80 Z" fill="#3d2310" />
+        </svg>
+      </div>
+      {/* Brown field */}
+      <div className="relative py-20 px-4" style={{ background: "#3d2310" }}>
+        <p className="text-center text-xs font-semibold uppercase tracking-[0.1em] mb-4" style={{ color: GOLD }}>
+          Four Outputs for Every Farmer
+        </p>
+
+        {/* Hub-and-spoke layout */}
+        <div className="relative max-w-2xl mx-auto" style={{ height: 420 }}>
+          {/* Connecting lines from center to cards */}
+          <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 1 }}>
+            {positions.map((p, i) => (
+              <line key={i} x1="50%" y1="35%" x2={p.x} y2={p.y}
+                stroke={GOLD} strokeWidth="1" opacity={inView ? 0.5 : 0}
+                strokeDasharray="4 3"
+                style={{ transition: `opacity 0.8s ${0.3 + i * 0.15}s ease` }} />
+            ))}
+          </svg>
+
+          {/* Central hub — farmer */}
+          <div className="absolute flex flex-col items-center"
+            style={{
+              left: "50%", top: "35%", transform: "translate(-50%, -50%)", zIndex: 10,
+              opacity: inView ? 1 : 0, transition: "opacity 0.6s 0.1s ease",
+            }}>
+            <div className="flex items-center justify-center rounded-full"
+              style={{ width: 88, height: 88, background: `radial-gradient(circle, ${GREEN}30, ${BROWN}80)`, border: `3px solid ${GOLD}` }}>
+              <span className="text-4xl">👨‍🌾</span>
+            </div>
+            <span className="text-xs font-semibold mt-2 tracking-wide" style={{ color: GOLD }}>Every Farmer</span>
+          </div>
+
+          {/* 4 output cards radiating */}
+          {positions.map((p, i) => (
+            <div key={p.data.title}
+              className="absolute text-center"
+              style={{
+                left: p.x, top: p.y, transform: "translate(-50%, -50%)", zIndex: 10,
+                opacity: inView ? 1 : 0,
+                transition: `all 0.6s ${0.2 + i * 0.15}s cubic-bezier(0.16, 1, 0.3, 1)`,
+              }}>
+              {/* Stat badge */}
+              <div className="flex items-center justify-center mx-auto rounded-full mb-2"
+                style={{ width: 44, height: 44, border: `2px solid ${GOLD}`, background: "rgba(0,0,0,0.3)" }}>
+                <span className="text-xs font-bold" style={{ color: GOLD }}>{stats[i]}</span>
               </div>
-              <p className="text-sm leading-relaxed" style={{ color: hovered === i ? MUTED : "oklch(75% 0.02 260)" }}>{o.desc}</p>
+              {/* Title */}
+              <span className="block text-xs font-bold mb-1" style={{ color: "#fff" }}>{p.data.title}</span>
+              {/* Description */}
+              <span className="block text-[10px] leading-tight max-w-[120px] mx-auto" style={{ color: "oklch(70% 0.02 80)" }}>
+                {p.data.desc}
+              </span>
             </div>
           ))}
         </div>
@@ -255,7 +308,7 @@ export function HowItWorks() {
         <CreditFlow />
       </div>
 
-      <OutputsGrid />
+      <OutputsHub />
     </div>
   );
 }
