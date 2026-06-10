@@ -25,10 +25,14 @@
 - [x] **Active-loan bug fixed** — `loan[7] === 0` → `=== 1` (was counting NONE-status loans as active)
 
 ### In progress
-- [ ] **Deploy API + dashboard to Vercel**
+- [x] **Deploy API + dashboard to Vercel**
+- [x] **Landing page redesign** — pill navbar, hero fixes, CrewAI-style How It Works
+- [x] **Dashboard fixes** — Field Operators rename, sidebar collapse, form fields, nav state
+- [x] **Docs diagrams** — SVG fixes, marketing architecture diagram, core-loop
+- [x] **Field Agents → Field Operators** — project-wide rename, route move to /field-ops
+- [x] **AI Agents page perf** — parallel RPC calls, 8s timeout
 
 ### Next
-- [ ] **Deploy API + dashboard to Vercel** (live URL for demo)
 - [ ] **Pitch deck** + demo video (2 min walkthrough)
 - [ ] Submit to Dorahacks (deadline: June 15)
 
@@ -49,5 +53,6 @@
 - [x] CCIP bridge (Mantle → Base) tested
 - [x] ERC-8004 IdentityRegistry deployed
 - [x] tsx installed as devDependency
-- [ ] Set up `.env` on Vercel with all contract addresses
-- [ ] Add `packages/api` to turbo.json pipeline
+- [x] Set up `.env` on Vercel with all contract addresses
+- [x] Vercel Git integration connected (auto-deploy on push)
+- [x] Add `packages/api` to turbo.json pipeline

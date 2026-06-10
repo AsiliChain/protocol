@@ -589,3 +589,114 @@ Eleventh hour before hackathon deadline. User reported app "loading forever" at 
 - Pitch deck + demo video
 - Submit to Dorahacks (June 15 deadline)
 
+---
+
+## 2026-06-10 — Landing Page Redesign, Dashboard Fixes, Docs Audits, Vercel Deploy (Session 11)
+
+### Context
+Massive landing page redesign inspired by flareapp.io and CrewAI. Dashboard had multiple UX issues: double hamburger, sidebar collapse clipping, dark form fields in light theme, AI Agents vs Field Agents confusion. Docs diagrams needed SVG fixes and deployment.
+
+### Landing Page
+1. **Pill navbar** (`app/page.tsx` + `globals.css`):
+   - 3-layer structure: `<header>` > `<div class="nav-container">` > `<div class="nav-pill">`
+   - Expanded (top): 104px header, max-width 1024px, margin 0 104px, pill 56px
+   - Contracted (scrolled): 88px header, max-width 1280px, margin 0, pill 40px
+   - Transitions: max-width 0.3s cubic-bezier, padding 0.3s with 0.1s delay
+   - Removed permanently: Routerly launch agent (`~/Library/LaunchAgents/ai.routerly.service.plist`)
+
+2. **Hero fixes** (`app/page.tsx`):
+   - Changed from `min-h-[85vh]` to `min-h-screen` with `pt-[120px] pb-[60px]`
+   - Removed `justify-center` — content anchors to top
+   - Left column: `gap-4` (was gap-6), stats `pt-4` (was pt-7), removed CTA buttons
+   - Right column: card gaps 8px, padding 12px/16px
+
+3. **How It Works** (`app/_components/HowItWorks.tsx`):
+   - Multiple iterations: circular ring → horizontal pipeline → CrewAI-style stacked vertical stages
+   - 8 stages with category tags (Onboard/Collect/Assess/Process/Store/Commit/Ship/Close)
+   - Clean typography: no card borders, left accent line + dot, numbered badges (01-08)
+   - Side progress bar: 4px thin bar fills with gradient as user scrolls
+   - Each card has own IntersectionObserver for independent reveal
+   - Credit Flow: slim horizontal timeline with gold dots
+   - Outputs: full-width navy band with 2×2 premium cards
+
+4. **Architecture SVG** (`public/architecture-marketing.svg`):
+   - 4-column marketing diagram: Ethereum (shield) → Mantle (M) → Hedera (H) → Mobile Money (phone+*)
+   - AI Intelligence Layer spanning below with Risk Monitor + Anomaly Detector (ERC-8004 badges)
+   - Replaced technical 7-contract diagram
+   - Added subtitle: "Secured by Ethereum, Abstracted by Mantle, Monitored by AI — Secure, Auditable, Accessible"
+
+5. **Metrics cleanup** (`app/page.tsx`):
+   - Removed 8 contract cards (FarmerRegistry through PurchaseOrder)
+   - Removed "8 Smart contracts" and "95+ Doc pages" metrics
+   - Kept "16% APR" and "2 AI agents live"
+
+### Dashboard Fixes
+1. **Field Agents → Field Operators** (project-wide):
+   - Moved route from `/agents/workspace` to `/field-ops`
+   - Updated sidebar (new "Field Ops" nav item with clipboard icon), mobile-nav, dashboard links, batches page
+   - Renamed invite form: "Invite Field Agent" → "Invite Field Operator"
+   - Updated API route comments, cooperatives page, HowItWorks component
+
+2. **Sidebar collapse fix** (`globals.css`):
+   - Changed from `width` transition (layout reflow, content clipping) to `transform: translateX(-11.5rem)`
+   - Main content `margin-left` stays at 16rem — no reflow
+
+3. **Double hamburger** (`top-bar.tsx`):
+   - Desktop toggle changed from ☰ to `◀`/`▶` chevron icon
+
+4. **Dark form fields** (RegisterFarmerForm, RecordDeliveryForm):
+   - Changed from `bg-[oklch(22%_0.01_55)]` to `bg-white` with gold focus ring
+
+5. **Nav active state** (`sidebar.tsx`):
+   - Fixed `isActive()` to exclude `/field-ops` from matching `/agents`
+
+6. **AI Agents page performance** (`lib/dashboard.ts`):
+   - `getAgentsIdentity()`: 4 sequential RPC calls → parallel (2 agents × 2 calls) with 8s combined timeout
+   - Was up to 20s, now renders even if RPC fails
+
+7. **Farmers page** (`farmers/page.tsx`):
+   - Moved search-by-wallet form above known farmers list
+
+### Docs Diagrams Audit
+1. **SVG fixes** (`docs/public/diagrams/`):
+   - `architecture-overview.svg`: widened viewBox from 900 to 960 to fit Fonbnk arrow (x2=920)
+   - Fixed layer label positions: Layer 1 at y=78 (Ethereum), Layer 2 at y=162 (Mantle)
+   - `supply-chain-pipeline.svg`: fixed `&amp;` entity in first milestone bullet
+   - Moved HCS dotted badge from y=95 (overlapping first milestone) to y=298
+   - `core-loop.svg`: new 4-step horizontal flow diagram for how-it-works page
+
+2. **Docs CSS** (`docs/src/css/custom.css`):
+   - Removed 740px max-width on `.sl-markdown-content`
+   - Shrunk right sidebar to 200px for better diagram display
+   - Added Mermaid brand theming (coffee-brown borders, dark mode)
+
+### Vercel Deployment
+- Project renamed `api` → `protocol`
+- Connected Git repository: `AsiliChain/protocol`
+- Root directory: `packages/api`
+- All 19 environment variables configured (contracts, Fonbnk, RPC, cron)
+- Auto-deploys from main branch to `asilichain.xyz`
+- Vercel token stored in macOS Keychain (`asilichain-vercel`) + `.env.keychain`
+
+### Files Changed
+- `app/page.tsx` — pill navbar, hero fixes, HowItWorks integration, architecture SVG, metrics
+- `app/_components/HowItWorks.tsx` — NEW: CrewAI-style scroll-driven pipeline
+- `app/globals.css` — sidebar collapse, pill navbar, stage accordion, animations
+- `app/(dashboard)/sidebar.tsx` — Field Ops nav item, active state fix, icons
+- `app/(dashboard)/top-bar.tsx` — chevron toggle icon
+- `app/(dashboard)/mobile-nav.tsx` — Field Ops mobile tab
+- `app/(dashboard)/farmers/page.tsx` — search on top
+- `app/(dashboard)/batches/page.tsx` — Field Ops link
+- `app/(dashboard)/dashboard/page.tsx` — Field Ops links
+- `app/(dashboard)/field-ops/page.tsx` — NEW (moved from agents/workspace)
+- `app/(dashboard)/field-ops/_components/` — NEW (moved from agents/workspace)
+- `app/(dashboard)/cooperatives/page.tsx` — field operator rename
+- `app/(dashboard)/cooperatives/_components/InviteAgentForm.tsx` — field operator rename
+- `app/api/agents/invite/route.ts` — field operator rename in comments
+- `lib/dashboard.ts` — parallel RPC calls, 8s timeout
+- `public/architecture-marketing.svg` — NEW
+- `public/architecture-overview.svg` — NEW (copied from docs)
+- `public/ethereum-logo.svg` — NEW
+- `public/hedera-logo.svg` — NEW
+- `.env.keychain` — added Vercel token + org/project IDs
+
