@@ -59,7 +59,7 @@ function NavIcon({ href }: { href: string }) {
 }
 
 const navItems = [
-  { href: "/dashboard", label: "Dashboard" },
+  { href: "/dashboard", label: "Open Dashboard" },
   { href: "/farmers", label: "Farmers" },
   { href: "/batches", label: "Batches" },
   { href: "/loans", label: "Loans" },
@@ -97,9 +97,9 @@ export function Sidebar() {
               <div className="text-sm font-bold tracking-wide" style={{ color: "oklch(18% 0.01 60)" }}>
                 AsiliChain
               </div>
-              <div className="text-[11px] font-bold tracking-widest" style={{ color: "oklch(60% 0.01 58)" }}>
-                Dashboard
-              </div>
+                <div className="text-[11px] font-bold tracking-widest" style={{ color: "oklch(60% 0.01 58)" }}>
+                  Open Dashboard
+                </div>
             </div>
           </a>
         </div>

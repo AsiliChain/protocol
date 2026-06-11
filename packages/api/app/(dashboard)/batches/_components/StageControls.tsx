@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { authHeaders } from "@/lib/auth-client";
 
 const STAGE_LABELS = [
   "DELIVERED", "GRADED", "MILLED", "WAREHOUSED",
@@ -29,7 +30,7 @@ export function StageControls({ tokenId, currentStage }: StageControlsProps) {
     try {
       const res = await fetch(`/api/batch/${tokenId}/stage`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...authHeaders() },
         body: JSON.stringify({ newStage: nextStage }),
       });
       const data = await res.json();

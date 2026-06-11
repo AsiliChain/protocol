@@ -424,8 +424,8 @@
   height: 100%;
   padding: 0 1.25rem;
   border-radius: 9999px;
-  background: oklch(15% 0.015 60);
-  color: white;
+  background: oklch(72% 0.16 80);
+  color: oklch(12% 0.005 60);
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
@@ -436,7 +436,7 @@
 }
 
 .nav-cta:hover {
-  background: oklch(28% 0.015 60);
+  background: oklch(65% 0.16 80);
   transform: translateY(-0.5px);
 }
 

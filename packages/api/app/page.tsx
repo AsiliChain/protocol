@@ -67,7 +67,7 @@ export default function LandingPage() {
 
             <div className="nav-links">
               <a href={MANTLESCAN_LINK} target="_blank" rel="noreferrer" className="nav-link">MantleScan</a>
-              <Link href="/dashboard" className="nav-cta">Dashboard</Link>
+              <Link href="/dashboard" className="nav-cta">Open Dashboard</Link>
             </div>
 
             <button onClick={() => setMobileOpen(true)} className="nav-hamburger" aria-label="Open menu">
@@ -85,7 +85,7 @@ export default function LandingPage() {
         </div>
         <div className="flex flex-col gap-4">
           <a href={MANTLESCAN_LINK} target="_blank" rel="noreferrer" className="text-base font-medium text-fg-muted hover:text-fg-default transition-colors">MantleScan</a>
-          <Link href="/dashboard" className="inline-flex items-center justify-center rounded-lg bg-fg-default px-5 py-2.5 text-sm font-semibold uppercase tracking-[0.06em] text-white" onClick={() => setMobileOpen(false)}>Dashboard</Link>
+          <Link href="/dashboard" className="inline-flex items-center justify-center rounded-lg px-5 py-2.5 text-sm font-semibold uppercase tracking-[0.06em]" style={{ backgroundColor: "oklch(72% 0.16 80)", color: "oklch(12% 0.005 60)" }} onClick={() => setMobileOpen(false)}>Open Dashboard</Link>
         </div>
       </div>
 
@@ -281,7 +281,7 @@ export default function LandingPage() {
           <h2 className="reveal font-['var(--font-archivo)'] text-3xl font-bold tracking-[-0.015em] text-fg-default sm:text-4xl">Ready to transform coffee finance?</h2>
           <p className="reveal mx-auto mt-4 max-w-xl text-lg text-fg-muted">Explore the live dashboard. Track batches, monitor loan health, and see AI agents in action on Mantle Sepolia.</p>
           <div className="reveal mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-            <Link href="/dashboard" className="inline-flex items-center justify-center rounded-lg bg-fg-default px-8 py-3 text-sm font-semibold text-white transition-all hover:bg-[oklch(28%_0.015_60)] hover:-translate-y-0.5">Launch Dashboard</Link>
+            <Link href="/dashboard" className="inline-flex items-center justify-center rounded-lg px-8 py-3 text-sm font-semibold transition-all hover:-translate-y-0.5" style={{ backgroundColor: "oklch(72% 0.16 80)", color: "oklch(12% 0.005 60)" }}>Open Dashboard</Link>
             <a href={MANTLESCAN_LINK} target="_blank" rel="noreferrer" className="inline-flex items-center justify-center rounded-lg border border-border-med px-8 py-3 text-sm font-semibold text-fg-muted transition-all hover:border-fg-subtle hover:text-fg-default">View on MantleScan</a>
           </div>
         </div>

@@ -2,10 +2,12 @@
 
 import { usePathname } from "next/navigation";
 import { useSidebar } from "./sidebar-context";
+import { useEffect, useState } from "react";
+import { getAuthToken, clearAuthToken } from "@/lib/auth-client";
 
 const pageTitles: Record<string, { title: string; subtitle: string }> = {
   "/dashboard": {
-    title: "Dashboard",
+    title: "Open Dashboard",
     subtitle: "Uganda Coffee Supply Chain Finance",
   },
   "/farmers": {
@@ -33,9 +35,28 @@ const pageTitles: Record<string, { title: string; subtitle: string }> = {
 export function TopBar() {
   const pathname = usePathname();
   const { collapsed, toggleCollapsed, setMobileOpen } = useSidebar();
+  const [wallet, setWallet] = useState<string | null>(null);
+
+  useEffect(() => {
+    const token = getAuthToken();
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        setWallet(payload.wallet);
+      } catch {
+        clearAuthToken();
+      }
+    }
+  }, []);
+
+  function handleLogout() {
+    clearAuthToken();
+    setWallet(null);
+    window.location.reload();
+  }
 
   const page = pageTitles[pathname] ?? {
-    title: "Dashboard",
+    title: "Open Dashboard",
     subtitle: "Uganda Coffee Supply Chain Finance",
   };
 
@@ -88,6 +109,20 @@ export function TopBar() {
       </div>
 
       <div className="flex items-center gap-1 md:gap-3">
+        {wallet ? (
+          <div className="flex items-center gap-2">
+            <span className="hidden sm:inline text-xs font-mono" style={{ color: "oklch(55% 0.012 60)" }}>
+              {wallet.slice(0, 6)}...{wallet.slice(-4)}
+            </span>
+            <button onClick={handleLogout} className="dash-btn-ghost no-underline text-xs md:text-sm">
+              Logout
+            </button>
+          </div>
+        ) : (
+          <a href="/login" className="dash-btn-ghost no-underline text-xs md:text-sm">
+            Login
+          </a>
+        )}
         <a
           href="https://docs.asilichain.xyz"
           target="_blank"
