@@ -1,9 +1,7 @@
 import { NextResponse } from "next/server";
-import { setEmailCode, cleanupExpiredNonces } from "@/api/_lib/nonces";
 import { getWalletForEmail } from "@/lib/email-wallets";
 import { sendVerificationEmail } from "@/lib/email";
-
-const CODE_TTL_MS = 5 * 60 * 1000;
+import { createEmailCode, codeExpiresAt, createMagicToken } from "@/lib/nonce";
 
 export async function POST(request: Request) {
   let body: { email: string };
@@ -23,14 +21,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Email not registered. Contact protocol admin to link your wallet." }, { status: 404 });
   }
 
-  const code = Math.floor(100000 + Math.random() * 900000).toString();
-  const token = crypto.randomUUID();
-  const expiresAt = Date.now() + CODE_TTL_MS;
-
-  setEmailCode(email, code, token, wallet, expiresAt);
-  cleanupExpiredNonces();
-
+  const code = await createEmailCode(email);
+  const token = await createMagicToken(email);
+  const expiresAt = codeExpiresAt();
   const verifyUrl = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/auth/verify?token=${token}`;
+
+  console.log(`[auth/request-code] Code for ${email}: ${code} (expires at ${new Date(expiresAt).toISOString()})`);
 
   await sendVerificationEmail({
     to: email,
@@ -52,5 +48,5 @@ export async function POST(request: Request) {
     text: `Your AsiliChain verification code: ${code}\n\nOr click: ${verifyUrl}\n\nThis code and link expire in 5 minutes.`,
   });
 
-  return NextResponse.json({ success: true });
+  return NextResponse.json({ success: true, expiresAt });
 }

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { SignJWT } from "jose";
-import { getEmailCode, deleteEmailCode } from "@/api/_lib/nonces";
+import { verifyEmailCode } from "@/lib/nonce";
+import { getWalletForEmail } from "@/lib/email-wallets";
 import { getPublicClient } from "@/lib/mantle";
 import { addresses, farmerRegistryAbi } from "@/lib/contracts";
 import { keccak256, toBytes } from "viem";
@@ -22,20 +23,30 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "email and code are required" }, { status: 400 });
   }
 
-  const stored = getEmailCode(email);
-  if (!stored || stored.code !== code || stored.expiresAt < Date.now()) {
+  const valid = await verifyEmailCode(email, code);
+  if (!valid) {
     return NextResponse.json({ error: "Invalid or expired code. Request a new one." }, { status: 401 });
   }
 
-  deleteEmailCode(email);
+  const wallet = getWalletForEmail(email);
+  if (!wallet) {
+    return NextResponse.json({ error: "Email not registered." }, { status: 404 });
+  }
 
   const publicClient = getPublicClient();
-  const hasRole = await publicClient.readContract({
-    address: addresses.farmerRegistry,
-    abi: farmerRegistryAbi,
-    functionName: "hasRole",
-    args: [COOP_ROLE, stored.wallet as `0x${string}`],
-  });
+  let hasRole: boolean;
+  try {
+    hasRole = await publicClient.readContract({
+      address: addresses.farmerRegistry,
+      abi: farmerRegistryAbi,
+      functionName: "hasRole",
+      args: [COOP_ROLE, wallet as `0x${string}`],
+    });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "RPC error";
+    console.error("[auth/verify-code] RPC error:", message);
+    return NextResponse.json({ error: "Failed to verify role. Check network connection." }, { status: 502 });
+  }
 
   if (!hasRole) {
     return NextResponse.json({ error: "Linked wallet does not have COOP_ROLE" }, { status: 403 });
@@ -43,13 +54,13 @@ export async function POST(request: Request) {
 
   const token = await new SignJWT({
     role: "COOP_ROLE",
-    wallet: stored.wallet,
-    sub: stored.wallet,
+    wallet,
+    sub: wallet,
   })
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setExpirationTime(JWT_EXPIRES_IN)
     .sign(JWT_SECRET);
 
-  return NextResponse.json({ token, role: "COOP_ROLE", wallet: stored.wallet });
+  return NextResponse.json({ token, role: "COOP_ROLE", wallet });
 }

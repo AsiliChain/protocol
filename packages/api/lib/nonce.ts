@@ -56,3 +56,38 @@ export async function verifyNonce(address: string, nonce: string): Promise<{ val
 
   return { valid: true };
 }
+
+// ── Stateless email OTP ──
+
+const OTP_TTL_MS = 5 * 60 * 1000;
+
+function otpTimeWindow(): number {
+  return Math.floor(Date.now() / OTP_TTL_MS) * OTP_TTL_MS;
+}
+
+export async function createEmailCode(email: string): Promise<string> {
+  const sig = await hmacSign(`otp:${email.toLowerCase()}:${otpTimeWindow()}`);
+  const num = parseInt(sig.slice(0, 8), 16); // first 8 hex chars → 0..4B
+  return (100000 + (num % 900000)).toString(); // 6-digit code 100000–999999
+}
+
+export function codeExpiresAt(): number {
+  return otpTimeWindow() + OTP_TTL_MS;
+}
+
+export async function verifyEmailCode(email: string, code: string): Promise<boolean> {
+  const expected = await createEmailCode(email);
+  return expected === code;
+}
+
+export async function createMagicToken(email: string): Promise<string> {
+  return hmacSign(`magic:${email.toLowerCase()}:${otpTimeWindow()}`);
+}
+
+export async function verifyMagicToken(email: string, token: string): Promise<boolean> {
+  const expected = await createMagicToken(email);
+  // Also check previous time window (for edge case where request straddles window boundary)
+  if (expected === token) return true;
+  const prevSig = await hmacSign(`magic:${email.toLowerCase()}:${otpTimeWindow() - OTP_TTL_MS}`);
+  return prevSig === token;
+}
