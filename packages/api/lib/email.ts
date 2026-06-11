@@ -16,7 +16,7 @@ export async function sendVerificationEmail(params: SendEmailParams): Promise<{ 
         Authorization: `Bearer ${resendKey}`,
       },
       body: JSON.stringify({
-        from: process.env.EMAIL_FROM || "AsiliChain <noreply@asilichain.xyz>",
+        from: process.env.EMAIL_FROM || "AsiliChain <hello@asilichain.xyz>",
         to: [params.to],
         subject: params.subject,
         html: params.html,

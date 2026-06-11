@@ -15,6 +15,7 @@
     "next": "^15",
     "react": "^19",
     "react-dom": "^19",
+    "resend": "^6.12.4",
     "viem": "^2.x"
   },
   "devDependencies": {
