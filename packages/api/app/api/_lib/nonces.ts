@@ -1,22 +1,6 @@
-const nonces = new Map<string, { nonce: string; expiresAt: number }>();
 const emailCodes = new Map<string, { code: string; token: string; wallet: string; expiresAt: number }>();
 
-export function getNonce(address: string) {
-  return nonces.get(address.toLowerCase());
-}
-
-export function setNonce(address: string, nonce: string, expiresAt: number) {
-  nonces.set(address.toLowerCase(), { nonce, expiresAt });
-}
-
-export function deleteNonce(address: string) {
-  nonces.delete(address.toLowerCase());
-}
-
 export function cleanupExpiredNonces() {
-  for (const [key, value] of nonces.entries()) {
-    if (value.expiresAt < Date.now()) nonces.delete(key);
-  }
   for (const [key, value] of emailCodes.entries()) {
     if (value.expiresAt < Date.now()) emailCodes.delete(key);
   }
