@@ -14,7 +14,29 @@ export async function POST(request: NextRequest) {
   const resend = new Resend(apiKey);
 
   try {
-    const event = await request.json();
+    const rawBody = await request.text();
+
+    const webhookSecret = process.env.RESEND_WEBHOOK_SECRET;
+    if (webhookSecret) {
+      const headers = {
+        id: request.headers.get("webhook-id") || "",
+        timestamp: request.headers.get("webhook-timestamp") || "",
+        signature: request.headers.get("webhook-signature") || "",
+      };
+
+      try {
+        resend.webhooks.verify({
+          payload: rawBody,
+          headers,
+          webhookSecret,
+        });
+      } catch {
+        console.error("[resend-webhook] Invalid signature");
+        return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
+      }
+    }
+
+    const event = JSON.parse(rawBody);
 
     if (event.type === "email.received") {
       const emailId = event.data.email_id;
