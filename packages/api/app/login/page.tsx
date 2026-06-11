@@ -8,12 +8,11 @@ type LoginMethod = "wallet" | "email" | "code";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [method, setMethod] = useState<LoginMethod>("email");
+  const [method, setMethod] = useState<LoginMethod>("wallet");
 
   // Wallet login state
   const [address, setAddress] = useState("");
   const [connectedAccount, setConnectedAccount] = useState("");
-  const [showManualInput, setShowManualInput] = useState(false);
   const [walletStatus, setWalletStatus] = useState<"idle" | "connecting" | "requesting" | "signing" | "verifying" | "success" | "error">("idle");
   const [walletMessage, setWalletMessage] = useState("");
 
@@ -98,7 +97,6 @@ export default function LoginPage() {
       const account = accounts[0];
       setConnectedAccount(account);
       setAddress(account);
-      setShowManualInput(false);
       setWalletStatus("idle");
       setWalletMessage(`Connected: ${account.slice(0, 6)}...${account.slice(-4)}`);
     } catch (err) {
@@ -184,16 +182,6 @@ export default function LoginPage() {
         {/* Method toggle */}
         <div className="flex gap-2 mb-6">
           <button
-            onClick={() => setMethod("email")}
-            className="flex-1 py-2 rounded-lg text-sm font-semibold transition-all"
-            style={{
-              backgroundColor: method === "email" ? "oklch(72% 0.16 80)" : "oklch(95% 0.005 85)",
-              color: method === "email" ? "oklch(12% 0.005 60)" : "oklch(55% 0.012 60)",
-            }}
-          >
-            Email
-          </button>
-          <button
             onClick={() => setMethod("wallet")}
             className="flex-1 py-2 rounded-lg text-sm font-semibold transition-all"
             style={{
@@ -203,99 +191,86 @@ export default function LoginPage() {
           >
             Wallet
           </button>
+          <button
+            onClick={() => setMethod("email")}
+            className="flex-1 py-2 rounded-lg text-sm font-semibold transition-all"
+            style={{
+              backgroundColor: method === "email" ? "oklch(72% 0.16 80)" : "oklch(95% 0.005 85)",
+              color: method === "email" ? "oklch(12% 0.005 60)" : "oklch(55% 0.012 60)",
+            }}
+          >
+            Email
+          </button>
         </div>
 
         {/* Wallet login */}
         {method === "wallet" && (
           <div className="space-y-4">
-            {!connectedAccount && !showManualInput && (
-              <button
-                onClick={handleConnectWallet}
-                disabled={walletStatus === "connecting"}
-                className="w-full py-3 rounded-lg text-sm font-semibold transition-all disabled:opacity-50 flex items-center justify-center gap-2"
-                style={{ backgroundColor: "oklch(72% 0.16 80)", color: "oklch(12% 0.005 60)" }}
-              >
-                <svg width="20" height="20" viewBox="0 0 35 33" fill="none" xmlns="http://www.w3.org/2000/svg" className="shrink-0">
-                  <rect x="1" y="1" width="33" height="31" rx="6" fill="white" stroke="#E4761B" strokeWidth="2"/>
-                  <path d="M17 5L20 13H14L17 5Z" fill="#E4761B"/>
-                  <path d="M17 5L10 18L14 13L17 5Z" fill="#E4761B" fillOpacity="0.6"/>
-                  <path d="M17 20L20 13L14 13L17 20Z" fill="#E4761B"/>
-                  <path d="M10 18L14 13L17 20L10 18Z" fill="#E4761B" fillOpacity="0.6"/>
-                </svg>
-                {walletStatus === "connecting" ? "Connecting..." : "Connect Wallet"}
-              </button>
-            )}
+            <div>
+              <label className="block text-sm font-medium mb-1" style={{ color: "oklch(30% 0.01 60)" }}>
+                Wallet Address
+              </label>
+              {connectedAccount ? (
+                <div
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-mono border"
+                  style={{ backgroundColor: "oklch(45% 0.12 145 / 0.1)", color: "oklch(40% 0.12 145)", borderColor: "oklch(45% 0.12 145 / 0.3)" }}
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20 6L9 17l-5-5"/>
+                  </svg>
+                  <span className="truncate">{connectedAccount}</span>
+                  <button
+                    onClick={() => { setConnectedAccount(""); setAddress(""); setWalletStatus("idle"); setWalletMessage(""); }}
+                    className="ml-auto text-xs underline underline-offset-2"
+                    style={{ color: "oklch(55% 0.012 60)" }}
+                  >
+                    Disconnect
+                  </button>
+                </div>
+              ) : (
+                <input
+                  type="text"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  placeholder="0x..."
+                  className="w-full px-3 py-2 rounded-lg border text-sm font-mono"
+                  style={{ borderColor: "oklch(88% 0.006 60)" }}
+                />
+              )}
+            </div>
 
-            {!connectedAccount && !showManualInput && (
+            {!connectedAccount && typeof window !== "undefined" && window.ethereum && (
               <div className="text-center">
                 <button
-                  onClick={() => setShowManualInput(true)}
-                  className="text-xs underline underline-offset-2 hover:opacity-80 transition-opacity"
+                  onClick={handleConnectWallet}
+                  disabled={walletStatus === "connecting"}
+                  className="text-xs underline underline-offset-2 hover:opacity-80 transition-opacity inline-flex items-center gap-1"
                   style={{ color: "oklch(60% 0.01 58)" }}
                 >
-                  Or enter address manually
+                  <svg width="12" height="12" viewBox="0 0 35 33" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="1" y="1" width="33" height="31" rx="6" fill="white" stroke="#E4761B" strokeWidth="2"/>
+                    <path d="M17 5L20 13H14L17 5Z" fill="#E4761B"/>
+                    <path d="M17 5L10 18L14 13L17 5Z" fill="#E4761B" fillOpacity="0.6"/>
+                    <path d="M17 20L20 13L14 13L17 20Z" fill="#E4761B"/>
+                    <path d="M10 18L14 13L17 20L10 18Z" fill="#E4761B" fillOpacity="0.6"/>
+                  </svg>
+                  {walletStatus === "connecting" ? "Connecting..." : "Connect Wallet Instead"}
                 </button>
               </div>
             )}
 
-            {(connectedAccount || showManualInput) && (
-              <>
-                {connectedAccount && (
-                  <div
-                    className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-mono"
-                    style={{ backgroundColor: "oklch(45% 0.12 145 / 0.1)", color: "oklch(40% 0.12 145)" }}
-                  >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M20 6L9 17l-5-5"/>
-                    </svg>
-                    <span className="truncate">{connectedAccount}</span>
-                    <button
-                      onClick={() => { setConnectedAccount(""); setAddress(""); setShowManualInput(false); setWalletStatus("idle"); setWalletMessage(""); }}
-                      className="ml-auto text-xs underline underline-offset-2"
-                      style={{ color: "oklch(55% 0.012 60)" }}
-                    >
-                      Disconnect
-                    </button>
-                  </div>
-                )}
-
-                {showManualInput && !connectedAccount && (
-                  <div>
-                    <label className="block text-sm font-medium mb-1" style={{ color: "oklch(30% 0.01 60)" }}>
-                      Wallet Address
-                    </label>
-                    <input
-                      type="text"
-                      value={address}
-                      onChange={(e) => setAddress(e.target.value)}
-                      placeholder="0x..."
-                      className="w-full px-3 py-2 rounded-lg border text-sm font-mono"
-                      style={{ borderColor: "oklch(88% 0.006 60)" }}
-                    />
-                    <button
-                      onClick={() => setShowManualInput(false)}
-                      className="text-xs mt-1 underline underline-offset-2 hover:opacity-80 transition-opacity"
-                      style={{ color: "oklch(60% 0.01 58)" }}
-                    >
-                      Connect wallet instead
-                    </button>
-                  </div>
-                )}
-
-                <button
-                  onClick={handleWalletLogin}
-                  disabled={!address || walletStatus === "requesting" || walletStatus === "signing" || walletStatus === "verifying"}
-                  className="w-full py-2.5 rounded-lg text-sm font-semibold transition-all disabled:opacity-50"
-                  style={{ backgroundColor: "oklch(72% 0.16 80)", color: "oklch(12% 0.005 60)" }}
-                >
-                  {walletStatus === "requesting" && "Requesting nonce..."}
-                  {walletStatus === "signing" && "Sign in wallet..."}
-                  {walletStatus === "verifying" && "Verifying..."}
-                  {walletStatus === "success" && "Success!"}
-                  {walletStatus === "idle" && "Sign in"}
-                </button>
-              </>
-            )}
+            <button
+              onClick={handleWalletLogin}
+              disabled={!address || walletStatus === "requesting" || walletStatus === "signing" || walletStatus === "verifying"}
+              className="w-full py-2.5 rounded-lg text-sm font-semibold transition-all disabled:opacity-50"
+              style={{ backgroundColor: "oklch(72% 0.16 80)", color: "oklch(12% 0.005 60)" }}
+            >
+              {walletStatus === "requesting" && "Requesting nonce..."}
+              {walletStatus === "signing" && "Sign in wallet..."}
+              {walletStatus === "verifying" && "Verifying..."}
+              {walletStatus === "success" && "Success!"}
+              {walletStatus === "idle" && "Sign in"}
+            </button>
 
             {walletMessage && (
               <p className="text-sm text-center" style={{ color: walletStatus === "error" ? "oklch(55% 0.2 25)" : "oklch(55% 0.012 60)" }}>
@@ -305,7 +280,7 @@ export default function LoginPage() {
 
             <div className="pt-1">
               <p className="text-xs leading-relaxed" style={{ color: "oklch(60% 0.01 58)" }}>
-                Wallet verification uses <strong>cryptographic signing</strong> — you sign a unique challenge with your wallet to prove you control the private key. This is stronger than email OTP because the signature cannot be intercepted, forged, or replayed.
+                Wallet verification uses <strong>cryptographic signing</strong> — you sign a unique challenge with your wallet to prove you control the private key. This is stronger than email OTP which proves only inbox access.
               </p>
             </div>
           </div>
@@ -314,23 +289,7 @@ export default function LoginPage() {
         {/* Email login */}
         {method === "email" && (
           <div className="space-y-4">
-            {emailStatus !== "sent" && emailStatus !== "verifying" && emailStatus !== "success" && (
-              <div>
-                <label className="block text-sm font-medium mb-1" style={{ color: "oklch(30% 0.01 60)" }}>
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@cooperative.org"
-                  className="w-full px-3 py-2 rounded-lg border text-sm"
-                  style={{ borderColor: "oklch(88% 0.006 60)" }}
-                />
-              </div>
-            )}
-
-            {emailStatus === "sent" || emailStatus === "verifying" || emailStatus === "success" || emailStatus === "error" ? (
+            {emailStatus === "sent" || emailStatus === "verifying" ? (
               <>
                 <div>
                   <label className="block text-sm font-medium mb-1" style={{ color: "oklch(30% 0.01 60)" }}>
@@ -339,59 +298,71 @@ export default function LoginPage() {
                   <input
                     type="text"
                     value={code}
-                    onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                    placeholder="000000"
+                    onChange={(e) => setCode(e.target.value)}
+                    placeholder="6-digit code"
                     maxLength={6}
-                    className="w-full px-3 py-2 rounded-lg border text-sm font-mono text-center tracking-[0.5em] text-lg"
+                    className="w-full px-3 py-2 rounded-lg border text-sm font-mono tracking-widest text-center text-lg"
                     style={{ borderColor: "oklch(88% 0.006 60)" }}
                   />
                 </div>
+
                 <button
                   onClick={handleVerifyCode}
-                  disabled={emailStatus === "verifying"}
+                  disabled={code.length !== 6 || emailStatus === "verifying"}
                   className="w-full py-2.5 rounded-lg text-sm font-semibold transition-all disabled:opacity-50"
                   style={{ backgroundColor: "oklch(72% 0.16 80)", color: "oklch(12% 0.005 60)" }}
                 >
-                  {emailStatus === "verifying" ? "Verifying..." : emailStatus === "success" ? "Success!" : "Verify Code"}
+                  {emailStatus === "verifying" ? "Verifying..." : "Verify Code"}
                 </button>
+
                 <button
-                  onClick={handleRequestCode}
-                  className="w-full py-2 rounded-lg text-xs font-medium transition-all"
-                  style={{ color: "oklch(55% 0.012 60)" }}
+                  onClick={() => setEmailStatus("idle")}
+                  className="text-xs underline underline-offset-2 w-full text-center hover:opacity-80 transition-opacity"
+                  style={{ color: "oklch(60% 0.01 58)" }}
                 >
-                  Resend code
+                  Use a different email
                 </button>
               </>
             ) : (
-              <button
-                onClick={handleRequestCode}
-                disabled={emailStatus === "sending"}
-                className="w-full py-2.5 rounded-lg text-sm font-semibold transition-all disabled:opacity-50"
-                style={{ backgroundColor: "oklch(72% 0.16 80)", color: "oklch(12% 0.005 60)" }}
-              >
-                {emailStatus === "sending" ? "Sending..." : "Send Verification Code"}
-              </button>
-            )}
+              <>
+                <div>
+                  <label className="block text-sm font-medium mb-1" style={{ color: "oklch(30% 0.01 60)" }}>
+                    Email Address
+                  </label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@example.com"
+                    className="w-full px-3 py-2 rounded-lg border text-sm"
+                    style={{ borderColor: "oklch(88% 0.006 60)" }}
+                  />
+                </div>
 
-            {emailMessage && (
-              <p className="text-sm text-center" style={{ color: emailStatus === "error" ? "oklch(55% 0.2 25)" : "oklch(55% 0.012 60)" }}>
-                {emailMessage}
-              </p>
+                <button
+                  onClick={handleRequestCode}
+                  disabled={!email || !email.includes("@") || emailStatus === "sending"}
+                  className="w-full py-2.5 rounded-lg text-sm font-semibold transition-all disabled:opacity-50"
+                  style={{ backgroundColor: "oklch(72% 0.16 80)", color: "oklch(12% 0.005 60)" }}
+                >
+                  {emailStatus === "sending" ? "Sending..." : "Send Code"}
+                </button>
+
+                {emailMessage && (
+                  <p className="text-sm text-center" style={{ color: emailStatus === "error" ? "oklch(55% 0.2 25)" : "oklch(55% 0.012 60)" }}>
+                    {emailMessage}
+                  </p>
+                )}
+
+                <div className="pt-1">
+                  <p className="text-xs leading-relaxed" style={{ color: "oklch(60% 0.01 58)" }}>
+                    A 6-digit code will be sent to your email. The code expires after 10 minutes.
+                  </p>
+                </div>
+              </>
             )}
           </div>
         )}
-
-        <div className="mt-6 pt-4 border-t" style={{ borderColor: "oklch(88% 0.006 60)" }}>
-          <p className="text-xs text-center" style={{ color: "oklch(60% 0.01 58)" }}>
-            COOP_ROLE required to advance stages and manage the protocol.
-          </p>
-          <p className="text-xs text-center mt-2" style={{ color: "oklch(60% 0.01 58)" }}>
-            New cooperative? Reachout{" "}
-            <a href="mailto:hello@asilichain.xyz?subject=Cooperative%20Onboarding%20Request" className="font-medium underline underline-offset-2 hover:text-fg-default transition-colors" style={{ color: "oklch(72% 0.16 80)" }}>
-              hello@asilichain.xyz
-            </a>
-          </p>
-        </div>
       </div>
     </div>
   );

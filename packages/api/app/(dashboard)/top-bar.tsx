@@ -111,9 +111,19 @@ export function TopBar() {
       <div className="flex items-center gap-1 md:gap-3">
         {wallet ? (
           <div className="flex items-center gap-2">
-            <span className="hidden sm:inline text-xs font-mono" style={{ color: "oklch(55% 0.012 60)" }}>
+            <button
+              onClick={() => navigator.clipboard.writeText(wallet).then(() => {
+                const btn = document.activeElement as HTMLElement;
+                const orig = btn?.textContent;
+                if (btn) btn.textContent = "Copied!";
+                setTimeout(() => { if (btn && orig) btn.textContent = orig; }, 1500);
+              })}
+              className="hidden sm:inline text-xs font-mono cursor-pointer hover:opacity-80 transition-opacity"
+              style={{ color: "oklch(55% 0.012 60)" }}
+              title="Click to copy wallet address"
+            >
               {wallet.slice(0, 6)}...{wallet.slice(-4)}
-            </span>
+            </button>
             <button onClick={handleLogout} className="dash-btn-ghost no-underline text-xs md:text-sm">
               Logout
             </button>
@@ -130,14 +140,6 @@ export function TopBar() {
           className="dash-btn-ghost no-underline text-xs md:text-sm"
         >
           Docs
-        </a>
-        <a
-          href="https://sepolia.mantlescan.org"
-          target="_blank"
-          rel="noreferrer"
-          className="dash-btn-ghost no-underline hidden sm:inline-flex"
-        >
-          MantleScan
         </a>
       </div>
     </header>
