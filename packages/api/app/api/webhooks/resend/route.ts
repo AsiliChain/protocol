@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { Resend } from "resend";
 
 const FORWARD_TO = process.env.RESEND_FORWARD_TO || "moemucu@gmail.com";
+const ALLOWED_INBOX = "hello@asilichain.xyz";
 
 export async function POST(request: NextRequest) {
   const apiKey = process.env.RESEND_API_KEY;
@@ -39,10 +40,18 @@ export async function POST(request: NextRequest) {
     const event = JSON.parse(rawBody);
 
     if (event.type === "email.received") {
-      const emailId = event.data.email_id;
+      const to: string[] = event.data.to || [];
+
+      const isForHello = to.some(
+        (addr) => addr.toLowerCase() === ALLOWED_INBOX,
+      );
+      if (!isForHello) {
+        console.log(`[resend-webhook] Skipped ${event.data.email_id} — not for ${ALLOWED_INBOX}`);
+        return NextResponse.json({ ok: true });
+      }
 
       const { data, error } = await resend.emails.receiving.forward({
-        emailId,
+        emailId: event.data.email_id,
         to: FORWARD_TO,
         from: "AsiliChain <hello@asilichain.xyz>",
       });
@@ -52,7 +61,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: error.message }, { status: 500 });
       }
 
-      console.log(`[resend-webhook] Forwarded ${emailId} → ${FORWARD_TO}`);
+      console.log(`[resend-webhook] Forwarded ${event.data.email_id} → ${FORWARD_TO}`);
       return NextResponse.json({ ok: true, id: data?.id });
     }
 
