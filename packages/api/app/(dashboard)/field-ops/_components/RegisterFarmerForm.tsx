@@ -93,11 +93,9 @@ export function RegisterFarmerForm() {
         throw new Error(`No wallet address configured for cooperative: ${cooperativeName}`);
       }
 
-      // 4. Derive farmer wallet from NIN (matches Solidity: keccak256("asilichain:{nin}"))
-      const farmerWallet = `0x${simpleHash(`asilichain:${nin}`).slice(0, 40)}` as `0x${string}`;
       const paddedCid = `0x${manifestResult.cid.slice(0, 64).padStart(64, "0")}` as `0x${string}`;
 
-      // 5. Register on-chain
+      // 4. Register on-chain (server derives wallet from NIN)
       const res = await fetch("/api/farmers/register", {
         method: "POST",
         headers: {
@@ -105,7 +103,6 @@ export function RegisterFarmerForm() {
           Authorization: `Bearer ${getAuthToken()}`,
         },
         body: JSON.stringify({
-          farmerWallet,
           maaifFarmerId: maaifId,
           cooperativeWallet: coopWallet,
           farmBoundaryIpfsCid: paddedCid,
@@ -118,7 +115,7 @@ export function RegisterFarmerForm() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Registration failed");
-      setResult(`Farmer registered — ${name} (${farmerWallet.slice(0, 6)}...${farmerWallet.slice(-4)})`);
+      setResult(`Farmer registered — ${name} (${data.farmerWallet?.slice(0, 6)}...${data.farmerWallet?.slice(-4)})`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unknown error");
     } finally {
@@ -253,12 +250,4 @@ function Field({ label, value, onChange, type = "text", required, placeholder, s
   );
 }
 
-function simpleHash(input: string): string {
-  let hash = 0;
-  for (let i = 0; i < input.length; i++) {
-    const chr = input.charCodeAt(i);
-    hash = ((hash << 5) - hash) + chr;
-    hash |= 0;
-  }
-  return Math.abs(hash).toString(16).padStart(40, "0");
-}
+

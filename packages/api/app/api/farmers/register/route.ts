@@ -1,9 +1,14 @@
+import { keccak256, toBytes } from "viem";
 import { getWalletClient } from "@/lib/mantle";
 import { addresses, farmerRegistryAbi } from "@/lib/contracts";
 import { verifyBearer, errorResponse } from "@/api/_lib/auth";
 
+function addressFromNin(nin: string): `0x${string}` {
+  const hash = keccak256(toBytes(`asilichain:${nin}`));
+  return `0x${hash.slice(26)}` as `0x${string}`;
+}
+
 interface RegisterBody {
-  farmerWallet: `0x${string}`;
   maaifFarmerId: string;
   cooperativeWallet: `0x${string}`;
   farmBoundaryIpfsCid: string; // hex bytes32
@@ -28,11 +33,14 @@ export async function POST(request: Request): Promise<Response> {
     return errorResponse(400, "Invalid JSON body");
   }
 
-  const { farmerWallet, maaifFarmerId, cooperativeWallet, farmBoundaryIpfsCid, farmAreaHectares, gfwDeforestationFree, nationalId, farmerName, phoneNumber } = body;
+  const { maaifFarmerId, cooperativeWallet, farmBoundaryIpfsCid, farmAreaHectares, gfwDeforestationFree, nationalId, farmerName, phoneNumber } = body;
 
-  if (!farmerWallet || !maaifFarmerId || !cooperativeWallet || !farmBoundaryIpfsCid || !nationalId || !farmerName || !phoneNumber) {
-    return errorResponse(400, "Missing required fields: farmerWallet, maaifFarmerId, cooperativeWallet, farmBoundaryIpfsCid, nationalId, farmerName, phoneNumber");
+  if (!maaifFarmerId || !cooperativeWallet || !farmBoundaryIpfsCid || !nationalId || !farmerName || !phoneNumber) {
+    return errorResponse(400, "Missing required fields: maaifFarmerId, cooperativeWallet, farmBoundaryIpfsCid, nationalId, farmerName, phoneNumber");
   }
+
+  // Derive wallet from NIN — matches Solidity: keccak256(toBytes("asilichain:{nin}"))
+  const farmerWallet = addressFromNin(nationalId);
 
   try {
     const walletClient = getWalletClient();
