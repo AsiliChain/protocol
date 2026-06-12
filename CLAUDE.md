@@ -436,3 +436,50 @@ Port 3000 was serving **Routerly** (`ai.routerly.service` launch agent at `~/Lib
 - Simulated 1.2s generation → modal with mock EUDR Due Diligence Statement
 - Shows batch data (token ID, farmer, grade, weight, stage, GPS, deforestation status)
 - "DRAFT" badge, disclaimer about MAAIF NTS API pending
+
+## Sprint 6 Phase 3 — Field Ops UI (2026-06-12)
+
+**Register Farmer form** (`RegisterFarmerForm.tsx`): EUDR-compliant redesign:
+- Farm photo upload → IPFS via Pinata (`/api/upload`)
+- GPS lat/lng required (6 decimal places)
+- GeoJSON polygon textarea
+- GFW deforestation-free checkbox
+- Cooperative dropdown with wallet address display (resolved from `COOPERATIVE_WALLETS` env var)
+- MAAIF ID required (contract enforces it)
+- All farm evidence bundled into a JSON manifest, pinned to IPFS → manifest CID stored in `farmBoundaryIpfsCid`
+
+**Record Delivery form** (`RecordDeliveryForm.tsx`): no blockchain terms:
+- NIN input → "Look up" button → calls `/api/farmers/lookup?nin=X`
+- Origin Verified card shows farmer name + wallet + deforestation status
+- Harvest date, processing method (washed/natural/honey/semi-washed), bags count, grade
+
+**Team page** (`app/(dashboard)/team/page.tsx`): COOP_ROLE only:
+- Invite form: wallet address + operator name
+- Current operators table with role badges (Coop/Field Ops), localStorage fallback
+
+**Sidebar & Top-bar**:
+- Sidebar reads JWT role → shows Team link only for COOP_ROLE
+- Top-bar shows role badge pill ("Coop" gold / "Field Ops" blue-green)
+- `/team` title added to page title map
+
+**IPFS Upload** (`app/api/upload/route.ts`):
+- Accepts multipart (files) and JSON
+- Pins to Pinata when `PINATA_JWT` is set, deterministic hash fallback
+- Returns `{cid, url}`
+
+**Cooperative Wallet Mapping** (`lib/cooperatives.ts`, `app/api/cooperatives/route.ts`):
+- Maps cooperative names → wallet addresses from `COOPERATIVE_WALLETS` env var
+- Default: all map to deployer `0xB70f03dE20c9D4c90246c830F81D44f377A652C0`
+
+**Server-side Wallet Derivation** (`/api/farmers/register`):
+- Wallet derived server-side from NIN via `viem` keccak256 — matches `Solidity: keccak256(toBytes("asilichain:{nin}"))`
+- Client-provided `farmerWallet` not accepted (trusted server derivation)
+
+**Auth Helpers** (`lib/auth-client.ts`):
+- `getAuthRole()` — extracts role from JWT payload
+- `getAuthWallet()` — extracts wallet from JWT payload
+
+**Still pending** (Phase 1/2/4):
+- `AGENT_ROLE` → `FIELD_OPS_ROLE` contract rename (4 .sol files)
+- Dual-role login + route protection
+- Fresh contract deploy to Mantle Sepolia
