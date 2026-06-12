@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSidebar } from "./sidebar-context";
+import { useEffect, useState } from "react";
+import { getAuthRole } from "@/lib/auth-client";
 
 function NavIcon({ href }: { href: string }) {
   const className = "h-5 w-5 shrink-0";
@@ -58,23 +60,35 @@ function NavIcon({ href }: { href: string }) {
   }
 }
 
-const navItems = [
-  { href: "/dashboard", label: "Open Dashboard" },
-  { href: "/farmers", label: "Farmers" },
-  { href: "/batches", label: "Batches" },
-  { href: "/loans", label: "Loans" },
-  { href: "/field-ops", label: "Field Ops" },
-  { href: "/agents", label: "AI Agents" },
-  { href: "/ccip", label: "CCIP Bridge" },
+const allNavItems = [
+  { href: "/dashboard", label: "Open Dashboard", roles: ["COOP_ROLE", "FIELD_OPS_ROLE"] },
+  { href: "/farmers", label: "Farmers", roles: ["COOP_ROLE", "FIELD_OPS_ROLE"] },
+  { href: "/batches", label: "Batches", roles: ["COOP_ROLE", "FIELD_OPS_ROLE"] },
+  { href: "/loans", label: "Loans", roles: ["COOP_ROLE", "FIELD_OPS_ROLE"] },
+  { href: "/field-ops", label: "Field Ops", roles: ["COOP_ROLE", "FIELD_OPS_ROLE"] },
+  { href: "/agents", label: "AI Agents", roles: ["COOP_ROLE", "FIELD_OPS_ROLE"] },
+  { href: "/team", label: "Team", roles: ["COOP_ROLE"] },
+  { href: "/ccip", label: "CCIP Bridge", roles: ["COOP_ROLE", "FIELD_OPS_ROLE"] },
 ];
+
+function useRole() {
+  const [role, setRole] = useState<string | null>(null);
+  useEffect(() => {
+    setRole(getAuthRole());
+  }, []);
+  return role;
+}
 
 export function Sidebar() {
   const pathname = usePathname();
   const { collapsed, toggleCollapsed, mobileOpen, setMobileOpen } = useSidebar();
+  const role = useRole();
+  const navItems = role ? allNavItems.filter((item) => item.roles.includes(role)) : allNavItems;
 
   const isActive = (href: string) => {
     if (href === "/dashboard") return pathname === "/dashboard";
     if (href === "/agents") return pathname === "/agents" || (pathname.startsWith("/agents/") && !pathname.startsWith("/field-ops"));
+    if (href === "/team") return pathname.startsWith("/team");
     return pathname.startsWith(href);
   };
 

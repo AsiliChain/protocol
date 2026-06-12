@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 import { useSidebar } from "./sidebar-context";
 import { useEffect, useState } from "react";
-import { getAuthToken, clearAuthToken } from "@/lib/auth-client";
+import { getAuthToken, clearAuthToken, getAuthRole } from "@/lib/auth-client";
 
 const pageTitles: Record<string, { title: string; subtitle: string }> = {
   "/dashboard": {
@@ -26,6 +26,10 @@ const pageTitles: Record<string, { title: string; subtitle: string }> = {
     title: "AI Agents",
     subtitle: "On-chain autonomous agents with ERC-8004 identity",
   },
+  "/team": {
+    title: "Team",
+    subtitle: "Invite and manage field operators",
+  },
   "/ccip": {
     title: "Cross-Chain Bridge (CCIP)",
     subtitle: "Chainlink CCIP — Mantle Sepolia ↔ Base Sepolia",
@@ -36,6 +40,7 @@ export function TopBar() {
   const pathname = usePathname();
   const { collapsed, toggleCollapsed, setMobileOpen } = useSidebar();
   const [wallet, setWallet] = useState<string | null>(null);
+  const [role, setRole] = useState<string | null>(null);
 
   useEffect(() => {
     const token = getAuthToken();
@@ -43,6 +48,7 @@ export function TopBar() {
       try {
         const payload = JSON.parse(atob(token.split(".")[1]));
         setWallet(payload.wallet);
+        setRole(payload.role || null);
       } catch {
         clearAuthToken();
       }
@@ -111,6 +117,17 @@ export function TopBar() {
       <div className="flex items-center gap-1 md:gap-3">
         {wallet ? (
           <div className="flex items-center gap-2">
+            {role && (
+              <span
+                className="hidden sm:inline-flex text-[11px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full"
+                style={{
+                  backgroundColor: role === "COOP_ROLE" ? "oklch(72% 0.16 80 / 0.15)" : "oklch(55% 0.15 200 / 0.15)",
+                  color: role === "COOP_ROLE" ? "oklch(65% 0.18 80)" : "oklch(50% 0.16 200)",
+                }}
+              >
+                {role === "COOP_ROLE" ? "Coop" : "Field Ops"}
+              </span>
+            )}
             <button
               onClick={() => navigator.clipboard.writeText(wallet).then(() => {
                 const btn = document.activeElement as HTMLElement;
