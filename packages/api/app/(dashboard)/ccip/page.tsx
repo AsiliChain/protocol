@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 const MANTLESCAN_CCIP_TX =
-  "https://sepolia.mantlescan.org/tx/0x62a6b58f8c3625F0c5f46D6C86A65595AA769C89";
+  "https://sepolia.mantlescan.xyz/tx/0x62a6b58f8c3625F0c5f46D6C86A65595AA769C89";
 
 const BRIDGE_DATA = [
   {

@@ -62,10 +62,10 @@ export default async function FarmerDetailPage({
             </code>
           </p>
           <Link
-            href="/farmers"
+            href="/batches"
             className="mt-4 inline-block text-sm font-medium text-brand-600 transition-colors hover:text-brand-700"
           >
-            &larr; Back to farmers
+            &larr; Back to batches
           </Link>
         </div>
       </div>
@@ -90,10 +90,10 @@ export default async function FarmerDetailPage({
     <div className="space-y-6">
       <div>
         <Link
-          href="/farmers"
+          href="/batches"
           className="text-sm font-medium text-brand-600 transition-colors hover:text-brand-700"
         >
-          &larr; Farmers
+          &larr; Batches
         </Link>
         <h1 className="mt-1 text-2xl font-bold text-navy-900">
           Farmer Profile

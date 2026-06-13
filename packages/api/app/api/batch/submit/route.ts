@@ -90,6 +90,11 @@ export async function POST(request: Request): Promise<Response> {
 
     console.log("[batch/submit] minted batch", batchId, "farmer", farmerWallet, "tx:", hash);
 
+    // Fire-and-forget: trigger both agents to assess the new batch
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+    fetch(`${baseUrl}/api/agents/anomaly-detector`, { method: "POST" }).catch(() => {});
+    fetch(`${baseUrl}/api/agents/risk-monitor`, { method: "POST" }).catch(() => {});
+
     return Response.json({
       success: true,
       batchId,

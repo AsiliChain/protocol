@@ -63,6 +63,10 @@ export async function POST(request: Request): Promise<Response> {
       ],
     });
 
+    // Fire-and-forget: trigger anomaly detector to scan EUDR compliance
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+    fetch(`${baseUrl}/api/agents/anomaly-detector`, { method: "POST" }).catch(() => {});
+
     return Response.json({
       success: true,
       farmerWallet,

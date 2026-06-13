@@ -5,6 +5,7 @@ import {
   batchTokenAbi,
   traceLogAbi,
   purchaseOrderAbi,
+  farmerRegistryAbi,
 } from "../contracts";
 import { agents } from "./registry";
 import { publishToHcs } from "../hedera";
@@ -201,7 +202,49 @@ export async function runAnomalyDetectorCycle(
     }
   }
 
-  // D. Stage distribution — flag if too many EXPORTED and no SETTLED
+  // D. EUDR compliance — check each batch's farmer is GFW deforestation-free
+  const uniqueFarmers = new Set<string>();
+  for (const b of batches) {
+    if (b.farmerWallet) uniqueFarmers.add(b.farmerWallet.toLowerCase());
+  }
+  if (uniqueFarmers.size > 0) {
+    const farmerContracts: { address: `0x${string}`; abi: Abi; functionName: string; args: readonly unknown[] }[] = [];
+    const farmerList = [...uniqueFarmers].map(w => `0x${w.slice(2)}` as `0x${string}`);
+    for (const w of farmerList) {
+      farmerContracts.push({ address: addresses.farmerRegistry, abi: farmerRegistryAbi, functionName: "getFarmer", args: [w] });
+    }
+    const farmerResults = await client.multicall({ contracts: farmerContracts, allowFailure: true });
+    const gfwByWallet = new Map<string, boolean>();
+    for (let i = 0; i < farmerList.length; i++) {
+      const r = farmerResults[i];
+      if (r.status === "success") {
+        const farmer = r.result as Record<string, unknown>;
+        gfwByWallet.set(farmerList[i].toLowerCase(), Boolean(farmer.gfwDeforestationFree));
+      }
+    }
+    for (const b of batches) {
+      if (b.farmerWallet) {
+        const gfwOk = gfwByWallet.get(b.farmerWallet.toLowerCase());
+        if (gfwOk === false) {
+          anomalies.push({
+            tokenId: b.tokenId,
+            type: "stage_distribution_anomaly" as Anomaly["type"],
+            severity: "critical",
+            message: `Batch ${b.tokenId} farmer is not EUDR-compliant — GFW deforestation check failed`,
+          });
+        } else if (gfwOk === undefined) {
+          anomalies.push({
+            tokenId: b.tokenId,
+            type: "delivered_no_grade" as Anomaly["type"],
+            severity: "info",
+            message: `Batch ${b.tokenId} farmer EUDR status unknown (farmer not found on-chain)`,
+          });
+        }
+      }
+    }
+  }
+
+  // E. Stage distribution — flag if too many EXPORTED and no SETTLED
   const exportedCount = stageCounts["EXPORTED"] ?? 0;
   const settledCount = stageCounts["SETTLED"] ?? 0;
   if (exportedCount > 0 && settledCount === 0 && batches.length > 5) {

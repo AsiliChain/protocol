@@ -22,7 +22,7 @@ interface AgentApiResponse {
 
 const IDENTITY_REGISTRY_ADDRESS =
   "0x62a6b58f8c3625F0c5f46D6C86A65595AA769C89";
-const MANTLESCAN_BASE = "https://sepolia.mantlescan.org";
+const MANTLESCAN_BASE = "https://sepolia.mantlescan.xyz";
 
 // ─── Data fetching ──────────────────────────────────────
 

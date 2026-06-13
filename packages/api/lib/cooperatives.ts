@@ -25,6 +25,13 @@ export function getDefaultCooperative(): string {
   return DEFAULT_COOPERATIVE;
 }
 
+export function getCooperativeName(wallet: `0x${string}`): string | null {
+  const entry = Object.entries(COOPERATIVES).find(
+    ([, addr]) => addr.toLowerCase() === wallet.toLowerCase(),
+  );
+  return entry ? entry[0] : null;
+}
+
 export function listCooperatives(): { name: string; wallet: `0x${string}` }[] {
   return Object.entries(COOPERATIVES).map(([name, wallet]) => ({ name, wallet }));
 }

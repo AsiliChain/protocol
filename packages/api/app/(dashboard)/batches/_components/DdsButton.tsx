@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { getAuthRole } from "@/lib/auth-client";
 
 interface DdsButtonProps {
   tokenId: number;
@@ -19,6 +20,11 @@ export function DdsButton({
   weightKg,
   stage,
 }: DdsButtonProps) {
+  // DDS generation is restricted to COOP_ROLE — buyers/exporters obtain it
+  // through the cooperative who manages the batch. Revenue model: ProtocolFee
+  // charges for DDS issuance (post-hackathon).
+  const role = getAuthRole();
+  if (role !== "COOP_ROLE") return null;
   const [open, setOpen] = useState(false);
   const [generating, setGenerating] = useState(false);
 

@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { HowItWorks } from "./_components/HowItWorks";
 
 const MANTLESCAN_LINK =
-  "https://sepolia.mantlescan.org/address/0x62a6b58f8c3625F0c5f46D6C86A65595AA769C89";
+  "https://sepolia.mantlescan.xyz/address/0x62a6b58f8c3625F0c5f46D6C86A65595AA769C89";
 
 function useRevealObserver() {
   const rootRef = useRef<HTMLDivElement>(null);

@@ -41,7 +41,7 @@ export default async function DashboardPage() {
     await fetchData();
 
   const MANTLESCAN_TOKENHOLDER =
-    "https://sepolia.mantlescan.org/address/0x27A445d5DfbbfB0B1fcE7D9199859C000B9070F3?tab=tokenholder";
+    "https://sepolia.mantlescan.xyz/address/0x27A445d5DfbbfB0B1fcE7D9199859C000B9070F3?tab=tokenholder";
 
   const isFirstVisit = stats.totalBatches === 0;
 
