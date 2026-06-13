@@ -38,6 +38,9 @@ package-lock.json
 # Agent-app academy content (large tutorial file with placeholder secrets)
 packages/agent-app/academy/
 
+# Internal integration docs, not public hackathon docs
+docs/NOTION_INTEGRATION.md
+
 # TypeScript build artifacts
 *.tsbuildinfo
 
