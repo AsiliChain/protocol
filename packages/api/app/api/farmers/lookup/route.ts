@@ -29,7 +29,7 @@ export async function GET(request: Request) {
         .readContract({
           address: addresses.farmerRegistry,
           abi: farmerRegistryAbi,
-          functionName: "getFarmer",
+          functionName: "farmers",
           args: [wallet],
         })
         .catch(() => null),

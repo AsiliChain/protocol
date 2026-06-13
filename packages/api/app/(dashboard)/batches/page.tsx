@@ -31,7 +31,7 @@ async function enrichWithFarmerNames(
   const contracts = uniqueWallets.map((w) => ({
     address: addresses.farmerRegistry as `0x${string}`,
     abi: farmerRegistryAbi,
-    functionName: "getFarmer",
+    functionName: "farmers",
     args: [`0x${w.slice(2)}` as `0x${string}`],
   }));
 

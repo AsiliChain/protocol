@@ -211,7 +211,7 @@ export async function runAnomalyDetectorCycle(
     const farmerContracts: { address: `0x${string}`; abi: Abi; functionName: string; args: readonly unknown[] }[] = [];
     const farmerList = [...uniqueFarmers].map(w => `0x${w.slice(2)}` as `0x${string}`);
     for (const w of farmerList) {
-      farmerContracts.push({ address: addresses.farmerRegistry, abi: farmerRegistryAbi, functionName: "getFarmer", args: [w] });
+      farmerContracts.push({ address: addresses.farmerRegistry, abi: farmerRegistryAbi, functionName: "farmers", args: [w] });
     }
     const farmerResults = await client.multicall({ contracts: farmerContracts, allowFailure: true });
     const gfwByWallet = new Map<string, boolean>();

@@ -198,7 +198,7 @@ export default async function BatchDetailPage({
     const farmerData = await publicClient.readContract({
       address: addresses.farmerRegistry,
       abi: farmerRegistryAbi,
-      functionName: "getFarmer",
+      functionName: "farmers",
       args: [farmerWallet],
     });
     farmerName = farmerData[8];

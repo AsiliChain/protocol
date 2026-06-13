@@ -44,7 +44,7 @@ export async function GET(request: Request): Promise<Response> {
     const farmerStats = new Map<string, { batchCount: number; totalWeightKg: bigint }>();
     for (const r of batchResults) {
       if (r.status !== "success") continue;
-      const batch = r.result as readonly [string, string, string, bigint, string, bigint, string, string, bigint, boolean];
+      const batch = r.result as unknown as readonly [string, string, string, bigint, string, bigint, string, string, bigint, boolean];
       const farmerWallet = batch[1].toLowerCase();
       if (farmerWallet === "0x0000000000000000000000000000000000000000") continue;
       const weight = batch[3];
@@ -68,7 +68,7 @@ export async function GET(request: Request): Promise<Response> {
     const detailContracts = farmerWallets.map((w) => ({
       address: addresses.farmerRegistry,
       abi: farmerRegistryAbi,
-      functionName: "getFarmer",
+      functionName: "farmers",
       args: [w],
     }));
 

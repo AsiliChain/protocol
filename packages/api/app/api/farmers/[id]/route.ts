@@ -20,7 +20,7 @@ export async function GET(
     const result = await publicClient.readContract({
       address: addresses.farmerRegistry,
       abi: farmerRegistryAbi,
-      functionName: "getFarmer",
+      functionName: "farmers",
       args: [farmerWallet],
     });
 

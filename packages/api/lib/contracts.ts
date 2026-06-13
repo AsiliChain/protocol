@@ -155,7 +155,7 @@ export const farmerRegistryAbi = [
   },
   {
     type: "function",
-    name: "getFarmer",
+    name: "farmers",
     inputs: [{ name: "farmerWallet", type: "address", internalType: "address" }],
     outputs: [
       { name: "maaifFarmerId", type: "string", internalType: "string" },
