@@ -1,6 +1,7 @@
 import {
   createPublicClient,
   createWalletClient,
+  fallback,
   http,
   type Account,
   type Chain,
@@ -14,18 +15,37 @@ import { mantle, mantleSepoliaTestnet } from "viem/chains";
 const CHAIN_ID = Number(process.env.MANTLE_CHAIN_ID) || 5003;
 const currentChain: Chain = CHAIN_ID === 5000 ? mantle : mantleSepoliaTestnet;
 
-function rpcUrl() {
+function primaryRpcUrl() {
   return CHAIN_ID === 5000
     ? process.env.MANTLE_RPC_URL!
     : process.env.MANTLE_SEPOLIA_RPC_URL!;
 }
 
+function sepoliaFallbackUrls(): string[] {
+  return [
+    "https://rpc.sepolia.mantle.xyz",
+    "https://mantle-sepolia-rpc.publicnode.com",
+    "https://mantle-sepolia.drpc.org",
+  ];
+}
+
 function rpcTransport() {
-  return http(rpcUrl(), {
-    retryCount: 3,
-    retryDelay: 300,
-    timeout: 15000,
-  });
+  const urls = CHAIN_ID === 5000
+    ? [primaryRpcUrl()]
+    : [primaryRpcUrl(), ...sepoliaFallbackUrls().filter((u) => u !== primaryRpcUrl())];
+
+  const transports = urls
+    .filter(Boolean)
+    .map((url) =>
+      http(url, {
+        retryCount: 2,
+        retryDelay: 200,
+        timeout: 10000,
+      }),
+    );
+
+  if (transports.length === 1) return transports[0];
+  return fallback(transports, { rank: false, retryCount: 1 });
 }
 
 let _publicClient: PublicClient | null = null;
