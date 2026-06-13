@@ -18,20 +18,19 @@ function truncateAddress(addr: string): string {
 }
 
 async function fetchData() {
-  const [stats, batches, agentsIdentity, portfolioHealth] = await Promise.all([
-    getDashboardStats().catch(() => ({
-      totalBatches: 0,
-      activeLoans: 0,
-      totalPrincipalUsdc: 0n,
-    })),
-    getRecentBatches(5).catch(
-      () => [] as Awaited<ReturnType<typeof getRecentBatches>>,
-    ),
-    getAgentsIdentity().catch(
-      () => [] as Awaited<ReturnType<typeof getAgentsIdentity>>,
-    ),
-    getPortfolioHealth().catch(() => null),
-  ]);
+  // Run sequentially to avoid RPC rate-limiting on Mantle Sepolia.
+  const stats = await getDashboardStats().catch(() => ({
+    totalBatches: 0,
+    activeLoans: 0,
+    totalPrincipalUsdc: 0n,
+  }));
+  const batches = await getRecentBatches(5).catch(
+    () => [] as Awaited<ReturnType<typeof getRecentBatches>>,
+  );
+  const agentsIdentity = await getAgentsIdentity().catch(
+    () => [] as Awaited<ReturnType<typeof getAgentsIdentity>>,
+  );
+  const portfolioHealth = await getPortfolioHealth().catch(() => null);
 
   return { stats, batches, agentsIdentity, portfolioHealth };
 }
