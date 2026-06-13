@@ -18,6 +18,8 @@ The system has three layers. On-chain logic lives on Mantle Sepolia as UUPS upgr
 
 The BatchToken contract represents each coffee lot as it moves from delivered cherry through grading, milling, warehousing, export commitment, export, and final settlement. LendingVault issues USDC loans against the tokenized collateral, withholds protocol fees and a credit loss reserve, and settles automatically when the buyer pays. FarmerRegistry ties every batch to a farmer wallet derived deterministically from the Ugandan national ID, so farmers do not need to manage private keys.
 
+![AsiliChain architecture diagram](packages/api/public/architecture-marketing.svg)
+
 ## Deployed contracts on Mantle Sepolia
 
 | Contract | Address |
