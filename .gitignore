@@ -22,10 +22,15 @@ agents/
 !packages/api/app/(dashboard)/agents/
 scripts/
 
-# Goose context files — not for commits
+# AI assistant context / session files — not for commits
 .goosehints
 .goose/
+.opencode/
+.sisyphus/
 .env.keychain
 SESSION_LOG.md
+CLAUDE.md
+TODO.md
+post-pilot-cleanup.md
 packages/contracts/coverage/
 package-lock.json
