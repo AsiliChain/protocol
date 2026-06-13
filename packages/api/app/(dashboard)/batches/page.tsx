@@ -151,9 +151,13 @@ export default async function BatchesPage() {
                 </tr>
               </thead>
               <tbody>
-                {batches.map((b) => {
+                  {batches.map((b) => {
+                  const zeroAddr = "0x" + "0".repeat(40);
+                  const isZeroAddress = b.farmerWallet.toLowerCase() === zeroAddr;
                   const farmer = farmerMap.get(b.farmerWallet.toLowerCase());
-                  const farmerName = farmer?.name ?? truncateAddress(b.farmerWallet);
+                  const farmerName = isZeroAddress
+                    ? "—"
+                    : (farmer?.name ?? truncateAddress(b.farmerWallet));
                   const stageName = stageLabel(b.stage);
                   const accent = STAGE_ACCENTS[stageName] ?? "oklch(72% 0.16 80)";
                   return (
@@ -168,17 +172,25 @@ export default async function BatchesPage() {
                         </a>
                       </td>
                       <td className="px-4 py-3">
-                        <a
-                          href={`/farmers/${b.farmerWallet}`}
-                          className="hover:underline"
-                          style={{ color: "oklch(18% 0.01 60)" }}
-                        >
-                          <span className="text-sm font-medium">{farmerName}</span>
-                        </a>
-                        <br />
-                        <span className="text-[11px] font-mono" style={{ color: "oklch(68% 0.01 58)" }}>
-                          {truncateAddress(b.farmerWallet)}
-                        </span>
+                        {isZeroAddress ? (
+                          <span className="text-sm" style={{ color: "oklch(68% 0.01 58)" }}>
+                            No farmer assigned
+                          </span>
+                        ) : (
+                          <>
+                            <a
+                              href={`/farmers/${b.farmerWallet}`}
+                              className="hover:underline"
+                              style={{ color: "oklch(18% 0.01 60)" }}
+                            >
+                              <span className="text-sm font-medium">{farmerName}</span>
+                            </a>
+                            <br />
+                            <span className="text-[11px] font-mono" style={{ color: "oklch(68% 0.01 58)" }}>
+                              {truncateAddress(b.farmerWallet)}
+                            </span>
+                          </>
+                        )}
                       </td>
                       <td className="px-4 py-3 tabular-nums" style={{ color: "oklch(40% 0.01 60)" }}>
                         {Number(b.weightKg).toLocaleString()} kg
