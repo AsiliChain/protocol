@@ -9,12 +9,23 @@ interface Props {
 
 type Status = "idle" | "running" | "success" | "error";
 
+type Summary = {
+  healthy?: number;
+  warning?: number;
+  critical?: number;
+  avgLtv?: number;
+  totalPrincipal?: number;
+  anomalies?: Array<{ type: string; severity: string; message: string; tokenId: number }>;
+  scanned?: number;
+  stageDistribution?: Record<string, number>;
+};
+
 const STAGE_LABELS = ["DELIVERED","GRADED","MILLED","WAREHOUSED","COMMITTED","EXPORTED","SETTLED"];
 
 export function RunAgentButton({ slug, label }: Props) {
   const [status, setStatus] = useState<Status>("idle");
   const [message, setMessage] = useState("");
-  const [summary, setSummary] = useState<Record<string, unknown> | null>(null);
+  const [summary, setSummary] = useState<Summary | null>(null);
 
   async function handleRun() {
     setStatus("running");
@@ -97,19 +108,19 @@ export function RunAgentButton({ slug, label }: Props) {
 
       {summary && slug === "anomaly-detector" && (
         <div className="mt-2 text-xs" style={{ color: "oklch(55% 0.012 60)" }}>
-          <span>{summary.scanned} batches · {summary.anomalies.length} anomalies</span>
-          {summary.anomalies.length > 0 && (
+          <span>{summary.scanned ?? 0} batches · {summary.anomalies?.length ?? 0} anomalies</span>
+          {(summary.anomalies?.length ?? 0) > 0 && (
             <ul className="mt-1 list-inside list-disc space-y-0.5">
-              {(summary.anomalies as Array<{ type: string; severity: string; message: string; tokenId: number }>).slice(0, 3).map((a, i) => (
+              {summary.anomalies!.slice(0, 3).map((a, i) => (
                 <li key={i} className={`text-xs ${a.severity === "critical" ? "text-risk-critical" : a.severity === "warning" ? "text-risk-warning" : ""}`}>
                   Batch #{a.tokenId}: {a.message}
                 </li>
               ))}
             </ul>
           )}
-          {Object.keys(summary.stageDistribution as Record<string, number>).length > 0 && (
+          {summary.stageDistribution && Object.keys(summary.stageDistribution).length > 0 && (
             <div className="mt-1 flex flex-wrap gap-2">
-              {Object.entries(summary.stageDistribution as Record<string, number>).map(([stage, count]) => (
+              {Object.entries(summary.stageDistribution).map(([stage, count]) => (
                 <span key={stage} className="rounded px-1.5 py-0.5" style={{ backgroundColor: "oklch(92% 0.008 60)" }}>
                   {STAGE_LABELS[Number(stage)] ?? stage}: {count}
                 </span>
