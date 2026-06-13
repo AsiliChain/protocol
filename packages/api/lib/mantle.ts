@@ -20,6 +20,14 @@ function rpcUrl() {
     : process.env.MANTLE_SEPOLIA_RPC_URL!;
 }
 
+function rpcTransport() {
+  return http(rpcUrl(), {
+    retryCount: 3,
+    retryDelay: 300,
+    timeout: 15000,
+  });
+}
+
 let _publicClient: PublicClient | null = null;
 let _walletClient: WalletClient<Transport, Chain, Account> | null = null;
 
@@ -27,7 +35,7 @@ export function getPublicClient() {
   if (!_publicClient) {
     _publicClient = createPublicClient({
       chain: currentChain,
-      transport: http(rpcUrl()),
+      transport: rpcTransport(),
     });
   }
   return _publicClient;
@@ -40,7 +48,7 @@ export function getWalletClient() {
     _walletClient = createWalletClient({
       account: privateKeyToAccount(pk as `0x${string}`),
       chain: currentChain,
-      transport: http(rpcUrl()),
+      transport: rpcTransport(),
     });
   }
   return _walletClient;
