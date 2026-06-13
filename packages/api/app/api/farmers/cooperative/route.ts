@@ -32,19 +32,22 @@ export async function GET(request: Request): Promise<Response> {
     });
     const maxTokens = Number(nextTokenId);
 
-    // 2. Scan all batch tokens via multicall
-    const contracts: { address: `0x${string}`; abi: typeof batchTokenAbi; functionName: string; args: readonly [bigint] }[] = [];
+    // 2. Scan all batch tokens (multicall3 unavailable on Mantle Sepolia)
+    const batchPromises: Promise<readonly [string, string, string, bigint, string, bigint, string, string, bigint, boolean] | null>[] = [];
     for (let i = 1; i < maxTokens; i++) {
-      contracts.push({ address: addresses.batchToken, abi: batchTokenAbi, functionName: "batchData", args: [BigInt(i)] });
+      batchPromises.push(
+        client.readContract({ address: addresses.batchToken, abi: batchTokenAbi, functionName: "batchData", args: [BigInt(i)] })
+          .then((r) => r as readonly [string, string, string, bigint, string, bigint, string, string, bigint, boolean])
+          .catch(() => null),
+      );
     }
 
-    const batchResults = await client.multicall({ contracts, allowFailure: true });
+    const batchResults = await Promise.all(batchPromises);
 
     // 3. Collect unique farmer wallets and aggregate per-farmer stats
     const farmerStats = new Map<string, { batchCount: number; totalWeightKg: bigint }>();
-    for (const r of batchResults) {
-      if (r.status !== "success") continue;
-      const batch = r.result as unknown as readonly [string, string, string, bigint, string, bigint, string, string, bigint, boolean];
+    for (const batch of batchResults) {
+      if (!batch) continue;
       const farmerWallet = batch[1].toLowerCase();
       if (farmerWallet === "0x0000000000000000000000000000000000000000") continue;
       const weight = batch[3];
@@ -65,20 +68,19 @@ export async function GET(request: Request): Promise<Response> {
     const farmerWallets = [...farmerStats.keys()].map(
       (w) => `0x${w.slice(2)}` as `0x${string}`,
     );
-    const detailContracts = farmerWallets.map((w) => ({
-      address: addresses.farmerRegistry,
-      abi: farmerRegistryAbi,
-      functionName: "farmers",
-      args: [w],
-    }));
+    const farmerPromises = farmerWallets.map((w) =>
+      client.readContract({ address: addresses.farmerRegistry, abi: farmerRegistryAbi, functionName: "farmers", args: [w] })
+        .then((r) => r as readonly unknown[])
+        .catch(() => null),
+    );
 
-    const detailResults = await client.multicall({ contracts: detailContracts, allowFailure: true });
+    const detailResults = await Promise.all(farmerPromises);
 
     // 5. Build response
     const farmers: FarmerRow[] = [];
     for (let i = 0; i < farmerWallets.length; i++) {
-      const r = detailResults[i];
-      if (r.status !== "success") {
+      const f = detailResults[i];
+      if (!f) {
         farmers.push({
           wallet: farmerWallets[i],
           name: "Unknown",
@@ -91,7 +93,6 @@ export async function GET(request: Request): Promise<Response> {
         });
         continue;
       }
-      const f = r.result as readonly unknown[];
       farmers.push({
         wallet: farmerWallets[i],
         name: (f[8] as string) ?? "Unknown",

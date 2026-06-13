@@ -1,4 +1,3 @@
-import { type Abi } from "viem";
 import { getPublicClient } from "../mantle";
 import {
   addresses,
@@ -81,57 +80,46 @@ export async function runAnomalyDetectorCycle(
   const anomalies: Anomaly[] = [];
   const stageCounts: Record<string, number> = {};
 
-  // Batch all contract reads into a single multicall to prevent RPC rate limiting.
-  // Each token produces 3 calls: batchData + stages + batchToActiveOrder.
-  // allowFailure ensures non-existent tokens don't block the rest.
-  const contracts: {
-    address: `0x${string}`;
-    abi: Abi;
-    functionName: string;
-    args: readonly unknown[];
-  }[] = [];
+  // Use nextTokenId so we only scan real tokens; then read each token's
+  // batchData, stage, and active order in parallel. Multicall3 is not
+  // available on Mantle Sepolia, so we fall back to Promise.all.
+  const nextTokenId = await client.readContract({
+    address: addresses.batchToken,
+    abi: batchTokenAbi,
+    functionName: "nextTokenId",
+  }).then((r) => Number(r)).catch(() => 0);
 
-  for (let i = 1; i <= scanLimit; i++) {
-    const id = BigInt(i);
-    contracts.push(
-      { address: addresses.batchToken, abi: batchTokenAbi, functionName: "batchData", args: [id] },
-      { address: addresses.traceLog, abi: traceLogAbi, functionName: "stages", args: [id] },
-      { address: addresses.purchaseOrder, abi: purchaseOrderAbi, functionName: "batchToActiveOrder", args: [id] },
-    );
-  }
-
-  const multicallResults = await client.multicall({ contracts, allowFailure: true });
-
+  const maxToken = Math.min(scanLimit, Math.max(0, nextTokenId - 1));
   const batches: BatchSnapshot[] = [];
 
-  // multicall returns a flat array of 3 entries per token: [batchData, stages, batchToActiveOrder, ...]
-  for (let i = 0; i < scanLimit; i++) {
-    const tokenId = i + 1;
-    const baseIdx = i * 3;
-    const batchResult = multicallResults[baseIdx];
-    const stageResult = multicallResults[baseIdx + 1];
-    const poResult = multicallResults[baseIdx + 2];
+  for (let tokenId = 1; tokenId <= maxToken; tokenId++) {
+    const id = BigInt(tokenId);
+    const [batchResult, stageResult, poResult] = await Promise.all([
+      client.readContract({ address: addresses.batchToken, abi: batchTokenAbi, functionName: "batchData", args: [id] })
+        .then((r) => r as unknown as Record<string, unknown>)
+        .catch(() => null),
+      client.readContract({ address: addresses.traceLog, abi: traceLogAbi, functionName: "stages", args: [id] })
+        .then((r) => Number(r))
+        .catch(() => null),
+      client.readContract({ address: addresses.purchaseOrder, abi: purchaseOrderAbi, functionName: "batchToActiveOrder", args: [id] })
+        .then((r) => r as bigint)
+        .catch(() => 0n),
+    ]);
 
-    // Must exist in BatchToken to be meaningful
-    if (batchResult.status === "failure") continue;
+    if (!batchResult) continue;
 
-    const batch = (batchResult as { status: "success"; result: Record<string, unknown> }).result;
-    const stageVal = stageResult.status === "success" ? Number(stageResult.result) : 0;
-    const activeOrderId = poResult.status === "success" ? (poResult.result as bigint) : 0n;
-
-    const stage = stageVal;
+    const stage = stageResult ?? 0;
     const stageName =
       stage >= 0 && stage < STAGE_NAMES.length ? STAGE_NAMES[stage] : "UNKNOWN";
 
-    // Collect batch fields
-    const batchId = (batch.batchId as string) ?? null;
-    const weightKg = batch.weightKg !== undefined ? Number(batch.weightKg) : 0;
-    const grade = (batch.grade as string) ?? null;
-    const farmerWallet = (batch.farmerWallet as `0x${string}`) ?? null;
+    const batchId = (batchResult.batchId as string) ?? null;
+    const weightKg = batchResult.weightKg !== undefined ? Number(batchResult.weightKg) : 0;
+    const grade = (batchResult.grade as string) ?? null;
+    const farmerWallet = (batchResult.farmerWallet as `0x${string}`) ?? null;
     const mintTimestamp =
-      batch.mintTimestamp !== undefined ? Number(batch.mintTimestamp) : null;
+      batchResult.mintTimestamp !== undefined ? Number(batchResult.mintTimestamp) : null;
 
-    const hasActiveOrder = activeOrderId > 0n;
+    const hasActiveOrder = (poResult ?? 0n) > 0n;
 
     batches.push({
       tokenId,
@@ -155,7 +143,7 @@ export async function runAnomalyDetectorCycle(
     //    Confirmed/cancelled POs clear the active order link, so we
     //    check the raw return value from the contract.
     //    This catches batches approaching export without any buyer.
-    if (stage >= 3 && stage <= 4 && activeOrderId === 0n) {
+    if (stage >= 3 && stage <= 4 && (poResult ?? 0n) === 0n) {
       anomalies.push({
         tokenId,
         type: "missing_purchase_order",
@@ -208,17 +196,17 @@ export async function runAnomalyDetectorCycle(
     if (b.farmerWallet) uniqueFarmers.add(b.farmerWallet.toLowerCase());
   }
   if (uniqueFarmers.size > 0) {
-    const farmerContracts: { address: `0x${string}`; abi: Abi; functionName: string; args: readonly unknown[] }[] = [];
     const farmerList = [...uniqueFarmers].map(w => `0x${w.slice(2)}` as `0x${string}`);
-    for (const w of farmerList) {
-      farmerContracts.push({ address: addresses.farmerRegistry, abi: farmerRegistryAbi, functionName: "farmers", args: [w] });
-    }
-    const farmerResults = await client.multicall({ contracts: farmerContracts, allowFailure: true });
+    const farmerPromises = farmerList.map((w) =>
+      client.readContract({ address: addresses.farmerRegistry, abi: farmerRegistryAbi, functionName: "farmers", args: [w] })
+        .then((r) => r as unknown as Record<string, unknown>)
+        .catch(() => null)
+    );
+    const farmerResults = await Promise.all(farmerPromises);
     const gfwByWallet = new Map<string, boolean>();
     for (let i = 0; i < farmerList.length; i++) {
-      const r = farmerResults[i];
-      if (r.status === "success") {
-        const farmer = r.result as Record<string, unknown>;
+      const farmer = farmerResults[i];
+      if (farmer) {
         gfwByWallet.set(farmerList[i].toLowerCase(), Boolean(farmer.gfwDeforestationFree));
       }
     }

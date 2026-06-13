@@ -131,38 +131,30 @@ export async function getDashboardStats(): Promise<DashboardStats> {
   const maxTokens = Number(nextTokenId);
   const totalBatches = maxTokens - 1;
 
-  // Scan loan data via multicall — one RPC instead of up to 200 sequential calls
-  const start = Math.max(1, maxTokens - 200);
-  const contracts: {
-    address: `0x${string}`;
-    abi: typeof lendingVaultAbi;
-    functionName: "getLoan";
-    args: readonly [bigint];
-  }[] = [];
+  // Multicall3 not available on Mantle Sepolia — use individual reads in parallel
+  const loanPromises: Promise<readonly [bigint, string, bigint, bigint, bigint, bigint, bigint, number] | null>[] = [];
 
-  for (let id = start; id < maxTokens; id++) {
-    contracts.push({
-      address: addresses.lendingVault,
-      abi: lendingVaultAbi,
-      functionName: "getLoan",
-      args: [BigInt(id)],
-    });
+  for (let id = 1; id < maxTokens; id++) {
+    loanPromises.push(
+      publicClient.readContract({
+        address: addresses.lendingVault,
+        abi: lendingVaultAbi,
+        functionName: "getLoan",
+        args: [BigInt(id)],
+      })
+        .then((r) => r as readonly [bigint, string, bigint, bigint, bigint, bigint, bigint, number])
+        .catch(() => null),
+    );
   }
 
-  const results = await publicClient.multicall({
-    contracts,
-    allowFailure: true,
-  });
+  const results = await Promise.all(loanPromises);
 
   let activeLoans = 0;
   let totalPrincipal = 0n;
 
   for (let i = 0; i < results.length; i++) {
-    const r = results[i];
-    if (r.status === "failure") continue;
-    // loan tuple: [batchTokenId, farmerWallet, principalUsdc, interestUsdc, originatedAt, expiresAt, forbearanceExpiry, status]
-    const loan = r.result as readonly [bigint, string, bigint, bigint, bigint, bigint, bigint, number];
-    // LoanStatus: NONE=0, ACTIVE=1, DEFAULTED=2, SETTLED=3
+    const loan = results[i];
+    if (!loan) continue;
     if (loan[7] === 1) {
       activeLoans++;
       totalPrincipal += loan[2];
@@ -195,36 +187,30 @@ export async function getPortfolioHealth(): Promise<PortfolioHealth | null> {
 
   const start = Math.max(1, maxTokens - 200);
 
-  // Pass 1: multicall getLoan for all tokens — find active loans + their principals
-  const loanContracts: {
-    address: `0x${string}`;
-    abi: typeof lendingVaultAbi;
-    functionName: "getLoan";
-    args: readonly [bigint];
-  }[] = [];
+  // Multicall3 not available on Mantle Sepolia — use individual reads in parallel
+  const loanPromises: Promise<readonly [bigint, string, bigint, bigint, bigint, bigint, bigint, number] | null>[] = [];
 
   for (let id = start; id < maxTokens; id++) {
-    loanContracts.push({
-      address: addresses.lendingVault,
-      abi: lendingVaultAbi,
-      functionName: "getLoan",
-      args: [BigInt(id)],
-    });
+    loanPromises.push(
+      publicClient.readContract({
+        address: addresses.lendingVault,
+        abi: lendingVaultAbi,
+        functionName: "getLoan",
+        args: [BigInt(id)],
+      })
+        .then((r) => r as readonly [bigint, string, bigint, bigint, bigint, bigint, bigint, number])
+        .catch(() => null),
+    );
   }
 
-  const loanResults = await publicClient.multicall({
-    contracts: loanContracts,
-    allowFailure: true,
-  });
+  const loanResults = await Promise.all(loanPromises);
 
   // Collect active loan data: tokenId → principalUsdc
   const activeLoanData: { tokenId: number; principalUsdc: number }[] = [];
 
   for (let i = 0; i < loanResults.length; i++) {
-    const r = loanResults[i];
-    if (r.status === "failure") continue;
-    const loan = r.result as readonly [bigint, string, bigint, bigint, bigint, bigint, bigint, number];
-    // LoanStatus: ACTIVE=1
+    const loan = loanResults[i];
+    if (!loan) continue;
     if (loan[7] !== 1) continue;
     activeLoanData.push({
       tokenId: start + i,
@@ -234,7 +220,7 @@ export async function getPortfolioHealth(): Promise<PortfolioHealth | null> {
 
   if (activeLoanData.length === 0) return null;
 
-  // Pass 2: read price params + multicall batchData for active loans only
+  // Pass 2: read price params + batchData for active loans only
   const [rawPricePerKg, rawMaxLtvBps] = await Promise.all([
     publicClient.readContract({
       address: addresses.lendingVault,
@@ -251,26 +237,22 @@ export async function getPortfolioHealth(): Promise<PortfolioHealth | null> {
   const pricePerKgBase = Number(rawPricePerKg);
   const maxLtvBps = Number(rawMaxLtvBps);
 
-  const batchContracts: {
-    address: `0x${string}`;
-    abi: typeof batchTokenAbi;
-    functionName: "batchData";
-    args: readonly [bigint];
-  }[] = [];
+  const batchPromises: Promise<readonly [string, string, string, bigint, string, bigint, string, string, bigint, boolean] | null>[] = [];
 
   for (const d of activeLoanData) {
-    batchContracts.push({
-      address: addresses.batchToken,
-      abi: batchTokenAbi,
-      functionName: "batchData",
-      args: [BigInt(d.tokenId)],
-    });
+    batchPromises.push(
+      publicClient.readContract({
+        address: addresses.batchToken,
+        abi: batchTokenAbi,
+        functionName: "batchData",
+        args: [BigInt(d.tokenId)],
+      })
+        .then((r) => r as readonly [string, string, string, bigint, string, bigint, string, string, bigint, boolean])
+        .catch(() => null),
+    );
   }
 
-  const batchResults = await publicClient.multicall({
-    contracts: batchContracts,
-    allowFailure: true,
-  });
+  const batchResults = await Promise.all(batchPromises);
 
   let healthy = 0;
   let warning = 0;
@@ -280,10 +262,9 @@ export async function getPortfolioHealth(): Promise<PortfolioHealth | null> {
 
   for (let i = 0; i < activeLoanData.length; i++) {
     const d = activeLoanData[i];
-    const br = batchResults[i];
-    if (br.status === "failure") continue;
+    const batch = batchResults[i];
+    if (!batch) continue;
 
-    const batch = br.result as unknown as readonly [string, string, string, bigint, string, bigint, string, string, bigint, boolean];
     const weightKg = Number(batch[3]);
     const grade = String(batch[4]);
     const gradeMultiplier = getGradeMultiplier(grade);
@@ -323,49 +304,50 @@ export async function getRecentBatches(count = 5): Promise<BatchSummary[]> {
 
   const maxTokens = Number(nextTokenId);
   const start = Math.max(1, maxTokens - count);
-  const tokenIds: bigint[] = [];
 
-  for (let id = maxTokens - 1; id >= start; id--) {
-    tokenIds.push(BigInt(id));
-  }
+  // Multicall3 not available on Mantle Sepolia — use individual reads in parallel
+  const batchPromises: Promise<readonly [string, `0x${string}`, `0x${string}`, bigint, string, bigint, `0x${string}`, `0x${string}`, bigint, boolean] | null>[] = [];
+  const stagePromises: Promise<number | null>[] = [];
 
-  // Batch batchData + stages reads into a single multicall
-  const contracts: {
-    address: `0x${string}`;
-    abi: typeof batchTokenAbi | typeof traceLogAbi;
-    functionName: string;
-    args: readonly [bigint];
-  }[] = [];
-
-  for (const id of tokenIds) {
-    contracts.push(
-      { address: addresses.batchToken, abi: batchTokenAbi, functionName: "batchData", args: [id] },
-      { address: addresses.traceLog, abi: traceLogAbi, functionName: "stages", args: [id] },
+  for (let id = start; id < maxTokens; id++) {
+    batchPromises.push(
+      publicClient.readContract({
+        address: addresses.batchToken,
+        abi: batchTokenAbi,
+        functionName: "batchData",
+        args: [BigInt(id)],
+      })
+        .then((r) => r as readonly [string, `0x${string}`, `0x${string}`, bigint, string, bigint, `0x${string}`, `0x${string}`, bigint, boolean])
+        .catch(() => null),
+    );
+    stagePromises.push(
+      publicClient.readContract({
+        address: addresses.traceLog,
+        abi: traceLogAbi,
+        functionName: "stages",
+        args: [BigInt(id)],
+      })
+        .then((r) => Number(r))
+        .catch(() => null),
     );
   }
 
-  const multicallResults = await publicClient.multicall({
-    contracts,
-    allowFailure: true,
-  });
+  const [batchResults, stageResults] = await Promise.all([
+    Promise.all(batchPromises),
+    Promise.all(stagePromises),
+  ]);
 
   const results: BatchSummary[] = [];
 
-  for (let i = 0; i < tokenIds.length; i++) {
-    const baseIdx = i * 2;
-    const batchResult = multicallResults[baseIdx];
-    const stageResult = multicallResults[baseIdx + 1];
+  for (let i = 0; i < batchResults.length; i++) {
+    const batch = batchResults[i];
+    const stage = stageResults[i] ?? 0;
 
-    if (batchResult.status === "failure") continue;
-
-    const batch = batchResult.result as unknown as readonly [string, `0x${string}`, `0x${string}`, bigint, string, bigint, `0x${string}`, `0x${string}`, bigint, boolean];
-    const stage = stageResult.status === "success" ? Number(stageResult.result) : 0;
-
-    // Skip empty batches (e2e-test artifacts with no farmer)
+    if (!batch) continue;
     if (batch[1] === "0x0000000000000000000000000000000000000000") continue;
 
     results.push({
-      tokenId: Number(tokenIds[i]),
+      tokenId: start + i,
       batchId: batch[0],
       farmerWallet: batch[1],
       weightKg: batch[3],
@@ -375,7 +357,7 @@ export async function getRecentBatches(count = 5): Promise<BatchSummary[]> {
     });
   }
 
-  return results;
+  return results.reverse();
 }
 
 export async function getFarmerInfo(
@@ -468,27 +450,23 @@ export async function getAllLoans(): Promise<LoanInfo[]> {
 
   const start = Math.max(1, maxTokens - 200);
 
-  // Multicall getLoan for all batch tokens
-  const loanContracts: {
-    address: `0x${string}`;
-    abi: typeof lendingVaultAbi;
-    functionName: "getLoan";
-    args: readonly [bigint];
-  }[] = [];
+  // Multicall3 not available on Mantle Sepolia — use individual reads in parallel
+  const loanPromises: Promise<readonly [bigint, string, bigint, bigint, bigint, bigint, bigint, number] | null>[] = [];
 
   for (let id = start; id < maxTokens; id++) {
-    loanContracts.push({
-      address: addresses.lendingVault,
-      abi: lendingVaultAbi,
-      functionName: "getLoan",
-      args: [BigInt(id)],
-    });
+    loanPromises.push(
+      publicClient.readContract({
+        address: addresses.lendingVault,
+        abi: lendingVaultAbi,
+        functionName: "getLoan",
+        args: [BigInt(id)],
+      })
+        .then((r) => r as readonly [bigint, string, bigint, bigint, bigint, bigint, bigint, number])
+        .catch(() => null),
+    );
   }
 
-  const loanResults = await publicClient.multicall({
-    contracts: loanContracts,
-    allowFailure: true,
-  });
+  const loanResults = await Promise.all(loanPromises);
 
   // Collect active loans: ACTIVE = 1
   interface RawLoan {
@@ -504,9 +482,8 @@ export async function getAllLoans(): Promise<LoanInfo[]> {
   const activeRaw: { tokenId: number; loan: RawLoan }[] = [];
 
   for (let i = 0; i < loanResults.length; i++) {
-    const r = loanResults[i];
-    if (r.status === "failure") continue;
-    const loan = r.result as readonly [bigint, string, bigint, bigint, bigint, bigint, bigint, number];
+    const loan = loanResults[i];
+    if (!loan) continue;
     if (loan[7] !== 1) continue; // LoanStatus: ACTIVE = 1
     activeRaw.push({
       tokenId: start + i,
@@ -524,29 +501,6 @@ export async function getAllLoans(): Promise<LoanInfo[]> {
 
   if (activeRaw.length === 0) return [];
 
-  // Multicall batchData for active loans only
-  const batchContracts: {
-    address: `0x${string}`;
-    abi: typeof batchTokenAbi;
-    functionName: "batchData";
-    args: readonly [bigint];
-  }[] = [];
-
-  for (const a of activeRaw) {
-    batchContracts.push({
-      address: addresses.batchToken,
-      abi: batchTokenAbi,
-      functionName: "batchData",
-      args: [BigInt(a.tokenId)],
-    });
-  }
-
-  const batchResults = await publicClient.multicall({
-    contracts: batchContracts,
-    allowFailure: true,
-  });
-
-  // We don't actually need batch data for the loans list — only LoanInfo fields
   return activeRaw.map((a) => ({
     batchTokenId: a.tokenId,
     farmerWallet: a.loan.farmerWallet,
@@ -555,7 +509,7 @@ export async function getAllLoans(): Promise<LoanInfo[]> {
     originatedAt: Number(a.loan.originatedAt),
     expiresAt: Number(a.loan.expiresAt),
     status: a.loan.status,
-    ltvBps: undefined, // computed client-side
+    ltvBps: undefined,
   }));
 }
 

@@ -28,20 +28,23 @@ async function enrichWithFarmerNames(
   const uniqueWallets = [...new Set(batches.map((b) => b.farmerWallet.toLowerCase()))];
   if (uniqueWallets.length === 0) return new Map();
 
-  const contracts = uniqueWallets.map((w) => ({
-    address: addresses.farmerRegistry as `0x${string}`,
-    abi: farmerRegistryAbi,
-    functionName: "farmers",
-    args: [`0x${w.slice(2)}` as `0x${string}`],
-  }));
+  const farmerPromises = uniqueWallets.map((w) =>
+    client.readContract({
+      address: addresses.farmerRegistry as `0x${string}`,
+      abi: farmerRegistryAbi,
+      functionName: "farmers",
+      args: [`0x${w.slice(2)}` as `0x${string}`],
+    })
+      .then((r) => r as readonly unknown[])
+      .catch(() => null),
+  );
 
-  const results = await client.multicall({ contracts, allowFailure: true });
+  const results = await Promise.all(farmerPromises);
   const map = new Map<string, { name: string; wallet: string }>();
 
   for (let i = 0; i < uniqueWallets.length; i++) {
-    const r = results[i];
-    if (r.status === "success") {
-      const f = r.result as readonly unknown[];
+    const f = results[i];
+    if (f) {
       map.set(uniqueWallets[i], {
         name: (f[8] as string) ?? "Unknown",
         wallet: uniqueWallets[i],
