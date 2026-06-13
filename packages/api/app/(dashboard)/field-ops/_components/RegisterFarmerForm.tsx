@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { keccak256, toBytes } from "viem";
 import { getAuthToken } from "@/lib/auth-client";
 
 interface Cooperative {
@@ -31,6 +32,28 @@ async function uploadJson(data: Record<string, unknown>): Promise<UploadResult> 
   return res.json();
 }
 
+// Auto-generate a GeoJSON polygon from a center GPS point and farm area.
+// Produces a simple bounding-box polygon rounded to 6 decimal places (EUDR spec).
+function generateGeoJsonPolygon(lat: number, lng: number, areaHectares: number): object {
+  const sideMeters = Math.sqrt(Math.max(areaHectares, 0.01) * 10000);
+  const halfSide = sideMeters / 2;
+  const latDelta = halfSide / 111320;
+  const lngDelta = halfSide / (111320 * Math.cos(lat * Math.PI / 180));
+  const round = (v: number) => Math.round(v * 1_000_000) / 1_000_000;
+  return {
+    type: "Polygon",
+    coordinates: [[
+      [round(lng - lngDelta), round(lat - latDelta)],
+      [round(lng + lngDelta), round(lat - latDelta)],
+      [round(lng + lngDelta), round(lat + latDelta)],
+      [round(lng - lngDelta), round(lat + latDelta)],
+      [round(lng - lngDelta), round(lat - latDelta)],
+    ]],
+  };
+}
+
+type GfwStatus = "pending" | "verified" | "flagged";
+
 export function RegisterFarmerForm() {
   const [cooperatives, setCooperatives] = useState<Cooperative[]>([]);
   const [nin, setNin] = useState("");
@@ -42,8 +65,7 @@ export function RegisterFarmerForm() {
   const [lat, setLat] = useState("");
   const [lng, setLng] = useState("");
   const [photoFile, setPhotoFile] = useState<File | null>(null);
-  const [geoJson, setGeoJson] = useState("");
-  const [gfwVerified, setGfwVerified] = useState(false);
+  const [gfwStatus, setGfwStatus] = useState<GfwStatus>("pending");
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -71,31 +93,36 @@ export function RegisterFarmerForm() {
         photoCid = result.cid;
       }
 
-      // 2. Build farm evidence manifest and upload to IPFS
+      // 2. Auto-generate GeoJSON polygon from GPS + area
+      const polygon = generateGeoJsonPolygon(Number(lat), Number(lng), Number(area));
+
+      // 3. Build farm evidence manifest and upload to IPFS
       const manifest: Record<string, unknown> = {
         farmerName: name,
         nationalId: nin,
         phoneNumber: phone,
-        latitude: lat ? Number(lat) : null,
-        longitude: lng ? Number(lng) : null,
-        farmAreaHectares: area ? Number(area) : null,
-        gfwDeforestationFree: gfwVerified,
-        geoJsonPolygon: geoJson || null,
+        latitude: Number(lat),
+        longitude: Number(lng),
+        farmAreaHectares: Number(area),
+        gfwDeforestationFree: gfwStatus === "verified",
+        gfwStatus,
+        geoJsonPolygon: polygon,
         photoIpfsCid: photoCid || null,
         cooperative: cooperativeName,
         registrationTimestamp: Date.now(),
       };
       const manifestResult = await uploadJson(manifest);
 
-      // 3. Resolve cooperative wallet
+      // 4. Resolve cooperative wallet
       const coopWallet = selectedCoop?.wallet;
       if (!coopWallet) {
         throw new Error(`No wallet address configured for cooperative: ${cooperativeName}`);
       }
 
-      const paddedCid = `0x${manifestResult.cid.slice(0, 64).padStart(64, "0")}` as `0x${string}`;
+      // Hash the IPFS CID into bytes32 for on-chain commitment
+      const cidBytes32 = keccak256(toBytes(manifestResult.cid));
 
-      // 4. Register on-chain (server derives wallet from NIN)
+      // 5. Register on-chain (server derives wallet from NIN)
       const res = await fetch("/api/farmers/register", {
         method: "POST",
         headers: {
@@ -105,9 +132,9 @@ export function RegisterFarmerForm() {
         body: JSON.stringify({
           maaifFarmerId: maaifId,
           cooperativeWallet: coopWallet,
-          farmBoundaryIpfsCid: paddedCid,
-          farmAreaHectares: Number(area),
-          gfwDeforestationFree: gfwVerified,
+          farmBoundaryIpfsCid: cidBytes32,
+          farmAreaHectares: Math.round(Number(area) * 100), // ×100 scaling (contract: 250 = 2.50 ha)
+          gfwDeforestationFree: gfwStatus === "verified",
           nationalId: nin,
           farmerName: name,
           phoneNumber: phone,
@@ -126,7 +153,7 @@ export function RegisterFarmerForm() {
   function reset() {
     setNin(""); setName(""); setPhone(""); setMaaifId("");
     setCooperativeName("Protocol Hub"); setArea(""); setLat(""); setLng("");
-    setPhotoFile(null); setGeoJson(""); setGfwVerified(false);
+    setPhotoFile(null); setGfwStatus("pending");
     setResult(null); setError(null);
   }
 
@@ -204,27 +231,32 @@ export function RegisterFarmerForm() {
           <Field label="Latitude *" value={lat} onChange={setLat} required type="number" step="0.000001" placeholder="0.123456" />
           <Field label="Longitude *" value={lng} onChange={setLng} required type="number" step="0.000001" placeholder="32.123456" />
 
-          <div className="space-y-1 sm:col-span-2">
-            <label className="text-xs" style={{ color: "oklch(60% 0.01 58)" }}>GeoJSON Polygon</label>
-            <textarea value={geoJson} onChange={(e) => setGeoJson(e.target.value)}
-              className="w-full bg-white border border-[oklch(82%_0.008_60)] rounded-xl px-3 py-2 text-sm text-[oklch(18%_0.01_60)] outline-none focus:border-[#C8922A] focus:ring-2 focus:ring-[#C8922A]/10 placeholder:text-[oklch(60%_0.01_58)] font-mono text-xs"
-              rows={3} placeholder='{"type":"Polygon","coordinates":[[[0.12,32.1],[0.13,32.11],[0.13,32.12],[0.12,32.13],[0.12,32.1]]]}' />
-            <p className="text-[11px]" style={{ color: "oklch(50% 0.01 58)" }}>
-              Required for farms &gt; 4 hectares (EUDR Article 4). Included in the IPFS manifest.
-            </p>
-          </div>
         </div>
 
-        <label className="flex items-start gap-3 mt-3 cursor-pointer">
-          <input type="checkbox" checked={gfwVerified} onChange={(e) => setGfwVerified(e.target.checked)}
-            className="mt-0.5 h-4 w-4 rounded" style={{ accentColor: "#C8922A" }} />
-          <div>
-            <span className="text-sm font-medium" style={{ color: "oklch(88% 0.006 60)" }}>Verified deforestation-free</span>
-            <p className="text-[11px]" style={{ color: "oklch(55% 0.012 60)" }}>
-              Confirmed by Global Forest Watch — no deforestation detected on this farm polygon.
-            </p>
+        <div className="space-y-2 mt-2">
+          <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: "oklch(55% 0.012 60)" }}>
+            Deforestation Status
+          </p>
+          <div className="flex gap-2">
+            {([["pending", "⏳", "Pending", "oklch(50% 0.01 58)", "Not yet checked against GFW"],
+              ["verified", "✓", "Deforestation-Free", "oklch(50% 0.16 155)", "GFW confirmed — no deforestation since Dec 2020"],
+              ["flagged", "⚠", "Risk Flagged", "oklch(55% 0.18 40)", "Possible deforestation detected — review required"],
+            ] as const).map(([key, icon, label, color, desc]) => (
+              <button key={key} type="button" onClick={() => setGfwStatus(key as GfwStatus)}
+                className={`flex-1 rounded-xl border p-3 text-left transition-all ${
+                  gfwStatus === key ? "ring-2" : "opacity-60 hover:opacity-100"
+                }`}
+                style={{
+                  borderColor: gfwStatus === key ? color : "oklch(82% 0.008 60)",
+                  backgroundColor: gfwStatus === key ? `${color}10` : "white",
+                  boxShadow: gfwStatus === key ? `0 0 0 2px ${color}40` : "none",
+                }}>
+                <div className="text-sm font-medium" style={{ color }}>{icon} {label}</div>
+                <p className="text-[11px] mt-0.5" style={{ color: "oklch(50% 0.01 58)" }}>{desc}</p>
+              </button>
+            ))}
           </div>
-        </label>
+        </div>
       </div>
 
       {error && <p className="text-xs font-medium" style={{ color: "oklch(60% 0.18 30)" }}>{error}</p>}

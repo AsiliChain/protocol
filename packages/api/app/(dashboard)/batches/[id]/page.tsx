@@ -16,7 +16,8 @@ const STAGE_LABELS = [
   "COMMITTED", "EXPORTED", "SETTLED",
 ];
 
-const LOAN_STATUS = ["Active", "Defaulted", "Settled", "Forborne"];
+// Matches LendingVault LoanStatus enum: NONE=0, ACTIVE=1, DEFAULTED=2, SETTLED=3
+const LOAN_STATUS = ["None", "Active", "Defaulted", "Settled"];
 
 function StageTimeline({ current }: { current: number }) {
   return (
@@ -185,6 +186,8 @@ export default async function BatchDetailPage({
     weightKg,
     grade,
     moisturePct,
+    , // collectionPointHash (skip)
+    , // weightSlipIpfsCid (skip)
     mintTimestamp,
     loanActive,
   ] = batch;
@@ -295,7 +298,7 @@ export default async function BatchDetailPage({
           <div>
             <p className="dash-table-header">Weight</p>
             <p className="mt-0.5 text-sm" style={{ color: "oklch(18% 0.01 60)" }}>
-              {weightKg.toString()} kg
+              {Number(weightKg).toLocaleString()} kg
             </p>
           </div>
           <div>
@@ -305,7 +308,7 @@ export default async function BatchDetailPage({
           <div>
             <p className="dash-table-header">Moisture</p>
             <p className="mt-0.5 text-sm" style={{ color: "oklch(18% 0.01 60)" }}>
-              {moisturePct.toString()}%
+              {(Number(moisturePct) / 10).toFixed(1)}%
             </p>
           </div>
           <div>
@@ -392,7 +395,7 @@ export default async function BatchDetailPage({
           <div>
             <p className="dash-table-header">Weight</p>
             <p className="mt-0.5 text-sm font-medium" style={{ color: "oklch(18% 0.01 60)" }}>
-              {weightKg.toString()} kg
+              {Number(weightKg).toLocaleString()} kg
             </p>
           </div>
           <div>
@@ -404,7 +407,7 @@ export default async function BatchDetailPage({
           <div>
             <p className="dash-table-header">Moisture</p>
             <p className="mt-0.5 text-sm" style={{ color: "oklch(18% 0.01 60)" }}>
-              {moisturePct.toString()}%
+              {(Number(moisturePct) / 10).toFixed(1)}%
             </p>
           </div>
           <div>

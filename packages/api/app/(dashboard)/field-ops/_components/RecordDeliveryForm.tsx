@@ -237,8 +237,8 @@ export function RecordDeliveryForm() {
               Wallet: {farmerData.wallet.slice(0, 6)}...{farmerData.wallet.slice(-4)}
             </p>
             {farmerData.farmer.gfwDeforestationFree && (
-              <p className="text-xs" style={{ color: "oklch(55% 0.15 140)" }}>
-                Deforestation-free verified
+              <p className="text-xs" style={{ color: "oklch(50% 0.16 155)" }}>
+                ✓ Deforestation-free verified
               </p>
             )}
           </div>
