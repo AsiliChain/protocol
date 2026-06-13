@@ -38,3 +38,6 @@ package-lock.json
 # Agent-app academy content (large tutorial file with placeholder secrets)
 packages/agent-app/academy/
 
+# TypeScript build artifacts
+*.tsbuildinfo
+
