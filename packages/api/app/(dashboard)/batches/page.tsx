@@ -1,23 +1,24 @@
 import Link from "next/link";
 import { getPublicClient } from "@/lib/mantle";
 import { addresses, farmerRegistryAbi } from "@/lib/contracts";
-import { getRecentBatches, stageLabel, stageColor, formatUsdc } from "@/lib/dashboard";
-import type { BatchSummary } from "@/lib/dashboard";
+import { getRecentBatches, stageLabel, type BatchSummary } from "@/lib/dashboard";
 export const dynamic = "force-dynamic";
 
 const STAGE_ORDER = ["DELIVERED","GRADED","MILLED","WAREHOUSED","COMMITTED","EXPORTED","SETTLED"] as const;
 
+const STAGE_ACCENTS: Record<string, string> = {
+  DELIVERED:  "oklch(62% 0.17 210)",
+  GRADED:     "oklch(62% 0.17 280)",
+  MILLED:     "oklch(62% 0.17 240)",
+  WAREHOUSED: "oklch(72% 0.16 80)",
+  COMMITTED:  "oklch(62% 0.17 35)",
+  EXPORTED:   "oklch(55% 0.2 340)",
+  SETTLED:    "oklch(62% 0.17 155)",
+};
+
 function truncateAddress(addr: string): string {
   if (addr.length < 12) return addr;
   return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
-}
-
-function daysSinceMint(mintTs: number | null): string {
-  if (!mintTs) return "—";
-  const elapsed = Math.floor((Date.now() / 1000) - mintTs) / 86400;
-  if (elapsed < 1) return "Today";
-  if (elapsed < 2) return "1 day";
-  return `${Math.floor(elapsed)} days`;
 }
 
 async function enrichWithFarmerNames(
@@ -56,25 +57,13 @@ export default async function BatchesPage() {
   const batches = await getRecentBatches(50).catch(() => [] as BatchSummary[]);
   const farmerMap = await enrichWithFarmerNames(batches);
 
-  // Group by stage
-  const grouped = new Map<string, BatchSummary[]>();
-  for (const s of STAGE_ORDER) grouped.set(s, []);
+  // Count per stage
+  const stageCounts: Record<string, number> = {};
+  for (const s of STAGE_ORDER) stageCounts[s] = 0;
   for (const b of batches) {
     const label = stageLabel(b.stage);
-    const group = grouped.get(label);
-    if (group) group.push(b);
+    stageCounts[label] = (stageCounts[label] ?? 0) + 1;
   }
-
-  // Stage accent colors
-  const stageAccents: Record<string, string> = {
-    DELIVERED: "oklch(62% 0.17 210)",     // blue
-    GRADED:    "oklch(62% 0.17 280)",     // purple
-    MILLED:    "oklch(62% 0.17 240)",     // indigo
-    WAREHOUSED: "oklch(72% 0.16 80)",     // gold
-    COMMITTED: "oklch(62% 0.17 35)",      // orange
-    EXPORTED:  "oklch(55% 0.2 340)",      // pink
-    SETTLED:   "oklch(62% 0.17 155)",     // green
-  };
 
   const hasBatches = batches.length > 0;
 
@@ -87,7 +76,7 @@ export default async function BatchesPage() {
             Batches
           </h2>
           <p className="mt-1 text-sm" style={{ color: "oklch(55% 0.012 60)" }}>
-            {hasBatches ? `${batches.length} total — grouped by supply chain stage` : "Coffee batch lifecycle"}
+            {hasBatches ? `${batches.length} total` : "Coffee batch lifecycle"}
           </p>
         </div>
         <Link
@@ -101,6 +90,42 @@ export default async function BatchesPage() {
         </Link>
       </div>
 
+      {/* Pipeline strip — one cell per stage */}
+      <div
+        className="rounded-xl p-4"
+        style={{ backgroundColor: "oklch(100% 0 0)", border: "1px solid oklch(88% 0.006 60)" }}
+      >
+        <div
+          className="grid gap-2"
+          style={{
+            gridTemplateColumns: "repeat(auto-fit, minmax(80px, 1fr))",
+          }}
+        >
+          {STAGE_ORDER.map((stageName) => {
+            const count = stageCounts[stageName] ?? 0;
+            const accent = STAGE_ACCENTS[stageName] ?? "oklch(72% 0.16 80)";
+            return (
+              <div
+                key={stageName}
+                className="flex flex-col items-center rounded-lg px-2 py-2.5 text-center"
+                style={{
+                  backgroundColor: `${accent}1A`,
+                  opacity: count === 0 ? 0.5 : 1,
+                }}
+              >
+                <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: accent }}>
+                  {stageName}
+                </span>
+                <span className="mt-0.5 text-lg font-bold tabular-nums" style={{ color: "oklch(18% 0.01 60)" }}>
+                  {count}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Batches table */}
       {!hasBatches ? (
         <div
           className="rounded-xl p-6"
@@ -109,119 +134,88 @@ export default async function BatchesPage() {
           <p className="text-sm" style={{ color: "oklch(55% 0.012 60)" }}>No batches recorded yet</p>
         </div>
       ) : (
-        <div className="space-y-4">
-          {STAGE_ORDER.map((stageName) => {
-            const stageBatches = grouped.get(stageName) ?? [];
-            const accent = stageAccents[stageName] ?? "oklch(72% 0.16 80)";
-
-            return (
-              <div
-                key={stageName}
-                className="rounded-xl overflow-hidden"
-                style={{
-                  backgroundColor: "oklch(100% 0 0)",
-                  border: "1px solid oklch(88% 0.006 60)",
-                  borderLeft: `3px solid ${accent}`,
-                }}
-              >
-                {/* Stage header */}
-                <div
-                  className="flex items-center justify-between px-5 py-3"
-                  style={{
-                    borderBottom: stageBatches.length > 0 ? "1px solid oklch(88% 0.006 60)" : "none",
-                    backgroundColor: "oklch(98% 0.004 85)",
-                  }}
-                >
-                  <div className="flex items-center gap-3">
-                    <span className="text-sm font-semibold" style={{ color: accent }}>
-                      {stageName}
-                    </span>
-                    <span
-                      className="inline-flex items-center justify-center rounded-full px-2 py-0.5 text-[11px] font-bold"
-                      style={{
-                        backgroundColor: `${accent}1A`,
-                        color: accent,
-                        minWidth: "1.25rem",
-                      }}
-                    >
-                      {stageBatches.length}
-                    </span>
-                  </div>
-                  {stageBatches.length > 0 && (
-                    <span className="text-xs" style={{ color: "oklch(55% 0.012 60)" }}>
-                      {stageBatches.reduce((sum, b) => sum + Number(b.weightKg), 0).toLocaleString()} kg total
-                    </span>
-                  )}
-                </div>
-
-                {/* Stage body */}
-                {stageBatches.length === 0 ? (
-                  <div className="px-5 py-4">
-                    <p className="text-xs italic" style={{ color: "oklch(68% 0.01 58)" }}>
-                      No batches at this stage
-                    </p>
-                  </div>
-                ) : (
-                  <div className="divide-y" style={{ borderColor: "oklch(94% 0.004 60)" }}>
-                    {stageBatches.map((b) => {
-                      const farmer = farmerMap.get(b.farmerWallet.toLowerCase());
-                      const farmerName = farmer?.name ?? truncateAddress(b.farmerWallet);
-                      return (
-                        <Link
-                          key={b.tokenId}
+        <div
+          className="overflow-hidden rounded-xl"
+          style={{ backgroundColor: "oklch(100% 0 0)", border: "1px solid oklch(88% 0.006 60)" }}
+        >
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm">
+              <thead>
+                <tr className="dash-table-header text-xs font-medium uppercase tracking-wide">
+                  <th className="px-4 py-3">Token</th>
+                  <th className="px-4 py-3">Farmer</th>
+                  <th className="px-4 py-3">Weight</th>
+                  <th className="px-4 py-3">Grade</th>
+                  <th className="px-4 py-3">Stage</th>
+                  <th className="px-4 py-3">Loan</th>
+                </tr>
+              </thead>
+              <tbody>
+                {batches.map((b) => {
+                  const farmer = farmerMap.get(b.farmerWallet.toLowerCase());
+                  const farmerName = farmer?.name ?? truncateAddress(b.farmerWallet);
+                  const stageName = stageLabel(b.stage);
+                  const accent = STAGE_ACCENTS[stageName] ?? "oklch(72% 0.16 80)";
+                  return (
+                    <tr key={b.tokenId} className="dash-table-row transition-colors">
+                      <td className="px-4 py-3">
+                        <a
                           href={`/batches/${b.tokenId}`}
-                          className="flex items-center gap-4 px-5 py-3 text-sm transition-colors hover:bg-[oklch(97%_0.006_85)]"
+                          className="font-mono text-xs font-medium hover:underline"
+                          style={{ color: "oklch(72% 0.16 80)" }}
+                        >
+                          #{b.tokenId}
+                        </a>
+                      </td>
+                      <td className="px-4 py-3">
+                        <a
+                          href={`/farmers/${b.farmerWallet}`}
+                          className="hover:underline"
                           style={{ color: "oklch(18% 0.01 60)" }}
                         >
-                          {/* Token ID */}
-                          <span className="font-mono text-xs font-medium shrink-0 w-12" style={{ color: "oklch(72% 0.16 80)" }}>
-                            #{b.tokenId}
+                          <span className="text-sm font-medium">{farmerName}</span>
+                        </a>
+                        <br />
+                        <span className="text-[11px] font-mono" style={{ color: "oklch(68% 0.01 58)" }}>
+                          {truncateAddress(b.farmerWallet)}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 tabular-nums" style={{ color: "oklch(40% 0.01 60)" }}>
+                        {Number(b.weightKg).toLocaleString()} kg
+                      </td>
+                      <td className="px-4 py-3 capitalize" style={{ color: "oklch(55% 0.012 60)" }}>
+                        {b.grade || "—"}
+                      </td>
+                      <td className="px-4 py-3">
+                        <span
+                          className="inline-block rounded-full px-2.5 py-0.5 text-xs font-medium"
+                          style={{
+                            backgroundColor: `${accent}1A`,
+                            color: accent,
+                          }}
+                        >
+                          {stageName}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3">
+                        {b.loanActive ? (
+                          <span
+                            className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium"
+                            style={{ backgroundColor: "oklch(62% 0.17 155 / 0.12)", color: "oklch(50% 0.16 155)" }}
+                          >
+                            <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: "oklch(50% 0.16 155)" }} />
+                            Active
                           </span>
-
-                          {/* Batch ID */}
-                          <span className="font-mono text-xs truncate shrink min-w-0 w-40" style={{ color: "oklch(55% 0.012 60)" }}>
-                            {b.batchId}
-                          </span>
-
-                          {/* Farmer */}
-                          <div className="flex-1 min-w-0">
-                            <span className="text-sm font-medium truncate block">
-                              {farmerName}
-                            </span>
-                            <span className="text-[11px] font-mono" style={{ color: "oklch(68% 0.01 58)" }}>
-                              {truncateAddress(b.farmerWallet)}
-                            </span>
-                          </div>
-
-                          {/* Weight */}
-                          <span className="text-sm tabular-nums shrink-0 w-20 text-right" style={{ color: "oklch(40% 0.01 60)" }}>
-                            {Number(b.weightKg).toLocaleString()} kg
-                          </span>
-
-                          {/* Grade */}
-                          <span className="text-sm capitalize shrink-0 w-16 text-center" style={{ color: "oklch(55% 0.012 60)" }}>
-                            {b.grade || "—"}
-                          </span>
-
-                          {/* Loan */}
-                          <span className="shrink-0 w-16 text-center">
-                            {b.loanActive ? (
-                              <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium" style={{ backgroundColor: "oklch(62% 0.17 155 / 0.12)", color: "oklch(50% 0.16 155)" }}>
-                                <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: "oklch(50% 0.16 155)" }} />
-                                Loan
-                              </span>
-                            ) : (
-                              <span className="text-[11px]" style={{ color: "oklch(68% 0.01 58)" }}>—</span>
-                            )}
-                          </span>
-                        </Link>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            );
-          })}
+                        ) : (
+                          <span style={{ color: "oklch(55% 0.012 60)" }}>—</span>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>
