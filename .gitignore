@@ -34,3 +34,7 @@ TODO.md
 post-pilot-cleanup.md
 packages/contracts/coverage/
 package-lock.json
+
+# Agent-app academy content (large tutorial file with placeholder secrets)
+packages/agent-app/academy/
+
