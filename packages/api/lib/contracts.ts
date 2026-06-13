@@ -58,6 +58,8 @@ export const batchTokenAbi = [
       { name: "weightKg", type: "uint256", internalType: "uint256" },
       { name: "grade", type: "string", internalType: "string" },
       { name: "moisturePct", type: "uint256", internalType: "uint256" },
+      { name: "collectionPointHash", type: "bytes32", internalType: "bytes32" },
+      { name: "weightSlipIpfsCid", type: "bytes32", internalType: "bytes32" },
       { name: "mintTimestamp", type: "uint256", internalType: "uint256" },
       { name: "loanActive", type: "bool", internalType: "bool" },
     ],

@@ -44,8 +44,9 @@ export async function GET(request: Request): Promise<Response> {
     const farmerStats = new Map<string, { batchCount: number; totalWeightKg: bigint }>();
     for (const r of batchResults) {
       if (r.status !== "success") continue;
-      const batch = r.result as readonly [string, string, string, bigint, string, bigint, bigint, boolean];
+      const batch = r.result as readonly [string, string, string, bigint, string, bigint, string, string, bigint, boolean];
       const farmerWallet = batch[1].toLowerCase();
+      if (farmerWallet === "0x0000000000000000000000000000000000000000") continue;
       const weight = batch[3];
       const existing = farmerStats.get(farmerWallet);
       if (existing) {

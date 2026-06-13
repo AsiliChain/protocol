@@ -283,7 +283,7 @@ export async function getPortfolioHealth(): Promise<PortfolioHealth | null> {
     const br = batchResults[i];
     if (br.status === "failure") continue;
 
-    const batch = br.result as readonly [string, string, string, bigint, string, bigint, bigint, boolean];
+    const batch = br.result as readonly [string, string, string, bigint, string, bigint, string, string, bigint, boolean];
     const weightKg = Number(batch[3]);
     const grade = String(batch[4]);
     const gradeMultiplier = getGradeMultiplier(grade);
@@ -358,8 +358,11 @@ export async function getRecentBatches(count = 5): Promise<BatchSummary[]> {
 
     if (batchResult.status === "failure") continue;
 
-    const batch = batchResult.result as unknown as readonly [string, string, string, bigint, string, bigint, bigint, boolean];
+    const batch = batchResult.result as readonly [string, `0x${string}`, `0x${string}`, bigint, string, bigint, `0x${string}`, `0x${string}`, bigint, boolean];
     const stage = stageResult.status === "success" ? Number(stageResult.result) : 0;
+
+    // Skip empty batches (e2e-test artifacts with no farmer)
+    if (batch[1] === "0x0000000000000000000000000000000000000000") continue;
 
     results.push({
       tokenId: Number(tokenIds[i]),
@@ -368,7 +371,7 @@ export async function getRecentBatches(count = 5): Promise<BatchSummary[]> {
       weightKg: batch[3],
       grade: batch[4],
       stage,
-      loanActive: batch[7],
+      loanActive: batch[9],
     });
   }
 
