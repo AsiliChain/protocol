@@ -23,9 +23,8 @@ function primaryRpcUrl() {
 
 function sepoliaFallbackUrls(): string[] {
   return [
-    "https://rpc.sepolia.mantle.xyz",
-    "https://mantle-sepolia-rpc.publicnode.com",
     "https://mantle-sepolia.drpc.org",
+    "https://rpc.sepolia.mantle.xyz",
   ];
 }
 
